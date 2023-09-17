@@ -1,0 +1,35 @@
+services:
+  mysql:
+    platform: linux/x86_64
+    image: mysql:8.0.28
+    container_name: mingle-mysql-local
+    restart: always
+    ports:
+      - "7071:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: mingle
+      MYSQL_USER: mingle
+      MYSQL_PASSWORD: mingle
+      MYSQL_DATABASE: mingle-mysql-local
+      TZ: Asia/Seoul
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+    volumes:
+      - mingle_mysql_volume:/var/lib/mysqldb/data
+      - ./docker/init-mysql-database.sql:/docker-entrypoint-initdb.d/init-database.sql
+
+  redis:
+    image: redis:6.2-alpine
+    command: redis-server --port 6379
+    container_name: mingle-redis-local
+    hostname: mingle_redis
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    ports:
+      - "7072:6379"
+    restart: unless-stopped
+
+# 도커 볼륨
+volumes:
+  mingle_mysql_volume:
