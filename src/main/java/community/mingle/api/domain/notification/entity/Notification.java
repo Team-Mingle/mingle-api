@@ -7,10 +7,8 @@ import community.mingle.api.enums.NotificationType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Getter

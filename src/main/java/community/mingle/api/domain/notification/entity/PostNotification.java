@@ -4,7 +4,6 @@ import community.mingle.api.domain.post.entity.Post;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @Entity

@@ -4,12 +4,8 @@ import community.mingle.api.domain.member.entity.Member;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Getter
