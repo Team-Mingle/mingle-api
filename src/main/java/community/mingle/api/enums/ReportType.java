@@ -10,5 +10,5 @@ public enum ReportType {
     INAPPROPRIATE("부적절"),
     SWEAR("욕설");
 
-    private String description;
+    private final String description;
 }
