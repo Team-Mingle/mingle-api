@@ -8,15 +8,7 @@ import lombok.Getter;
 @Getter
 @Entity
 @Table(name = "comment_notification")
-public class CommentNotification {
-    @Id
-    @Column(name = "id", nullable = false)
-    private Long id;
-
-    @MapsId
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id", nullable = false)
-    private Notification notification;
+public class CommentNotification extends Notification {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

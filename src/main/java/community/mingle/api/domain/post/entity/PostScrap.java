@@ -5,11 +5,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "post_scrap")
 public class PostScrap {
     @Id

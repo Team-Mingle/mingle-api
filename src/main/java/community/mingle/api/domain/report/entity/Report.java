@@ -8,11 +8,15 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@EntityListeners(AuditingEntityListener.class)
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "content_type")
 @Table(name = "report")
 public class Report {
     @Id

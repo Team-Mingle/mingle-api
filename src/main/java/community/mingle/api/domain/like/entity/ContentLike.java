@@ -5,12 +5,17 @@ import community.mingle.api.enums.ContentType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Entity
 @Table(name = "content_like")
+@Inheritance(strategy = InheritanceType.JOINED)
+@EntityListeners(AuditingEntityListener.class)
+@DiscriminatorColumn(name = "content_type")
 public class ContentLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +29,7 @@ public class ContentLike {
 
     @NotNull
     @Column(name = "created_at", nullable = false)
+    @CreatedDate
     private LocalDateTime createdAt;
 
     @NotNull

@@ -8,15 +8,7 @@ import lombok.Getter;
 @Getter
 @Entity
 @Table(name = "comment_like")
-public class CommentLike {
-    @Id
-    @Column(name = "id", nullable = false)
-    private Long id;
-
-    @MapsId
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id", nullable = false)
-    private ContentLike contentLike;
+public class CommentLike extends ContentLike {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

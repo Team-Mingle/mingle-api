@@ -8,15 +8,7 @@ import lombok.Getter;
 @Getter
 @Entity
 @Table(name = "post_report")
-public class PostReport {
-    @Id
-    @Column(name = "id", nullable = false)
-    private Long id;
-
-    @MapsId
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id", nullable = false)
-    private Report report;
+public class PostReport extends Report{
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
