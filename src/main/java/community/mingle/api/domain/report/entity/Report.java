@@ -1,24 +1,25 @@
 package community.mingle.api.domain.report.entity;
 
 import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.entitybase.AuditLoggingBase;
 import community.mingle.api.enums.ContentType;
 import community.mingle.api.enums.ReportType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Entity
-@EntityListeners(AuditingEntityListener.class)
+@Where(clause = "deleted_at IS NULL")
+@SQLDelete(sql = "UPDATE comment SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "content_type")
 @Table(name = "report")
-public class Report {
+public class Report extends AuditLoggingBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -38,10 +39,8 @@ public class Report {
     @Column(name = "reason", length = 200)
     private String reason;
 
-    @NotNull
-    @Column(name = "created_at", nullable = false)
-    @CreatedDate
-    private LocalDateTime createdAt;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     @NotNull
     @Column(name = "content_type", nullable = false)

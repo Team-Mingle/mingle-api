@@ -1,6 +1,6 @@
 package community.mingle.api.domain.notification.entity;
 
-import community.mingle.api.domain.commnet.entity.Comment;
+import community.mingle.api.domain.comment.entity.Comment;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

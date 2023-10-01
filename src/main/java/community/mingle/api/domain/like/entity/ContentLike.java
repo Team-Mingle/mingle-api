@@ -1,22 +1,23 @@
 package community.mingle.api.domain.like.entity;
 
 import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.entitybase.AuditLoggingBase;
 import community.mingle.api.enums.ContentType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Entity
-@Table(name = "content_like")
+@Where(clause = "deleted_at IS NULL")
+@SQLDelete(sql = "UPDATE comment SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Inheritance(strategy = InheritanceType.JOINED)
-@EntityListeners(AuditingEntityListener.class)
-@DiscriminatorColumn(name = "content_type")
-public class ContentLike {
+@Table(name = "content_like")
+public class ContentLike extends AuditLoggingBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -27,10 +28,8 @@ public class ContentLike {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @NotNull
-    @Column(name = "created_at", nullable = false)
-    @CreatedDate
-    private LocalDateTime createdAt;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     @NotNull
     @Column(name = "content_type", nullable = false)

@@ -1,4 +1,4 @@
-package community.mingle.api.domain.commnet.entity;
+package community.mingle.api.domain.comment.entity;
 
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.post.entity.Post;
@@ -10,7 +10,7 @@ import lombok.Getter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -53,6 +53,6 @@ public class Comment extends AuditLoggingBase {
     private ContentStatusType statusType;
 
     @Column(name = "deleted_at")
-    private Instant deletedAt;
+    private LocalDateTime deletedAt;
 
 }

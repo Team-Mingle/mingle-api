@@ -1,0 +1,52 @@
+databaseChangeLog:
+  - changeSet:
+      id: add updated_at, deleted_at column to like, scrap, notification, and report table
+      author: Hyeonwoo Jung
+      changes:
+        - addColumn:
+            tableName: content_like
+            columns:
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: timestamp
+
+        - addColumn:
+            tableName: notification
+            columns:
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: timestamp
+
+        - addColumn:
+            tableName: post_scrap
+            columns:
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: timestamp
+
+        - addColumn:
+            tableName: report
+            columns:
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: timestamp
