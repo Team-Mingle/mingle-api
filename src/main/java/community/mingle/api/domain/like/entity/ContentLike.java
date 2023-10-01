@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @Where(clause = "deleted_at IS NULL")
-@SQLDelete(sql = "UPDATE comment SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLDelete(sql = "UPDATE content_like SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "content_like")
 public class ContentLike extends AuditLoggingBase {

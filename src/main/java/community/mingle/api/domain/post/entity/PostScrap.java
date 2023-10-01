@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @Where(clause = "deleted_at IS NULL")
-@SQLDelete(sql = "UPDATE comment SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLDelete(sql = "UPDATE post_scrap SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Table(name = "post_scrap")
 public class PostScrap extends AuditLoggingBase {
     @Id
