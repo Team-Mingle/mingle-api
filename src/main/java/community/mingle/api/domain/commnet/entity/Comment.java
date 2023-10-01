@@ -14,7 +14,6 @@ import org.hibernate.annotations.Where;
 import java.time.Instant;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "comment")
 @Where(clause = "deleted_at IS NULL")

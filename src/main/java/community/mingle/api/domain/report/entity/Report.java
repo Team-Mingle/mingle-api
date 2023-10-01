@@ -14,7 +14,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "report")
 public class Report {

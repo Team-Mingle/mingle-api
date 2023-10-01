@@ -12,7 +12,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "content_like")
 public class ContentLike {
