@@ -31,5 +31,6 @@ services:
     restart: unless-stopped
 
 # 도커 볼륨
+
 volumes:
   mingle_mysql_volume:
