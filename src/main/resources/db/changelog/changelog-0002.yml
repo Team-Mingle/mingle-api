@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: add foreign key constraint between content_like and content_type
+      author: Hyeonwoo Jung
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: content_like
+            baseColumnNames: content_type
+            referencedTableName: content_type
+            referencedColumnNames: type
+            constraintName: content_like_content_type_fk
