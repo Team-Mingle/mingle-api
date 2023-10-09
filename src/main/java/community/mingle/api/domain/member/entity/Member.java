@@ -62,4 +62,7 @@ public class Member extends AuditLoggingBase {
     @Column(name = "fcm_token")
     private String fcmToken;
 
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
 }
