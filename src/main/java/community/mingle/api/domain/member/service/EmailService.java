@@ -1,4 +1,4 @@
-package community.mingle.api.src.auth;
+package community.mingle.api.domain.member.service;
 
 import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.global.exception.ErrorCode;

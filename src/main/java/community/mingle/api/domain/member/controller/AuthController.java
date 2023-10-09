@@ -1,7 +1,9 @@
-package community.mingle.api.src.auth;
+package community.mingle.api.domain.member.controller;
 
-import community.mingle.api.src.auth.model.PostCodeRequest;
-import community.mingle.api.src.auth.model.PostEmailRequest;
+import community.mingle.api.domain.member.controller.request.PostCodeRequest;
+import community.mingle.api.domain.member.controller.request.PostEmailRequest;
+import community.mingle.api.domain.member.facade.AuthFacade;
+import community.mingle.api.domain.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,27 +17,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final MemberService memberService;
-    private final AuthFacadeService authFacadeService;
+    private final AuthFacade authFacade;
 
     /**
      * 1.3 이메일 입력 & 중복검사 API
      */
-    @PostMapping("email-verification")
+    @PostMapping("verifyemail")
     public ResponseEntity<String> verifyEmail(@Valid @RequestBody PostEmailRequest postEmailRequest) {
 
-        memberService.verifyEmail(postEmailRequest);
-        return ResponseEntity.ok().body("이메일 확인 성공");
+        String response = authFacade.verifyEmail(postEmailRequest);
+        return ResponseEntity.ok().body(response);
 
     }
 
     /**
      * 1.4 인증코드 전송 API
      */
-    @PostMapping("code")
+    @PostMapping("sendcode")
     public ResponseEntity<String> sendCode(@Valid @RequestBody PostEmailRequest postEmailRequest) {
 
-        String response = authFacadeService.verifyStatusEmail(postEmailRequest);
+        String response = authFacade.verifyStatusEmail(postEmailRequest);
         return ResponseEntity.ok().body(response);
 
     }
@@ -43,10 +44,10 @@ public class AuthController {
     /**
      * 1.5 인증 코드 검사 API
      */
-    @PostMapping("code-verification")
+    @PostMapping("verifycode")
     public ResponseEntity<String> verifyCode(@Valid @RequestBody PostCodeRequest postCodeRequest) {
 
-        String response = memberService.verifyCode(postCodeRequest);
+        String response = authFacade.verifyCode(postCodeRequest);
         return ResponseEntity.ok().body(response);
     }
 }

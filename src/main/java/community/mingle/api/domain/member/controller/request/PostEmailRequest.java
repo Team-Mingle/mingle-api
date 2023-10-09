@@ -1,4 +1,4 @@
-package community.mingle.api.src.auth.model;
+package community.mingle.api.domain.member.controller.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

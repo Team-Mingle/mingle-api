@@ -1,4 +1,4 @@
-package community.mingle.api.src.auth;
+package community.mingle.api.domain.member.repository;
 
 import community.mingle.api.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;

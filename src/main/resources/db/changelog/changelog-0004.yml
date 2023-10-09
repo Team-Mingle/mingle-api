@@ -20,8 +20,8 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
-                  name: auth_token
-                  type: TEXT
+                  name: auth_code
+                  type: VARCHAR(10)
               - column:
                   constraints:
                     nullable: false

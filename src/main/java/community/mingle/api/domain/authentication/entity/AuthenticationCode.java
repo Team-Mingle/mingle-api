@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @Table(name = "authentication_code")
+@NoArgsConstructor
 public class AuthenticationCode {
 
     @Id
@@ -24,7 +26,7 @@ public class AuthenticationCode {
     @Column(name = "email", nullable = false, length = 100)
     private String email;
 
-    @Column(name = "auth_token")
+    @Column(name = "auth_code")
     private String authToken;
 
     @Column(name = "created_at")
