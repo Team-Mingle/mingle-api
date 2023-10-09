@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ErrorCode {
+
+    //TODO status 를 HttpStatus로 받아오기
     MEMBER_DUPLICATED(409, "1002", "중복된 유저입니다."),
     TOKEN_EXPIRED(401, "2000", "토큰이 만료되었습니다."),
     AUTHENTICATION_FAILED(401, "2001", "잘못된 인증 정보입니다.")
