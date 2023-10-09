@@ -46,4 +46,8 @@ public class MemberService {
             throw new CustomException(MEMBER_REPORTED_ERROR);
         }
     }
+
+    public void setFcmToken(Member member, String fcmToken) {
+        member.setFcmToken(fcmToken);
+    }
 }

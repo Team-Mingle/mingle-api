@@ -7,15 +7,18 @@ import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.global.utils.EmailHasher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AuthFacade {
 
     private final MemberService memberService;
     private final TokenService tokenService;
 
 
+    @Transactional
     public LoginMemberResponse login(LoginMemberRequest request) {
         //이메일 암호화
         String hashedEmail = EmailHasher.hashEmail(request.getEmail());
@@ -31,15 +34,8 @@ public class AuthFacade {
         TokenResult tokens = tokenService.createTokens(member, hashedEmail);
 
         //FCM 토큰 지정
-        member.setFcmToken(request.getFcmToken()); // memberService.setFcmToken(request.getFcmToken()); //극한의 facade
+        memberService.setFcmToken(member, request.getFcmToken());
 
-        //Response 생성
-        return loginMemberResponseBuilder(member, hashedEmail, tokens);
-    }
-
-
-    //TODO: too many arguments passed for ResponseBuilder -> 전용 메서드 또는 login 서비스 안에서 바로 해결
-    private LoginMemberResponse loginMemberResponseBuilder(Member member, String hashedEmail, TokenResult tokens) {
         return LoginMemberResponse.builder()
                 .memberId(member.getId())
                 .email(hashedEmail)
