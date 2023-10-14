@@ -1,6 +1,6 @@
-package community.mingle.api.domain.member;
+package community.mingle.api.domain.member.service;
 
-import com.fasterxml.classmate.MemberResolver;
+import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.enums.MemberStatus;
 import community.mingle.api.global.exception.CustomException;
@@ -22,12 +22,12 @@ public class MemberService {
      * encrypted 된 이메일 넘기기
      * @param  email    String
      */
-    Member getMemberByEmail(String email) {
+    public Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(FAILED_TO_LOGIN));
     }
 
-    void checkPassword(String rawPassword, String storedPasswordHash) {
+    public void checkPassword(String rawPassword, String storedPasswordHash) {
         if (!passwordEncoder.matches(rawPassword, storedPasswordHash))
             throw new CustomException(FAILED_TO_LOGIN);
     }
@@ -36,7 +36,7 @@ public class MemberService {
      * 탈퇴, 신고된 유저 재로그인 방지
      * @param member    Member
      */
-    void validateLoginMemberStatusIsActive(Member member) {
+    public void validateLoginMemberStatusIsActive(Member member) {
         //탈퇴 유저 로그인 방지
         if (member.getStatus().equals(MemberStatus.INACTIVE)) {
             throw new CustomException(MEMBER_DELETED_ERROR);
@@ -47,7 +47,7 @@ public class MemberService {
         }
     }
 
-    public void setFcmToken(Member member, String fcmToken) {
+    public void updateFcmToken(Member member, String fcmToken) {
         member.setFcmToken(fcmToken);
     }
 }

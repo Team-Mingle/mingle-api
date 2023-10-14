@@ -1,4 +1,4 @@
-package community.mingle.api.domain.member;
+package community.mingle.api.domain.auth.service;
 
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.enums.MemberRole;
@@ -20,6 +20,6 @@ public class TokenService {
         return new TokenResult(accessToken, refreshToken);
     }
 
-    record TokenResult(String accessToken, String refreshToken) {
+    public record TokenResult(String accessToken, String refreshToken) {
     }
 }

@@ -1,8 +1,10 @@
-package community.mingle.api.domain.member;
+package community.mingle.api.domain.auth.facade;
 
-import community.mingle.api.domain.member.TokenService.TokenResult;
-import community.mingle.api.domain.member.dto.LoginMemberRequest;
-import community.mingle.api.domain.member.dto.LoginMemberResponse;
+import community.mingle.api.domain.auth.controller.request.LoginMemberRequest;
+import community.mingle.api.domain.auth.controller.response.LoginMemberResponse;
+import community.mingle.api.domain.auth.service.TokenService;
+import community.mingle.api.domain.auth.service.TokenService.TokenResult;
+import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.global.utils.EmailHasher;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,9 @@ public class AuthFacade {
     private final TokenService tokenService;
 
 
+    /**
+     * 로그인
+     */
     @Transactional
     public LoginMemberResponse login(LoginMemberRequest request) {
         //이메일 암호화
@@ -34,7 +39,7 @@ public class AuthFacade {
         TokenResult tokens = tokenService.createTokens(member, hashedEmail);
 
         //FCM 토큰 지정
-        memberService.setFcmToken(member, request.getFcmToken());
+        memberService.updateFcmToken(member, request.getFcmToken());
 
         return LoginMemberResponse.builder()
                 .memberId(member.getId())

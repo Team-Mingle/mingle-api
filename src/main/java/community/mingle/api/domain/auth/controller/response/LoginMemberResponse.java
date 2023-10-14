@@ -1,4 +1,4 @@
-package community.mingle.api.domain.member.dto;
+package community.mingle.api.domain.auth.controller.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
