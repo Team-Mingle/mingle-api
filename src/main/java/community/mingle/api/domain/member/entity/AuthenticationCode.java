@@ -1,13 +1,12 @@
-package community.mingle.api.domain.authentication.entity;
+package community.mingle.api.domain.member.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Where;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +14,9 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "authentication_code")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
+@AllArgsConstructor
+@Builder
 public class AuthenticationCode {
 
     @Id
@@ -31,14 +33,8 @@ public class AuthenticationCode {
     private String authToken;
 
     @Column(name = "created_at")
+    @CreatedDate
     private LocalDateTime createdAt;
-
-    @Builder
-    public AuthenticationCode(String email, String authToken) {
-        this.email = email;
-        this.authToken = authToken;
-        this.createdAt = LocalDateTime.now();
-    }
 
 
 }

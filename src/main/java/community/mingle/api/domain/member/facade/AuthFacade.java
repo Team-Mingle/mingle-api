@@ -15,7 +15,6 @@ public class AuthFacade {
     private final MemberService memberService;
     private final EmailService emailService;
 
-    @Transactional
     public String verifyEmail(PostEmailRequest postEmailRequest) {
         memberService.verifyEmail(postEmailRequest.getEmail());
         return "이메일 확인 성공.";
@@ -32,10 +31,8 @@ public class AuthFacade {
 
         String authKey = emailService.createCode();
 
-        //메일 보내기
         emailService.sendAuthEmail(email,authKey);
 
-        //메일 보내고 DB에 코드 저장
         memberService.registerAuthEmail(email, authKey);
         return "인증번호가 전송되었습니다.";
     }

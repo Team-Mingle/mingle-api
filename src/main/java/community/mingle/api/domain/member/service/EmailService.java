@@ -29,14 +29,11 @@ public class EmailService {
     private String emailFrom;
 
     public String createCode() {
-        try {
-            Random random = new Random();
-            String authKey = String.valueOf(random.nextInt(888888) + 111111);
-            return authKey;
-        } catch (CustomException e) {
-            e.printStackTrace();
-            throw new CustomException(ErrorCode.CODE_GENERATION_FAILED);
-        }
+
+        Random random = new Random();
+        String authKey = String.valueOf(random.nextInt(888888) + 111111);
+        return authKey;
+
     }
 
 
@@ -69,9 +66,6 @@ public class EmailService {
         } catch (MessagingException e) {
             e.printStackTrace();
             throw new CustomException(ErrorCode.EMAIL_SEND_FAILED);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new CustomException(ErrorCode.DATABASE_ERROR);
         }
 
 
