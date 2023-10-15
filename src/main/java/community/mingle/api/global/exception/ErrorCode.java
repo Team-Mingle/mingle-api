@@ -16,6 +16,8 @@ public enum ErrorCode {
     MEMBER_DELETED_ERROR(404, "2003","탈퇴한 사용자입니다."),
     MEMBER_REPORTED_ERROR(404, "2004", "신고된 사용자입니다."),
 
+    MEMBER_NOT_FOUND(404, "2005", "존재하지 않는 회원 정보입니다."),
+
     FAILED_TO_CREATEJWT(500, "2005", "토큰 발급에 실패하였습니다." );
     private final int status;
     private final String code;

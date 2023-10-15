@@ -4,6 +4,7 @@ import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.enums.MemberStatus;
 import community.mingle.api.global.exception.CustomException;
+import community.mingle.api.global.utils.EmailHasher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,13 +25,25 @@ public class MemberService {
      */
     public Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(FAILED_TO_LOGIN));
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
     }
 
     public void checkPassword(String rawPassword, String storedPasswordHash) {
         if (!passwordEncoder.matches(rawPassword, storedPasswordHash))
             throw new CustomException(FAILED_TO_LOGIN);
     }
+
+    public Member isValidEmailAndPwd(String rawEmail, String reqPwd) throws CustomException {
+        try {
+            String hashedEmail = EmailHasher.hashEmail(rawEmail);
+            Member member = getMemberByEmail(hashedEmail);
+            checkPassword(reqPwd, member.getPassword());
+            return member;
+        } catch (CustomException e) {
+            throw new CustomException(FAILED_TO_LOGIN); //Failed to login exception으로 통일하기 위해 사용
+        }
+    }
+
 
     /**
      * 탈퇴, 신고된 유저 재로그인 방지
