@@ -1,7 +1,7 @@
 package community.mingle.api.domain.member.service;
 
-import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.enums.MemberStatus;
 import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.global.utils.EmailHasher;
@@ -62,5 +62,11 @@ public class MemberService {
 
     public void updateFcmToken(Member member, String fcmToken) {
         member.setFcmToken(fcmToken);
+    }
+
+
+    public void updatePwd(Member member, String pwd) {
+        String encodedPwd = passwordEncoder.encode(pwd);
+        member.updatePwd(encodedPwd);
     }
 }

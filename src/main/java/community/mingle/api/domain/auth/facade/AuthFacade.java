@@ -1,17 +1,15 @@
 package community.mingle.api.domain.auth.facade;
 
 import community.mingle.api.domain.auth.controller.request.LoginMemberRequest;
+import community.mingle.api.domain.auth.controller.request.UpdatePwdRequest;
 import community.mingle.api.domain.auth.controller.response.LoginMemberResponse;
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.auth.service.TokenService.TokenResult;
-import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.domain.member.entity.Member;
-import community.mingle.api.global.utils.EmailHasher;
+import community.mingle.api.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static community.mingle.api.global.exception.ErrorCode.FAILED_TO_LOGIN;
 
 @Service
 @RequiredArgsConstructor
@@ -49,5 +47,14 @@ public class AuthFacade {
                 .build();
     }
 
+
+    /**
+     * 1.10 비밀번호 초기화
+     */
+    @Transactional
+    public String updatePwd(UpdatePwdRequest request) {
+        Member member = memberService.isValidEmailAndPwd(request.getEmail(), request.getPwd());
+        memberService.updatePwd(member, request.getPwd());
+        return "비밀번호 변경에 성공하였습니다.";
     }
 }
