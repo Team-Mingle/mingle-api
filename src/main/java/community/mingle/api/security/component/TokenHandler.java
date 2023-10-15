@@ -20,7 +20,6 @@ public class TokenHandler {
 
     private final Algorithm tokenAlgorithm;
 
-    //TODO RefreshToken도 redis를 뺄까?
     public String createAccessToken(Long memberId, MemberRole memberRole) {
         try {
             return JWT.create()
@@ -57,8 +56,6 @@ public class TokenHandler {
                             )
                     )
                     .sign(tokenAlgorithm);
-            //TODO Refresh token 저장 위한 테이블 생성
-            //        redisService.setValues(email, refreshToken, Duration.ofDays(refreshTokenMaxAgeSeconds));
         } catch (Exception e) {
             throw new CustomException(FAILED_TO_CREATEJWT);
         }
