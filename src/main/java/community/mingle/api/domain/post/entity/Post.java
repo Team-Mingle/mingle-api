@@ -8,6 +8,7 @@ import community.mingle.api.enums.ContentStatusType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -68,5 +69,17 @@ public class Post extends AuditLoggingBase {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+
+
+    @Builder
+    public Post(String title, String content, BoardType boardType, CategoryType categoryType, boolean anonymous, boolean fileAttached) {
+        this.title = title;
+        this.content = content;
+        this.boardType = boardType;
+        this.categoryType = categoryType;
+        this.anonymous = anonymous;
+        this.fileAttached = fileAttached;
+    }
 
 }

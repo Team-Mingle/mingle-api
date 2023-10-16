@@ -3,6 +3,7 @@ package community.mingle.api.domain.post.controller;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.response.CreatePostResponse;
 import community.mingle.api.domain.post.facade.PostFacade;
+import community.mingle.api.enums.BoardType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +17,14 @@ public class PostController {
     private final PostFacade postFacade;
 
     /**
-     * 1.3 이메일 입력 & 중복검사 API
+     * 게시물 생성 API
      */
     @PostMapping("/{boardType}")
-    public ResponseEntity<CreatePostResponse> createPost(@Valid @ModelAttribute CreatePostRequest createPostRequest, @PathVariable Long boardType) {
+    public ResponseEntity<CreatePostResponse> createPost(@Valid @ModelAttribute CreatePostRequest createPostRequest, @PathVariable(value = "boardType") BoardType boardType) {
 
-        String response = authFacade.verifyEmail(postEmailRequest);
-        return ResponseEntity.ok().body(response);
+        //TODO ENUM 대소문자 및 일치하는 값 없는 경우 예외처리
+        CreatePostResponse createPostResponse = postFacade.createPost(createPostRequest, boardType);
+        return ResponseEntity.ok().body(createPostResponse);
 
     }
 
