@@ -8,8 +8,10 @@ import community.mingle.api.enums.ContentStatusType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -20,6 +22,7 @@ import java.time.LocalDateTime;
 @Where(clause = "deleted_at IS NULL")
 @SQLDelete(sql = "UPDATE post SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Table(name = "post")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends AuditLoggingBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,5 +1,6 @@
 package community.mingle.api.domain.post.controller.request;
 
+import community.mingle.api.enums.CategoryType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -15,8 +16,7 @@ public class CreatePostRequest {
     private int categoryId;
 
     @NotBlank(message = "카테고리를 입력해주세요.")
-    @Size(max = 45)
-    private String category;
+    private CategoryType categoryType;
 
     @NotBlank(message = "제목을 입력해주세요.")
     @Size(max = 45)
