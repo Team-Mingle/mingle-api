@@ -31,6 +31,9 @@ public class PostFacade {
         if (isFileAttached) {
             postImageService.createPostImage(post, createPostRequest.getMultipartFile());
         }
+        return CreatePostResponse.builder()
+                .postId(post.getId())
+                .build();
     }
 
 }

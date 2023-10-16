@@ -1,5 +1,8 @@
 package community.mingle.api.domain.post.controller.response;
 
+import lombok.Builder;
+
+@Builder
 public class CreatePostResponse {
-    private int categoryId;
+    private long postId;
 }
