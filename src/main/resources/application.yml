@@ -2,4 +2,4 @@ server:
   port: 7070
 spring:
   liquibase:
-    change-log: db/db.changelog-main.yml
+    change-log: dbc/db.changelog-main.yml
