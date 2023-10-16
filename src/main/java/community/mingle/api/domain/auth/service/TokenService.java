@@ -12,11 +12,11 @@ public class TokenService {
 
     private final TokenHandler tokenHandler;
 
-    public TokenResult createTokens(Member member, String hashedEmail) {
+    public TokenResult createTokens(Member member) {
         Long memberId = member.getId();
         MemberRole memberRole = member.getRole();
         String accessToken = tokenHandler.createAccessToken(memberId, memberRole);
-        String refreshToken = tokenHandler.createRefreshToken(memberId, memberRole, hashedEmail);
+        String refreshToken = tokenHandler.createRefreshToken(memberId, memberRole, member.getEmail());
         return new TokenResult(accessToken, refreshToken);
     }
 
