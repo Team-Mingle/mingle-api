@@ -13,8 +13,6 @@ import java.util.List;
 @Setter
 public class CreatePostRequest {
 
-    private int categoryId;
-
     @NotBlank(message = "카테고리를 입력해주세요.")
     private CategoryType categoryType;
 
