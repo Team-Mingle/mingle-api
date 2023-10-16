@@ -1,5 +1,6 @@
 package community.mingle.api.domain.auth.entity;
 
+import community.mingle.api.entitybase.AuditLoggingBase;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Table(name = "refresh_token")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RefreshToken {
+public class RefreshToken extends AuditLoggingBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

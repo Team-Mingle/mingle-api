@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-refresh-token-table
+      author: taehyun
+      changes:
+        - createTable:
+            tableName: refresh_token
+            columns:
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: token
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expiry
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_at
+                  type: timestamp
+              - column:
+                  constraints:
+                    nullable: false
+                  name: updated_at
+                  type: timestamp

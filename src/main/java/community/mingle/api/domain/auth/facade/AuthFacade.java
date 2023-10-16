@@ -67,7 +67,6 @@ public class AuthFacade {
         TokenDto tokenDto = tokenService.verifyToken(refreshToken);
         tokenService.validateRefreshToken(refreshToken);
 
-        //새로운 access, refresh 토큰 생성 후 redis 저장
         TokenResult tokens = tokenService.createTokens(tokenDto.getMemberId(), tokenDto.getMemberRole(), email);
         tokenService.saveRefreshToken(email, tokens.refreshToken(), Duration.of(30, ChronoUnit.DAYS));
 
