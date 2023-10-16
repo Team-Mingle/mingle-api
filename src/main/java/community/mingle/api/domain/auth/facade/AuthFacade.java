@@ -32,7 +32,7 @@ public class AuthFacade {
         memberService.validateLoginMemberStatusIsActive(member);
 
         //토큰 생성
-        TokenResult tokens = tokenService.createTokens(member, member.getEmail());
+        TokenResult tokens = tokenService.createTokens(member);
 
         //FCM 토큰 지정
         memberService.updateFcmToken(member, request.getFcmToken());
