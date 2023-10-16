@@ -17,6 +17,5 @@ public class UpdatePostResponse {
     private String title;
     private String content;
     private boolean isAnonymous;
-    private List<MultipartFile> multipartFile;
 
 }

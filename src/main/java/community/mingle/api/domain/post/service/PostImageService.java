@@ -33,4 +33,15 @@ public class PostImageService {
         return postImageRepository.saveAll(postImages);
     }
 
+    @Transactional
+    public void updatePostImage(Post post, List<Long> imageIdsToDelete, List<MultipartFile> imagesToAdd) {
+        if (imageIdsToDelete != null) {
+            postImageRepository.deleteAllById(imageIdsToDelete);
+        }
+
+        if (imagesToAdd != null) {
+            createPostImage(post, imagesToAdd);
+        }
+    }
+
 }

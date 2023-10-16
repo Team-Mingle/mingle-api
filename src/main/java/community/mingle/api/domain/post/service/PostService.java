@@ -4,9 +4,13 @@ import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.repository.PostRepository;
 import community.mingle.api.enums.BoardType;
 import community.mingle.api.enums.CategoryType;
+import community.mingle.api.enums.ContentStatusType;
+import community.mingle.api.global.exception.CustomException;
+import community.mingle.api.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +39,21 @@ public class PostService {
                         .build();
 
         return postRepository.save(post);
+    }
+
+
+    @Transactional
+    public Post updatePost(long postId, String title, String content, boolean isAnonymous) {
+        //TODO 권한
+         Post post = postRepository.findById(postId)
+                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_EXIST));
+
+         if (post.getStatusType().equals(ContentStatusType.DELETED) || post.getStatusType().equals(ContentStatusType.REPORTED)) {
+             throw new CustomException(ErrorCode.POST_DELETED_REPORTED);
+         }
+         post.updatePost(title, content, isAnonymous);
+
+         return post;
     }
 
 }
