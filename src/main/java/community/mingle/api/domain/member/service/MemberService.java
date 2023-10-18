@@ -1,14 +1,13 @@
 package community.mingle.api.domain.member.service;
 
-import community.mingle.api.domain.member.entity.AuthenticationCode;
-import community.mingle.api.domain.member.repository.AuthRepository;
-import community.mingle.api.domain.member.repository.AuthenticationCodeRepository;
+import community.mingle.api.domain.auth.entity.AuthenticationCode;
+import community.mingle.api.domain.member.repository.MemberRepository;
+import community.mingle.api.domain.auth.repository.AuthenticationCodeRepository;
 import community.mingle.api.enums.MemberStatus;
 import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -16,15 +15,15 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class MemberService {
 
-    private final AuthRepository authRepository;
+    private final MemberRepository memberRepository;
     private final AuthenticationCodeRepository authenticationCodeRepository;
 
 
     public void verifyEmail (String email) {
-        if (authRepository.existsByEmail(email)) {
+        if (memberRepository.existsByEmail(email)) {
             throw new CustomException(ErrorCode.EMAIL_DUPLICATED);
         }
-        if (authRepository.findByEmail(email).getStatus().equals(MemberStatus.INACTIVE)) {
+        if (memberRepository.findByEmail(email).getStatus().equals(MemberStatus.INACTIVE)) {
             throw new CustomException(ErrorCode.MEMBER_DELETED);
         }
     }

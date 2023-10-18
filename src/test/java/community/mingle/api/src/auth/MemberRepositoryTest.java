@@ -1,14 +1,14 @@
 package community.mingle.api.src.auth;
 
-import community.mingle.api.domain.member.repository.AuthRepository;
+import community.mingle.api.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-class AuthRepositoryTest {
+class MemberRepositoryTest {
     @Autowired
-    AuthRepository authRepository;
+    MemberRepository memberRepository;
 
     @Test
     void existsByEmail() {

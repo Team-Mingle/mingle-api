@@ -1,8 +1,8 @@
-package community.mingle.api.domain.member.facade;
+package community.mingle.api.domain.auth.facade;
 
-import community.mingle.api.domain.member.controller.request.PostCodeRequest;
-import community.mingle.api.domain.member.controller.request.PostEmailRequest;
-import community.mingle.api.domain.member.service.EmailService;
+import community.mingle.api.domain.auth.controller.request.PostCodeRequest;
+import community.mingle.api.domain.auth.controller.request.PostEmailRequest;
+import community.mingle.api.domain.auth.service.EmailService;
 import community.mingle.api.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package community.mingle.api.domain.member.entity;
+package community.mingle.api.domain.auth.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

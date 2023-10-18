@@ -1,9 +1,8 @@
-package community.mingle.api.domain.member.controller;
+package community.mingle.api.domain.auth.controller;
 
-import community.mingle.api.domain.member.controller.request.PostCodeRequest;
-import community.mingle.api.domain.member.controller.request.PostEmailRequest;
-import community.mingle.api.domain.member.facade.AuthFacade;
-import community.mingle.api.domain.member.service.MemberService;
+import community.mingle.api.domain.auth.controller.request.PostCodeRequest;
+import community.mingle.api.domain.auth.controller.request.PostEmailRequest;
+import community.mingle.api.domain.auth.facade.AuthFacade;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
