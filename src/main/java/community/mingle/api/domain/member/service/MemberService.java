@@ -6,6 +6,7 @@ import community.mingle.api.domain.auth.repository.AuthenticationCodeRepository;
 import community.mingle.api.enums.MemberStatus;
 import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.global.exception.ErrorCode;
+import community.mingle.api.global.utils.EmailHasher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +21,12 @@ public class MemberService {
 
 
     public void verifyEmail (String email) {
-        if (memberRepository.existsByEmail(email)) {
+        String hashedEmail = EmailHasher.hashEmail(email);
+
+        if (memberRepository.existsByEmail(hashedEmail)) {
             throw new CustomException(ErrorCode.EMAIL_DUPLICATED);
         }
-        if (memberRepository.findByEmail(email).getStatus().equals(MemberStatus.INACTIVE)) {
+        if (memberRepository.findByEmail(hashedEmail).getStatus().equals(MemberStatus.INACTIVE)) {
             throw new CustomException(ErrorCode.MEMBER_DELETED);
         }
     }

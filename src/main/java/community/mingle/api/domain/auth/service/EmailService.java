@@ -39,15 +39,11 @@ public class EmailService {
 
     public void sendAuthEmail(String emailTo, String authKey) {
 
-
-        //제목 설정
         String subject = "Mingle의 이메일 인증번호를 확인하세요";
 
-        //템플릿에 전달할 데이터 설정
         Context context = new Context();
         context.setVariable("authKey", authKey);
 
-        //메일 내용 설정: 템플릿 프로세스
         String html = springTemplateEngine.process("index", context);
 
         try {
