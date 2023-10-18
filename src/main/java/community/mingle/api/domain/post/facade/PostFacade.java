@@ -45,6 +45,12 @@ public class PostFacade {
     @Transactional
     public UpdatePostResponse updatePost(UpdatePostRequest updatePostRequest, BoardType boardType, Long postId) {
         //TODO 권한 validation
+
+//        Member member;
+//        TotalPost totalPost;
+//        Long memberIdByJwt = jwtService.getUserIdx();
+//        member = postRepository.findMemberbyId(memberIdByJwt);
+
         Post post = postService.updatePost(
                                     postId,
                                     updatePostRequest.getTitle(),

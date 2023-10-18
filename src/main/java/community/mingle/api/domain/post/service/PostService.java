@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +47,9 @@ public class PostService {
     @Transactional
     public Post updatePost(long postId, String title, String content, boolean isAnonymous) {
         //TODO 권한
+//        if (!Objects.equals(memberIdByJwt, totalPost.getMember().getId())) { // 2/17 핫픽스
+//            throw new BaseException(MODIFY_NOT_AUTHORIZED);
+//        }
          Post post = postRepository.findById(postId)
                  .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_EXIST));
 
