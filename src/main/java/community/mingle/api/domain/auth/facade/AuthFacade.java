@@ -4,6 +4,7 @@ import community.mingle.api.domain.auth.controller.request.PostCodeRequest;
 import community.mingle.api.domain.auth.controller.request.PostEmailRequest;
 import community.mingle.api.domain.auth.service.EmailService;
 import community.mingle.api.domain.member.service.MemberService;
+import community.mingle.api.global.utils.EmailHasher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,9 +31,7 @@ public class AuthFacade {
         }
 
         String authKey = emailService.createCode();
-
         emailService.sendAuthEmail(email,authKey);
-
         memberService.registerAuthEmail(email, authKey);
         return "인증번호가 전송되었습니다.";
     }

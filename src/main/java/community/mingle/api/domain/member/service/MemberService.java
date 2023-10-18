@@ -21,6 +21,7 @@ public class MemberService {
 
 
     public void verifyEmail (String email) {
+
         String hashedEmail = EmailHasher.hashEmail(email);
 
         if (memberRepository.existsByEmail(hashedEmail)) {
@@ -33,13 +34,12 @@ public class MemberService {
 
 
     public void registerAuthEmail(String email, String code) {
-
+        String hashedEmail = EmailHasher.hashEmail(email);
         AuthenticationCode authenticationCode = AuthenticationCode.builder()
-                                                                    .email(email)
-                                                                    .authToken(code)
-                                                                    .build();
+                                                            .email(hashedEmail)
+                                                            .authToken(code)
+                                                            .build();
         authenticationCodeRepository.save(authenticationCode);
-
     }
 
 
@@ -60,11 +60,9 @@ public class MemberService {
     }
 
     private AuthenticationCode getAuthenticationCode(String email) {
-        AuthenticationCode authenticationCode = authenticationCodeRepository.findByEmail(email);
-        if (authenticationCode == null) {
-            throw new CustomException(ErrorCode.CODE_FOUND_FAILED);
-        }
-        return authenticationCode;
+        String hashedEmail = EmailHasher.hashEmail(email);
+        return authenticationCodeRepository.findByEmail(hashedEmail)
+                .orElseThrow(() -> new CustomException(ErrorCode.CODE_FOUND_FAILED));
     }
 
     private void checkCodeMatch(String inputCode, String storedCode) {
