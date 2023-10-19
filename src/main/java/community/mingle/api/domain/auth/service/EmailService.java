@@ -22,10 +22,10 @@ import java.util.Random;
 @Service
 public class EmailService {
 
-    private final JavaMailSender javaMailSender;
+//    private final JavaMailSender javaMailSender;
     private final SpringTemplateEngine springTemplateEngine;
 
-    @Value("${spring.mail.username}")
+//    @Value("${spring.mail.username}")
     private String emailFrom;
 
     public String createCode() {
@@ -46,23 +46,23 @@ public class EmailService {
 
         String html = springTemplateEngine.process("index", context);
 
-        try {
-
-            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "utf-8");
-
-            helper.setFrom(emailFrom);
-            helper.setTo(emailTo);
-            helper.setSubject(subject);
-            helper.setText(html, true);
-            helper.addInline("image", new ClassPathResource("templates/images/image-1.jpeg"));
-
-            javaMailSender.send(mimeMessage);
-
-        } catch (MessagingException e) {
-            e.printStackTrace();
-            throw new CustomException(ErrorCode.EMAIL_SEND_FAILED);
-        }
+//        try {
+//
+//            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+//            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "utf-8");
+//
+//            helper.setFrom(emailFrom);
+//            helper.setTo(emailTo);
+//            helper.setSubject(subject);
+//            helper.setText(html, true);
+//            helper.addInline("image", new ClassPathResource("templates/images/image-1.jpeg"));
+//
+//            javaMailSender.send(mimeMessage);
+//
+//        } catch (MessagingException e) {
+//            e.printStackTrace();
+//            throw new CustomException(ErrorCode.EMAIL_SEND_FAILED);
+//        }
 
 
     }
