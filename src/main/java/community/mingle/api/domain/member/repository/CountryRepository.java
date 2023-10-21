@@ -7,5 +7,4 @@ import java.util.List;
 
 @Repository
 public interface CountryRepository extends JpaRepository<Country, String> {
-    List<Country> findAll();
 }
