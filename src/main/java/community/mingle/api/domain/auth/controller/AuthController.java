@@ -1,10 +1,12 @@
 package community.mingle.api.domain.auth.controller;
 
 
+import community.mingle.api.domain.auth.controller.request.ReissueTokenRequest;
 import community.mingle.api.domain.auth.controller.request.UpdatePwdRequest;
 import community.mingle.api.domain.auth.facade.AuthFacade;
 import community.mingle.api.domain.auth.controller.request.LoginMemberRequest;
 import community.mingle.api.domain.auth.controller.response.LoginMemberResponse;
+import community.mingle.api.domain.auth.facade.TokenResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,16 @@ public class AuthController {
         return new ResponseEntity<>(authFacade.login(request), HttpStatus.OK);
     }
 
+
+    /**
+     * 1.12 토큰 재발급 API
+     */
+    @PostMapping("refresh-token")
+    public ResponseEntity<TokenResponse> reissueAccessToken(
+            @RequestHeader(value = "Authorization") String refreshToken,
+            @RequestBody ReissueTokenRequest request) {
+        return new ResponseEntity<>(authFacade.reissueAccessToken(refreshToken, request.getEmail()), HttpStatus.OK);
+    }
 
     /**
      * 1.10 비밀번호 초기화 API

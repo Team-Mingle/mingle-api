@@ -30,7 +30,7 @@ public class TokenVerifier {
         return verifyToken(authorizationHeader);
     }
 
-    private TokenDto verifyToken(String bearerToken) {
+    public TokenDto verifyToken(String bearerToken) {
         try {
             DevTokenDto devToken = secretsManagerService.getJwtDevToken();
             String token = bearerToken.substring(7);

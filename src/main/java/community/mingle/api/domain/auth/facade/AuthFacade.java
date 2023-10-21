@@ -7,9 +7,15 @@ import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.auth.service.TokenService.TokenResult;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
+import community.mingle.api.dto.security.TokenDto;
+import community.mingle.api.enums.MemberRole;
+import community.mingle.api.global.utils.EmailHasher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +38,9 @@ public class AuthFacade {
         memberService.validateLoginMemberStatusIsActive(member);
 
         //토큰 생성
-        TokenResult tokens = tokenService.createTokens(member);
+        Long memberId = member.getId();
+        MemberRole memberRole = member.getRole();
+        TokenResult tokens = tokenService.createTokens(memberId, memberRole, hashedEmail);
 
         //FCM 토큰 지정
         memberService.updateFcmToken(member, request.getFcmToken());
@@ -42,6 +50,25 @@ public class AuthFacade {
                 .email(member.getEmail())
                 .nickName(member.getNickname())
                 .univName(member.getUniversity().getName())
+                .accessToken(tokens.accessToken())
+                .refreshToken(tokens.refreshToken())
+                .build();
+    }
+
+
+    /**
+     * 1.12 Access Token 재발급
+     */
+    @Transactional
+    public TokenResponse reissueAccessToken(String refreshToken, String email) {
+        //JWT, refresh token DB 유효성 검사
+        TokenDto tokenDto = tokenService.verifyToken(refreshToken);
+        tokenService.validateRefreshToken(refreshToken);
+
+        TokenResult tokens = tokenService.createTokens(tokenDto.getMemberId(), tokenDto.getMemberRole(), email);
+        tokenService.saveRefreshToken(email, tokens.refreshToken(), Duration.of(30, ChronoUnit.DAYS));
+
+        return TokenResponse.builder()
                 .accessToken(tokens.accessToken())
                 .refreshToken(tokens.refreshToken())
                 .build();

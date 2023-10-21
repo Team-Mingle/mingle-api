@@ -10,6 +10,10 @@ public enum ErrorCode {
     TOKEN_EXPIRED(401, "2000", "토큰이 만료되었습니다."),
     AUTHENTICATION_FAILED(401, "2001", "잘못된 인증 정보입니다."),
 
+    FAIL_TO_REISSUE_TOKEN(401, "2002", "토큰 재발급에 실패하였습니다"),
+
+    TOKEN_NOT_FOUND(401, "2003", "일치하는 토큰을 찾지 못하였습니다."),
+
     FAILED_TO_LOGIN(404, "2002", "일치하는 이메일이나 비밀번호를 찾지 못했습니다.\n" +
                              "띄어쓰기나 잘못된 글자가 있는지 확인해 주세요."),
 
