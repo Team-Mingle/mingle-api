@@ -33,7 +33,7 @@ public class TokenService {
 
     public TokenResult createTokens(Long memberId, MemberRole memberRole, String hashedEmail) {
         String accessToken = tokenHandler.createAccessToken(memberId, memberRole);
-        String refreshToken = tokenHandler.createRefreshToken(memberId, memberRole, hashedEmail);
+        String refreshToken = tokenHandler.createRefreshToken(memberId, memberRole, member.getEmail());
         return new TokenResult(accessToken, refreshToken);
     }
 

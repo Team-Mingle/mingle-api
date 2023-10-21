@@ -65,4 +65,8 @@ public class Member extends AuditLoggingBase {
     public void setFcmToken(String fcmToken) {
         this.fcmToken = fcmToken;
     }
+
+    public void updatePwd(String pwd) {
+        this.password = pwd;
+    }
 }

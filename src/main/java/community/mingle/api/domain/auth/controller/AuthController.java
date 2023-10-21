@@ -2,6 +2,7 @@ package community.mingle.api.domain.auth.controller;
 
 
 import community.mingle.api.domain.auth.controller.request.ReissueTokenRequest;
+import community.mingle.api.domain.auth.controller.request.UpdatePwdRequest;
 import community.mingle.api.domain.auth.facade.AuthFacade;
 import community.mingle.api.domain.auth.controller.request.LoginMemberRequest;
 import community.mingle.api.domain.auth.controller.response.LoginMemberResponse;
@@ -38,6 +39,14 @@ public class AuthController {
             @RequestHeader(value = "Authorization") String refreshToken,
             @RequestBody ReissueTokenRequest request) {
         return new ResponseEntity<>(authFacade.reissueAccessToken(refreshToken, request.getEmail()), HttpStatus.OK);
+    }
+
+    /**
+     * 1.10 비밀번호 초기화 API
+     */
+    @PatchMapping("/pwd")
+    public ResponseEntity<String> updatePwd(@RequestBody @Validated UpdatePwdRequest request) {
+        return new ResponseEntity<>(authFacade.updatePwd(request), HttpStatus.OK);
     }
 
 }
