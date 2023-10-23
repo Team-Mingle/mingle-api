@@ -33,7 +33,7 @@ public class TokenService {
 
     public TokenResult createTokens(Long memberId, MemberRole memberRole, String hashedEmail) {
         String accessToken = tokenHandler.createAccessToken(memberId, memberRole);
-        String refreshToken = tokenHandler.createRefreshToken(memberId, memberRole, member.getEmail());
+        String refreshToken = tokenHandler.createRefreshToken(memberId, memberRole, hashedEmail);
         return new TokenResult(accessToken, refreshToken);
     }
 
@@ -74,5 +74,11 @@ public class TokenService {
         RefreshToken refreshToken = RefreshToken.createRefreshToken(email, token, expiry);
         refreshTokenRepository.save(refreshToken);
     }
+
+
+    public TokenDto getTokenInfo() {
+        return tokenVerifier.getJwt();
+    }
+
 
 }

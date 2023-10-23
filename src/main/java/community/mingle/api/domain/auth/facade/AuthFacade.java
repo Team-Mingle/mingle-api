@@ -40,7 +40,7 @@ public class AuthFacade {
         //토큰 생성
         Long memberId = member.getId();
         MemberRole memberRole = member.getRole();
-        TokenResult tokens = tokenService.createTokens(memberId, memberRole, hashedEmail);
+        TokenResult tokens = tokenService.createTokens(memberId, memberRole, member.getEmail());
 
         //FCM 토큰 지정
         memberService.updateFcmToken(member, request.getFcmToken());
