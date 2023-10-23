@@ -44,4 +44,10 @@ public class PostImageService {
         }
     }
 
+    @Transactional
+    public void deletePostImage(Long postId) {
+        List<PostImage> postImages = postImageRepository.findAllByPostId(postId);
+        postImageRepository.deleteAll(postImages);
+    }
+
 }

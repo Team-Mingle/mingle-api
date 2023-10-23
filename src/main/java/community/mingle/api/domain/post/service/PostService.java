@@ -59,10 +59,15 @@ public class PostService {
     }
 
     @Transactional
-    public String deletePost(Long memberIdByJwt, Long postId) {
+    public void deletePost(Long memberIdByJwt, Long postId) {
 
         Post post = findValidPost(postId);
 
+        if (!Objects.equals(memberIdByJwt, post.getMember().getId())) {
+            throw new CustomException(ErrorCode.MODIFY_NOT_AUTHORIZED);
+        }
+
+        post.deletePost();
     }
 
     public Post findValidPost(Long postId) {

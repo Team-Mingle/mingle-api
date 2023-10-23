@@ -1,5 +1,6 @@
 package community.mingle.api.domain.post.facade;
 
+import community.mingle.api.domain.comment.service.CommentService;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
@@ -23,6 +24,8 @@ import java.util.List;
 public class PostFacade {
     private final PostService postService;
     private final PostImageService postImageService;
+
+    private final CommentService commentService;
 
     @Transactional
     public CreatePostResponse createPost(CreatePostRequest createPostRequest, BoardType boardType) {
@@ -73,9 +76,13 @@ public class PostFacade {
         //        Long memberIdByJwt = jwtService.getUserIdx();
         Long memberIdByJwt = 1L;
 
-        String response = postService.deletePost(memberIdByJwt, postId);
+        postService.deletePost(memberIdByJwt, postId);
+        commentService.deleteComment(postId);
+        postImageService.deletePostImage(postId);
 
+        String response = "게시물 삭제에 성공하였습니다";
         return response;
+
     }
 
 }
