@@ -1,5 +1,6 @@
 package community.mingle.api.domain.post.service;
 
+import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.repository.PostRepository;
 import community.mingle.api.enums.BoardType;
@@ -29,8 +30,7 @@ public class PostService {
                 boolean fileAttached
     ) {
         //TODO 멤버세팅
-        //Member member = memberRepository.find(memberId);
-
+//        Member member = memberRepository.find(memberId);
         Post post = Post.builder()
                         .title(title)
                         .content(content)
@@ -45,17 +45,19 @@ public class PostService {
 
 
     @Transactional
-    public Post updatePost(long postId, String title, String content, boolean isAnonymous) {
-        //TODO 권한
-//        if (!Objects.equals(memberIdByJwt, totalPost.getMember().getId())) { // 2/17 핫픽스
-//            throw new BaseException(MODIFY_NOT_AUTHORIZED);
-//        }
+    public Post updatePost(Long memberIdByJwt, Long postId, String title, String content, Boolean isAnonymous) {
+
          Post post = postRepository.findById(postId)
                  .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_EXIST));
 
          if (post.getStatusType().equals(ContentStatusType.DELETED) || post.getStatusType().equals(ContentStatusType.REPORTED)) {
              throw new CustomException(ErrorCode.POST_DELETED_REPORTED);
          }
+
+        if (!Objects.equals(memberIdByJwt, post.getMember().getId())) {
+            throw new CustomException(ErrorCode.MODIFY_NOT_AUTHORIZED);
+        }
+
          post.updatePost(title, content, isAnonymous);
 
          return post;

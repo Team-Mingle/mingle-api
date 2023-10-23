@@ -37,7 +37,6 @@ public class PostController {
     @PatchMapping("/{boardType}/{postId}")
     public ResponseEntity<UpdatePostResponse> updatePost(@Valid @ModelAttribute UpdatePostRequest updatePostRequest, @PathVariable(value = "boardType") BoardType boardType, @PathVariable Long postId) {
 
-        //TODO MemberID 가져오기
         UpdatePostResponse updatePostResponse = postFacade.updatePost(updatePostRequest, boardType, postId);
         return ResponseEntity.ok().body(updatePostResponse);
 

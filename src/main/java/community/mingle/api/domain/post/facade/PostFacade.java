@@ -1,5 +1,6 @@
 package community.mingle.api.domain.post.facade;
 
+import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
 import community.mingle.api.domain.post.controller.response.CreatePostResponse;
@@ -25,7 +26,6 @@ public class PostFacade {
 
     @Transactional
     public CreatePostResponse createPost(CreatePostRequest createPostRequest, BoardType boardType) {
-        //TODO 권한 validation
         boolean isFileAttached = (createPostRequest.getMultipartFile() != null) && (!createPostRequest.getMultipartFile().isEmpty());
         Post post = postService.createPost(
                                 createPostRequest.getTitle(),
@@ -44,14 +44,11 @@ public class PostFacade {
 
     @Transactional
     public UpdatePostResponse updatePost(UpdatePostRequest updatePostRequest, BoardType boardType, Long postId) {
-        //TODO 권한 validation
 
-//        Member member;
-//        TotalPost totalPost;
 //        Long memberIdByJwt = jwtService.getUserIdx();
-//        member = postRepository.findMemberbyId(memberIdByJwt);
+        Long memberIdByJwt = 1L;
 
-        Post post = postService.updatePost(
+        Post post = postService.updatePost(memberIdByJwt,
                                     postId,
                                     updatePostRequest.getTitle(),
                                     updatePostRequest.getContent(),
