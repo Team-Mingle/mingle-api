@@ -67,4 +67,15 @@ public class PostFacade {
 
     }
 
+    @Transactional
+    public String deletePost(Long postId) {
+
+        //        Long memberIdByJwt = jwtService.getUserIdx();
+        Long memberIdByJwt = 1L;
+
+        String response = postService.deletePost(memberIdByJwt, postId);
+
+        return response;
+    }
+
 }
