@@ -1,9 +1,12 @@
 package community.mingle.api.global.utils;
 
-import java.nio.charset.StandardCharsets;
+// EmailHasher.java
+
 import java.security.MessageDigest;
+import java.nio.charset.StandardCharsets;
 
 public class EmailHasher {
+
     public static String hashEmail(String email) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
