@@ -69,11 +69,12 @@ public class AuthController {
 
     @Operation(summary = "이메일 인증 코드 검사 api")
     @PostMapping("/verifycode")
-    public ResponseEntity<String> verifyCode(@Valid @RequestBody VerificationCodeRequest verificationCodeRequest) {
+    public ResponseEntity<VerifyCodeResponse> verifyCode(@Valid @RequestBody VerificationCodeRequest verificationCodeRequest) {
 
-        String response = authFacade.verifyCode(verificationCodeRequest);
-        return ResponseEntity.ok().body(response);
+        VerifyCodeResponse verifyCodeResponse = authFacade.verifyCode(verificationCodeRequest);
+        return ResponseEntity.ok().body(verifyCodeResponse);
     }
+
     @Operation(summary = "로그인 api")
     @PostMapping("/login")
     public ResponseEntity<LoginMemberResponse> login(@RequestBody @Validated LoginMemberRequest request) {

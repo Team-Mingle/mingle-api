@@ -47,23 +47,6 @@ public class MemberService {
         }
     }
 
-
-    public String verifyCode(String email, String code) {
-
-        String domain = email.split("@")[1];
-        LocalDateTime now = LocalDateTime.now();
-
-        AuthenticationCode authenticationCode = getAuthenticationCode(email);
-        checkCodeMatch(code, authenticationCode.getAuthToken());
-
-        if (domain.equals("freshman.mingle.com")) {
-            return "새내기 인증이 완료되었습니다.";
-        }
-
-        checkCodeValidity(authenticationCode, now);
-        return "인증이 완료되었습니다.";
-    }
-
     private AuthenticationCode getAuthenticationCode(String email) {
         String hashedEmail = EmailHasher.hashEmail(email);
         return authenticationCodeRepository.findByEmail(hashedEmail)

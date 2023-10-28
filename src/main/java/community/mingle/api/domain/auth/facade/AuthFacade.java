@@ -3,9 +3,9 @@ package community.mingle.api.domain.auth.facade;
 import community.mingle.api.domain.auth.controller.request.VerificationCodeRequest;
 import community.mingle.api.domain.auth.controller.request.EmailRequest;
 import community.mingle.api.domain.auth.controller.response.SendVerificationCodeResponse;
+import community.mingle.api.domain.auth.controller.response.VerifyCodeResponse;
 import community.mingle.api.domain.auth.controller.response.VerifyEmailResponse;
 import community.mingle.api.domain.auth.service.AuthService;
-import community.mingle.api.domain.auth.service.EmailService;
 import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.domain.auth.controller.request.LoginMemberRequest;
 import community.mingle.api.domain.auth.controller.request.UpdatePasswordRequest;
@@ -21,15 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
+import static community.mingle.api.domain.auth.service.AuthService.FRESHMAN_EMAIL_DOMAIN;
+
 @Service
 @RequiredArgsConstructor
 public class AuthFacade {
     private final MemberService memberService;
     private final AuthService authService;
-    private final EmailService emailService;
     private final TokenService tokenService;
-
-    public static final String FRESHMAN_EMAIL_DOMAIN = "freshman.mingle.com";
 
     public VerifyEmailResponse verifyEmail(EmailRequest emailRequest) {
         authService.verifyEmail(emailRequest.getEmail());
@@ -40,19 +39,19 @@ public class AuthFacade {
     public SendVerificationCodeResponse sendVerificationCodeEmail(EmailRequest emailRequest) {
 
         String email = emailRequest.getEmail();
-        String domain = email.split("@")[1];
+        String domain = authService.extractDomain(email);
         if (!domain.equals(FRESHMAN_EMAIL_DOMAIN)) {
-            String authKey = emailService.createCode();
+            String authKey = authService.createCode();
             authService.registerAuthEmail(email, authKey);
-            emailService.sendAuthEmail(email,authKey);
+            authService.sendAuthEmail(email,authKey);
         }
         return new SendVerificationCodeResponse(true);
     }
 
 
-    public String verifyCode(VerificationCodeRequest verificationCodeRequest) {
-        String response = memberService.verifyCode(verificationCodeRequest.getEmail(), verificationCodeRequest.getCode());
-        return response;
+    public VerifyCodeResponse verifyCode(VerificationCodeRequest verificationCodeRequest) {
+        Boolean verified = authService.verifyCode(verificationCodeRequest.getEmail(), verificationCodeRequest.getCode());
+        return new VerifyCodeResponse(verified);
     }
 
     @Transactional
