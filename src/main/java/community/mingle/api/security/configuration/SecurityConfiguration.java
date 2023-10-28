@@ -11,13 +11,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
-import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 
 @Configuration
 @RequiredArgsConstructor
@@ -30,6 +31,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfiguration {
 
     private final TokenVerifier tokenVerifier;
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
 
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
@@ -62,8 +69,6 @@ public class SecurityConfiguration {
                     .requestMatchers("/**")
                             .authenticated();
                 })
-                .csrf(CsrfConfigurer::disable)
-                .cors(CorsConfigurer::disable)
                 .exceptionHandling(it-> {
                         it.authenticationEntryPoint(authenticationEntryPoint());
                         it.accessDeniedHandler(accessDeniedHandler());

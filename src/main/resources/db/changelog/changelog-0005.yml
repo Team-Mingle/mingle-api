@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - changeSet:
+      id: created table for auth code
+      author: Boyeong Choi
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: email
+                  type: VARCHAR(100)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: auth_code
+                  type: VARCHAR(10)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_at
+                  type: timestamp
+            tableName: authentication_code
