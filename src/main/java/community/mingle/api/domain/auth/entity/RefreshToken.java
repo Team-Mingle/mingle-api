@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 public class RefreshToken extends AuditLoggingBase {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(length = 255)
     private String email;
 

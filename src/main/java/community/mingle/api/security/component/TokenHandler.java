@@ -2,6 +2,8 @@ package community.mingle.api.security.component;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import community.mingle.api.domain.auth.entity.RefreshToken;
+import community.mingle.api.domain.auth.repository.RefreshTokenRepository;
 import community.mingle.api.enums.MemberRole;
 import community.mingle.api.global.exception.CustomException;
 import lombok.AllArgsConstructor;
@@ -18,6 +20,7 @@ import static community.mingle.api.global.exception.ErrorCode.FAILED_TO_CREATEJW
 public class TokenHandler {
 
     private final Algorithm tokenAlgorithm;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public String createAccessToken(Long memberId, MemberRole memberRole) {
         try {
@@ -40,9 +43,9 @@ public class TokenHandler {
     }
 
 
-    public String createRefreshToken(Long memberId, MemberRole memberRole) {
+    public String createRefreshToken(Long memberId, MemberRole memberRole, String email) {
         try {
-            return JWT.create()
+            String token = JWT.create()
                     .withClaim("memberId", memberId)
                     .withClaim("memberRole", memberRole.toString())
                     .withExpiresAt(
@@ -55,6 +58,14 @@ public class TokenHandler {
                             )
                     )
                     .sign(tokenAlgorithm);
+            RefreshToken refreshToken = RefreshToken.builder()
+                    .email(email)
+                    .token(token)
+                    .expiry(LocalDateTime.now().plusDays(30))
+                    .build();
+            refreshTokenRepository.save(refreshToken);
+
+            return token;
         } catch (Exception e) {
             throw new CustomException(FAILED_TO_CREATEJWT);
         }

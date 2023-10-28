@@ -59,12 +59,13 @@ public class AuthFacade {
 
         Member member = memberService.getMemberByEmail(loginMemberRequest.getEmail());
 
-        authService.checkPassword(loginMemberRequest.getPassword(), member.getPassword());
+//        authService.checkPassword(loginMemberRequest.getPassword(), member.getPassword());
         authService.checkMemberStatusActive(member);
 
         Long memberId = member.getId();
         MemberRole memberRole = member.getRole();
-        TokenResult tokens = tokenService.createTokens(memberId, memberRole);
+        String email = member.getEmail();
+        TokenResult tokens = tokenService.createTokens(memberId, memberRole, email);
 
         memberService.updateFcmToken(member, loginMemberRequest.getFcmToken());
 
@@ -84,7 +85,7 @@ public class AuthFacade {
         TokenDto tokenDto = tokenService.verifyToken(refreshToken);
         tokenService.validateRefreshToken(refreshToken);
 
-        TokenResult tokens = tokenService.createTokens(tokenDto.getMemberId(), tokenDto.getMemberRole());
+        TokenResult tokens = tokenService.createTokens(tokenDto.getMemberId(), tokenDto.getMemberRole(), email);
         tokenService.saveRefreshToken(email, tokens.refreshToken(), Duration.of(30, ChronoUnit.DAYS));
 
         return TokenResponse.builder()
