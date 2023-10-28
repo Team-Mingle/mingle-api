@@ -1,15 +1,21 @@
 package community.mingle.api.domain.auth.controller;
 
 import community.mingle.api.domain.auth.controller.request.*;
+import community.mingle.api.domain.auth.controller.response.CountryResponse;
+import community.mingle.api.domain.auth.controller.response.DomainResponse;
 import community.mingle.api.domain.auth.controller.response.LoginMemberResponse;
 import community.mingle.api.domain.auth.facade.AuthFacade;
 import community.mingle.api.domain.auth.facade.TokenResponse;
+import community.mingle.api.domain.member.service.CountryService;
+import community.mingle.api.domain.member.service.UniversityService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 //@Tag(name = "auth", description = "회원가입 process 관련 API") //TODO swagger 설정후 추가
@@ -19,6 +25,28 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthFacade authFacade;
+    private final CountryService countryService;
+    private final UniversityService universityService;
+
+
+    /**
+     * 국가 리스트 api
+     */
+
+    @GetMapping("countries")
+    public ResponseEntity<List<CountryResponse>> getCountries() {
+        List<CountryResponse> countries = countryService.getCountries();
+        return ResponseEntity.ok().body(countries);
+    }
+
+    /**
+     * 학교 및 도메인 리스트 불러오기 api
+     */
+    @GetMapping("/email-domains")
+    public ResponseEntity<List<DomainResponse>> getEmailDomains() {
+        List<DomainResponse> domains = universityService.getDomains();
+        return ResponseEntity.ok().body(domains);
+    }
 
     /**
      * 1.3 이메일 입력 & 중복검사 API
