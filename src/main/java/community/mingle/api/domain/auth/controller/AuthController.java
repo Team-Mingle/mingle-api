@@ -1,12 +1,10 @@
 package community.mingle.api.domain.auth.controller;
 
-
-import community.mingle.api.domain.auth.controller.request.ReissueTokenRequest;
-import community.mingle.api.domain.auth.controller.request.UpdatePwdRequest;
-import community.mingle.api.domain.auth.facade.AuthFacade;
-import community.mingle.api.domain.auth.controller.request.LoginMemberRequest;
+import community.mingle.api.domain.auth.controller.request.*;
 import community.mingle.api.domain.auth.controller.response.LoginMemberResponse;
+import community.mingle.api.domain.auth.facade.AuthFacade;
 import community.mingle.api.domain.auth.facade.TokenResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +20,37 @@ public class AuthController {
 
     private final AuthFacade authFacade;
 
+    /**
+     * 1.3 이메일 입력 & 중복검사 API
+     */
+    @PostMapping("verifyemail")
+    public ResponseEntity<String> verifyEmail(@Valid @RequestBody PostEmailRequest postEmailRequest) {
+
+        String response = authFacade.verifyEmail(postEmailRequest);
+        return ResponseEntity.ok().body(response);
+
+    }
+
+    /**
+     * 1.4 인증코드 전송 API
+     */
+    @PostMapping("sendcode")
+    public ResponseEntity<String> sendCode(@Valid @RequestBody PostEmailRequest postEmailRequest) {
+
+        String response = authFacade.verifyStatusEmail(postEmailRequest);
+        return ResponseEntity.ok().body(response);
+
+    }
+
+    /**
+     * 1.5 인증 코드 검사 API
+     */
+    @PostMapping("verifycode")
+    public ResponseEntity<String> verifyCode(@Valid @RequestBody PostCodeRequest postCodeRequest) {
+
+        String response = authFacade.verifyCode(postCodeRequest);
+        return ResponseEntity.ok().body(response);
+    }
     /**
      * 로그인 API
      */

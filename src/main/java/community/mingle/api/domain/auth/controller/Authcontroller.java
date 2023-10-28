@@ -3,6 +3,7 @@ package community.mingle.api.domain.auth.controller;
 
 import community.mingle.api.domain.auth.controller.response.DomainResponse;
 import community.mingle.api.domain.member.service.UniversityService;
+import community.mingle.api.domain.auth.controller.response.CountryResponse;
 import lombok.RequiredArgsConstructor;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +20,11 @@ public class Authcontroller {
     private final CountryService countryService;
     private final UniversityService universityService;
 
+
     /**
      * 국가 리스트 api
      */
+
     @GetMapping("countries")
     public ResponseEntity<List<String>> getCountries() {
         List<String> countries = countryService.getCountries();
@@ -36,13 +39,4 @@ public class Authcontroller {
         List<DomainResponse> domains = universityService.getDomains();
         return ResponseEntity.ok().body(domains);
     }
-
-
-
-
-
-
-
-
-
 }
