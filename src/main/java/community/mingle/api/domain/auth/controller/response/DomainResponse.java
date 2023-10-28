@@ -1,10 +1,8 @@
 package community.mingle.api.domain.auth.controller.response;
 
+import lombok.Data;
+
+@Data
 public class DomainResponse {
-    private String domain;
-
-    public DomainResponse(String domain) {
-        this.domain = domain;
-    }
-
+    private final String domain;
 }

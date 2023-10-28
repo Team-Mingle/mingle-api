@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UpdatePwdRequest {
+public class UpdatePasswordRequest {
 
     @Email(message = "잘못된 이메일 형식입니다.")
     @NotBlank(message = "이메일을 입력해주세요.")

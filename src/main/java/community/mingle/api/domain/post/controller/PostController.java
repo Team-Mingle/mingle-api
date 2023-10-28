@@ -45,8 +45,8 @@ public class PostController {
     /**
      * 게시물 삭제 API
      */
-    @PatchMapping("/{boardType}/{postId}")
-    public ResponseEntity<String> deletePost(@PathVariable(value = "boardType") BoardType boardType, @PathVariable Long postId) {
+    @PatchMapping("/{postId}")
+    public ResponseEntity<String> deletePost(@PathVariable Long postId) {
 
         String response = postFacade.deletePost(postId);
 

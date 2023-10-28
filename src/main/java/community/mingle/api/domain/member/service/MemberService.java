@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
+
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.enums.MemberStatus;
@@ -35,10 +37,11 @@ public class MemberService {
 
         String hashedEmail = EmailHasher.hashEmail(email);
 
-        if (memberRepository.existsByEmail(hashedEmail)) {
+        Optional<Member> member = memberRepository.findByEmail(hashedEmail);
+        if (member.isEmpty()) {
             throw new CustomException(ErrorCode.EMAIL_DUPLICATED);
         }
-        if (memberRepository.findByEmail(hashedEmail).get().getStatus().equals(MemberStatus.INACTIVE)) {
+        if (member.get().getStatus().equals(MemberStatus.INACTIVE)) {
             throw new CustomException(ErrorCode.MEMBER_DELETED);
         }
     }
