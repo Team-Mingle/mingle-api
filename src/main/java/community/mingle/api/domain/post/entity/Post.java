@@ -91,4 +91,9 @@ public class Post extends AuditLoggingBase {
         this.anonymous = isAnonymous;
     }
 
+    public void deletePost() {
+        this.deletedAt = LocalDateTime.now();
+        this.statusType = ContentStatusType.INACTIVE;
+    }
+
 }

@@ -47,12 +47,7 @@ public class PostService {
     @Transactional
     public Post updatePost(Long memberIdByJwt, Long postId, String title, String content, Boolean isAnonymous) {
 
-         Post post = postRepository.findById(postId)
-                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_EXIST));
-
-         if (post.getStatusType().equals(ContentStatusType.DELETED) || post.getStatusType().equals(ContentStatusType.REPORTED)) {
-             throw new CustomException(ErrorCode.POST_DELETED_REPORTED);
-         }
+        Post post = findValidPost(postId);
 
         if (!Objects.equals(memberIdByJwt, post.getMember().getId())) {
             throw new CustomException(ErrorCode.MODIFY_NOT_AUTHORIZED);
@@ -61,6 +56,28 @@ public class PostService {
          post.updatePost(title, content, isAnonymous);
 
          return post;
+    }
+
+    @Transactional
+    public void deletePost(Long memberIdByJwt, Long postId) {
+
+        Post post = findValidPost(postId);
+
+        if (!Objects.equals(memberIdByJwt, post.getMember().getId())) {
+            throw new CustomException(ErrorCode.MODIFY_NOT_AUTHORIZED);
+        }
+
+        post.deletePost();
+    }
+
+    public Post findValidPost(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_EXIST));
+
+        if (post.getStatusType().equals(ContentStatusType.DELETED) || post.getStatusType().equals(ContentStatusType.REPORTED)) {
+            throw new CustomException(ErrorCode.POST_DELETED_REPORTED);
+        }
+        return post;
     }
 
 }
