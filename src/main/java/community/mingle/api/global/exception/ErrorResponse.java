@@ -14,8 +14,8 @@ public class ErrorResponse {
         this.message = errorCode.getMessage();
     }
 
-    public ErrorResponse(String code, String message){
-        this.status = 400;
+    public ErrorResponse(Integer status, String code, String message){
+        this.status = status;
         this.code = code;
         this.message = message;
     }

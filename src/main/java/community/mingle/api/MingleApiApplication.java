@@ -1,5 +1,6 @@
 package community.mingle.api;
 
+import community.mingle.api.configuration.ProjectBaseConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
