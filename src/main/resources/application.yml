@@ -3,3 +3,6 @@ server:
 spring:
   liquibase:
     change-log: db/db.changelog-main.yml
+logging:
+  level:
+    root: debug

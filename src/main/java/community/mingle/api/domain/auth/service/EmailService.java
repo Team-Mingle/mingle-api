@@ -42,7 +42,6 @@ public class EmailService {
         String html = springTemplateEngine.process("index", context);
 
         try {
-
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "utf-8");
 

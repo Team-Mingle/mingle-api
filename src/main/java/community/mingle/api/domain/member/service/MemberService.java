@@ -11,16 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import community.mingle.api.domain.member.entity.Member;
-import community.mingle.api.domain.member.repository.MemberRepository;
-import community.mingle.api.enums.MemberStatus;
-import community.mingle.api.global.exception.CustomException;
-import community.mingle.api.global.utils.EmailHasher;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 import static community.mingle.api.global.exception.ErrorCode.*;
 
@@ -33,21 +26,6 @@ public class MemberService {
     private final AuthenticationCodeRepository authenticationCodeRepository;
 
 
-    public void verifyEmail (String email) {
-
-        String hashedEmail = EmailHasher.hashEmail(email);
-
-        Optional<Member> member = memberRepository.findByEmail(hashedEmail);
-        if (member.isPresent()) {
-            throw new CustomException(ErrorCode.EMAIL_DUPLICATED);
-        }
-    }
-
-
-    /**
-     * encrypted 된 이메일 넘기기
-     * @param  email    String
-     */
     public Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
@@ -58,25 +36,15 @@ public class MemberService {
             throw new CustomException(FAILED_TO_LOGIN);
     }
 
-    public Member isValidEmailAndPwd(String rawEmail, String reqPwd) throws CustomException {
+    public Member isValidEmailAndPassword(String email, String password) throws CustomException {
         try {
-            String hashedEmail = EmailHasher.hashEmail(rawEmail);
+            String hashedEmail = EmailHasher.hashEmail(email);
             Member member = getMemberByEmail(hashedEmail);
-            checkPassword(reqPwd, member.getPassword());
+            checkPassword(password, member.getPassword());
             return member;
         } catch (CustomException e) {
-            throw new CustomException(FAILED_TO_LOGIN); //Failed to login exception으로 통일하기 위해 사용
+            throw new CustomException(FAILED_TO_LOGIN);
         }
-    }
-
-
-    public void registerAuthEmail(String email, String code) {
-        String hashedEmail = EmailHasher.hashEmail(email);
-        AuthenticationCode authenticationCode = AuthenticationCode.builder()
-                                                            .email(hashedEmail)
-                                                            .authToken(code)
-                                                            .build();
-        authenticationCodeRepository.save(authenticationCode);
     }
 
 

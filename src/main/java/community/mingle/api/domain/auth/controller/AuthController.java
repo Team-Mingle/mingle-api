@@ -1,10 +1,7 @@
 package community.mingle.api.domain.auth.controller;
 
 import community.mingle.api.domain.auth.controller.request.*;
-import community.mingle.api.domain.auth.controller.response.CountryResponse;
-import community.mingle.api.domain.auth.controller.response.DomainResponse;
-import community.mingle.api.domain.auth.controller.response.LoginMemberResponse;
-import community.mingle.api.domain.auth.controller.response.VerifyEmailResponse;
+import community.mingle.api.domain.auth.controller.response.*;
 import community.mingle.api.domain.auth.facade.AuthFacade;
 import community.mingle.api.domain.auth.facade.TokenResponse;
 import community.mingle.api.domain.member.service.CountryService;
@@ -63,10 +60,10 @@ public class AuthController {
 
     @Operation(summary = "이메일 인증코드 전송 api")
     @PostMapping("/sendcode")
-    public ResponseEntity<VerifyEmailResponse> sendCode(@Valid @RequestBody EmailRequest emailRequest) {
+    public ResponseEntity<SendVerificationCodeResponse> sendCode(@Valid @RequestBody EmailRequest emailRequest) {
 
-        VerifyEmailResponse verifyEmailResponse = authFacade.sendVerificationCodeEmail(emailRequest);
-        return ResponseEntity.ok().body(verifyEmailResponse);
+        SendVerificationCodeResponse sendVerificationCodeResponse = authFacade.sendVerificationCodeEmail(emailRequest);
+        return ResponseEntity.ok().body(sendVerificationCodeResponse);
 
     }
 

@@ -2,7 +2,9 @@ package community.mingle.api.domain.auth.facade;
 
 import community.mingle.api.domain.auth.controller.request.VerificationCodeRequest;
 import community.mingle.api.domain.auth.controller.request.EmailRequest;
+import community.mingle.api.domain.auth.controller.response.SendVerificationCodeResponse;
 import community.mingle.api.domain.auth.controller.response.VerifyEmailResponse;
+import community.mingle.api.domain.auth.service.AuthService;
 import community.mingle.api.domain.auth.service.EmailService;
 import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.domain.auth.controller.request.LoginMemberRequest;
@@ -19,32 +21,32 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
-@RequiredArgsConstructor
 @Service
-@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class AuthFacade {
     private final MemberService memberService;
+    private final AuthService authService;
     private final EmailService emailService;
     private final TokenService tokenService;
 
     public static final String FRESHMAN_EMAIL_DOMAIN = "freshman.mingle.com";
 
     public VerifyEmailResponse verifyEmail(EmailRequest emailRequest) {
-        memberService.verifyEmail(emailRequest.getEmail());
+        authService.verifyEmail(emailRequest.getEmail());
         return new VerifyEmailResponse(true);
     }
 
     @Transactional
-    public VerifyEmailResponse sendVerificationCodeEmail(EmailRequest emailRequest) {
+    public SendVerificationCodeResponse sendVerificationCodeEmail(EmailRequest emailRequest) {
 
         String email = emailRequest.getEmail();
-        String domain = "@".split(email)[1];
-        if (domain.equals(FRESHMAN_EMAIL_DOMAIN)) {
+        String domain = email.split("@")[1];
+        if (!domain.equals(FRESHMAN_EMAIL_DOMAIN)) {
             String authKey = emailService.createCode();
+            authService.registerAuthEmail(email, authKey);
             emailService.sendAuthEmail(email,authKey);
-            memberService.registerAuthEmail(email, authKey);
         }
-        return new VerifyEmailResponse(true);
+        return new SendVerificationCodeResponse(true);
     }
 
 
@@ -56,7 +58,7 @@ public class AuthFacade {
     @Transactional
     public LoginMemberResponse login(LoginMemberRequest request) {
         //이메일 암호화 및 이메일, 비밀번호 확인 로직
-        Member member = memberService.isValidEmailAndPwd(request.getEmail(), request.getPwd());
+        Member member = memberService.isValidEmailAndPassword(request.getEmail(), request.getPwd());
 
         //신고된 유저, 탈퇴한 유저 확인
         memberService.validateLoginMemberStatusIsActive(member);
@@ -97,7 +99,7 @@ public class AuthFacade {
 
     @Transactional
     public String updatePwd(UpdatePasswordRequest request) {
-        Member member = memberService.isValidEmailAndPwd(request.getEmail(), request.getPwd());
+        Member member = memberService.isValidEmailAndPassword(request.getEmail(), request.getPwd());
         memberService.updatePwd(member, request.getPwd());
         return "비밀번호 변경에 성공하였습니다.";
     }
