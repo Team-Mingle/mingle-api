@@ -8,7 +8,6 @@ import java.util.Optional;
 
 
 public interface AuthenticationCodeRepository extends JpaRepository <AuthenticationCode, Long> {
-
     Optional<AuthenticationCode> findByEmail (String email);
 
 }

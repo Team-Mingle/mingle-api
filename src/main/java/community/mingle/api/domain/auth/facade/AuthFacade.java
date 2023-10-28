@@ -2,6 +2,7 @@ package community.mingle.api.domain.auth.facade;
 
 import community.mingle.api.domain.auth.controller.request.VerificationCodeRequest;
 import community.mingle.api.domain.auth.controller.request.EmailRequest;
+import community.mingle.api.domain.auth.controller.response.VerifyEmailResponse;
 import community.mingle.api.domain.auth.service.EmailService;
 import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.domain.auth.controller.request.LoginMemberRequest;
@@ -28,23 +29,22 @@ public class AuthFacade {
 
     public static final String FRESHMAN_EMAIL_DOMAIN = "freshman.mingle.com";
 
-    public void verifyEmail(EmailRequest emailRequest) {
+    public VerifyEmailResponse verifyEmail(EmailRequest emailRequest) {
         memberService.verifyEmail(emailRequest.getEmail());
+        return new VerifyEmailResponse(true);
     }
 
     @Transactional
-    public String verifyStatusEmail(EmailRequest emailRequest) {
+    public VerifyEmailResponse sendVerificationCodeEmail(EmailRequest emailRequest) {
 
         String email = emailRequest.getEmail();
-        String domain = email.split("@")[1];
+        String domain = "@".split(email)[1];
         if (domain.equals(FRESHMAN_EMAIL_DOMAIN)) {
-            return "새내기용 이메일입니다.";
+            String authKey = emailService.createCode();
+            emailService.sendAuthEmail(email,authKey);
+            memberService.registerAuthEmail(email, authKey);
         }
-
-        String authKey = emailService.createCode();
-        emailService.sendAuthEmail(email,authKey);
-        memberService.registerAuthEmail(email, authKey);
-        return "인증번호가 전송되었습니다.";
+        return new VerifyEmailResponse(true);
     }
 
 

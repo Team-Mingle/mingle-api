@@ -2,9 +2,7 @@ package community.mingle.api.domain.auth.entity;
 
 import community.mingle.api.entitybase.AuditLoggingBase;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +10,8 @@ import java.time.LocalDateTime;
 @Getter
 @Table(name = "refresh_token")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class RefreshToken extends AuditLoggingBase {
 
     @Id
@@ -24,14 +24,6 @@ public class RefreshToken extends AuditLoggingBase {
 
     @Column(nullable = false)
     private LocalDateTime expiry;
-
-    public static RefreshToken createRefreshToken(String email, String token, LocalDateTime expiry) {
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.email = email;
-        refreshToken.token = token;
-        refreshToken.expiry = expiry;
-        return refreshToken;
-    }
 }
 
 

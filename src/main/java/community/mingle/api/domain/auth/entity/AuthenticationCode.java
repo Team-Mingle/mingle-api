@@ -14,7 +14,9 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "authentication_code")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
+@Builder
 public class AuthenticationCode {
 
     @Id
@@ -33,12 +35,4 @@ public class AuthenticationCode {
     @Column(name = "created_at")
     @CreatedDate
     private LocalDateTime createdAt;
-
-    @Builder
-    public AuthenticationCode(String email, String authToken) {
-        this.email = email;
-        this.authToken = authToken;
-        this.createdAt = LocalDateTime.now();
-    }
-
 }

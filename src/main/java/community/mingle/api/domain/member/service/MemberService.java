@@ -38,11 +38,8 @@ public class MemberService {
         String hashedEmail = EmailHasher.hashEmail(email);
 
         Optional<Member> member = memberRepository.findByEmail(hashedEmail);
-        if (member.isEmpty()) {
+        if (member.isPresent()) {
             throw new CustomException(ErrorCode.EMAIL_DUPLICATED);
-        }
-        if (member.get().getStatus().equals(MemberStatus.INACTIVE)) {
-            throw new CustomException(ErrorCode.MEMBER_DELETED);
         }
     }
 

@@ -4,6 +4,7 @@ import community.mingle.api.domain.auth.controller.request.*;
 import community.mingle.api.domain.auth.controller.response.CountryResponse;
 import community.mingle.api.domain.auth.controller.response.DomainResponse;
 import community.mingle.api.domain.auth.controller.response.LoginMemberResponse;
+import community.mingle.api.domain.auth.controller.response.VerifyEmailResponse;
 import community.mingle.api.domain.auth.facade.AuthFacade;
 import community.mingle.api.domain.auth.facade.TokenResponse;
 import community.mingle.api.domain.member.service.CountryService;
@@ -47,25 +48,25 @@ public class AuthController {
     @Operation(summary = "학교 및 도메인 리스트 불러오기 api")
     @GetMapping("/email-domains")
     public ResponseEntity<List<DomainResponse>> getEmailDomains() {
-        List<DomainResponse> domains = universityService.getDomains();
-        return ResponseEntity.ok().body(domains);
+        List<DomainResponse> domainResponses = universityService.getDomains();
+        return ResponseEntity.ok().body(domainResponses);
     }
 
-    @Operation(summary = "이메일 입력 & 중복검사 api")
+    @Operation(summary = "이메일 중복 검사 api")
     @PostMapping("/verifyemail")
-    public ResponseEntity<String> verifyEmail(@Valid @RequestBody EmailRequest emailRequest) {
+    public ResponseEntity<VerifyEmailResponse> verifyEmail(@Valid @RequestBody EmailRequest emailRequest) {
 
-        authFacade.verifyEmail(emailRequest);
-        return ResponseEntity.ok().body("이메일 확인 성공");
+        VerifyEmailResponse verifyEmailResponse = authFacade.verifyEmail(emailRequest);
+        return ResponseEntity.ok().body(verifyEmailResponse);
 
     }
 
     @Operation(summary = "이메일 인증코드 전송 api")
     @PostMapping("/sendcode")
-    public ResponseEntity<String> sendCode(@Valid @RequestBody EmailRequest emailRequest) {
+    public ResponseEntity<VerifyEmailResponse> sendCode(@Valid @RequestBody EmailRequest emailRequest) {
 
-        String response = authFacade.verifyStatusEmail(emailRequest);
-        return ResponseEntity.ok().body(response);
+        VerifyEmailResponse verifyEmailResponse = authFacade.sendVerificationCodeEmail(emailRequest);
+        return ResponseEntity.ok().body(verifyEmailResponse);
 
     }
 
