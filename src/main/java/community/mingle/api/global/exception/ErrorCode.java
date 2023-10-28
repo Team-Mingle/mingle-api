@@ -16,7 +16,6 @@ public enum ErrorCode {
     DATABASE_ERROR(500, "1100", "데이터베이스 연결에 실패하였습니다."),
 
     //TODO status 를 HttpStatus로 받아오기
-    MEMBER_DUPLICATED(409, "1002", "중복된 유저입니다."),
     TOKEN_EXPIRED(401, "2000", "토큰이 만료되었습니다."),
     AUTHENTICATION_FAILED(401, "2001", "잘못된 인증 정보입니다."),
 
