@@ -77,8 +77,8 @@ public class AuthController {
 
     @Operation(summary = "로그인 api")
     @PostMapping("/login")
-    public ResponseEntity<LoginMemberResponse> login(@RequestBody @Validated LoginMemberRequest request) {
-        return new ResponseEntity<>(authFacade.login(request), HttpStatus.OK);
+    public ResponseEntity<LoginMemberResponse> login(@RequestBody @Validated LoginMemberRequest loginMemberRequest) {
+        return new ResponseEntity<>(authFacade.login(loginMemberRequest), HttpStatus.OK);
     }
 
 

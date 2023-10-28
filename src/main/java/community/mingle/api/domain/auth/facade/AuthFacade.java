@@ -55,24 +55,21 @@ public class AuthFacade {
     }
 
     @Transactional
-    public LoginMemberResponse login(LoginMemberRequest request) {
-        //이메일 암호화 및 이메일, 비밀번호 확인 로직
-        Member member = memberService.isValidEmailAndPassword(request.getEmail(), request.getPwd());
+    public LoginMemberResponse login(LoginMemberRequest loginMemberRequest) {
 
-        //신고된 유저, 탈퇴한 유저 확인
-        memberService.validateLoginMemberStatusIsActive(member);
+        Member member = memberService.getMemberByEmail(loginMemberRequest.getEmail());
 
-        //토큰 생성
+        authService.checkPassword(loginMemberRequest.getPassword(), member.getPassword());
+        authService.checkMemberStatusActive(member);
+
         Long memberId = member.getId();
         MemberRole memberRole = member.getRole();
         TokenResult tokens = tokenService.createTokens(memberId, memberRole);
 
-        //FCM 토큰 지정
-        memberService.updateFcmToken(member, request.getFcmToken());
+        memberService.updateFcmToken(member, loginMemberRequest.getFcmToken());
 
         return LoginMemberResponse.builder()
                 .memberId(member.getId())
-                .email(member.getEmail())
                 .nickName(member.getNickname())
                 .univName(member.getUniversity().getName())
                 .accessToken(tokens.accessToken())
@@ -97,9 +94,10 @@ public class AuthFacade {
     }
 
     @Transactional
-    public String updatePwd(UpdatePasswordRequest request) {
-        Member member = memberService.isValidEmailAndPassword(request.getEmail(), request.getPwd());
-        memberService.updatePwd(member, request.getPwd());
+    public String updatePwd(UpdatePasswordRequest updatePasswordRequest) {
+        Member member = memberService.getMemberByHashedEmail(updatePasswordRequest.getEmail());
+        authService.checkPassword(updatePasswordRequest.getPassword(), member.getPassword());
+        memberService.updatePwd(member, updatePasswordRequest.getPassword());
         return "비밀번호 변경에 성공하였습니다.";
     }
 }

@@ -4,6 +4,7 @@ import community.mingle.api.domain.auth.entity.AuthenticationCode;
 import community.mingle.api.domain.auth.repository.AuthenticationCodeRepository;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.repository.MemberRepository;
+import community.mingle.api.enums.MemberStatus;
 import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.global.exception.ErrorCode;
 import community.mingle.api.global.utils.EmailHasher;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
@@ -21,6 +23,8 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
+
+import static community.mingle.api.global.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +34,8 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final JavaMailSender javaMailSender;
     private final SpringTemplateEngine springTemplateEngine;
+    private final PasswordEncoder passwordEncoder;
+
 
     public static final String VERIFICATION_CODE_EMAIL_SUBJECT = "Mingle의 이메일 인증번호를 확인하세요";
     public static final String FRESHMAN_EMAIL_DOMAIN = "freshman.mingle.com";
@@ -65,8 +71,6 @@ public class AuthService {
             throw new CustomException(ErrorCode.EMAIL_SEND_FAILED);
         }
     }
-
-
 
     public void verifyEmail (String email) {
 
@@ -107,6 +111,21 @@ public class AuthService {
     public String extractDomain(String email) {
         return email.split("@")[1];
     }
+
+    public void checkPassword(String rawPassword, String storedPasswordHash) {
+        if (!passwordEncoder.matches(rawPassword, storedPasswordHash))
+            throw new CustomException(FAILED_TO_LOGIN);
+    }
+
+    public void checkMemberStatusActive(Member member) {
+        if (member.getStatus().equals(MemberStatus.INACTIVE)) {
+            throw new CustomException(MEMBER_DELETED_ERROR);
+        }
+        if (member.getStatus().equals(MemberStatus.REPORTED)) {
+            throw new CustomException(MEMBER_REPORTED_ERROR);
+        }
+    }
+
 
     private AuthenticationCode getAuthenticationCode(String email) {
         String hashedEmail = EmailHasher.hashEmail(email);

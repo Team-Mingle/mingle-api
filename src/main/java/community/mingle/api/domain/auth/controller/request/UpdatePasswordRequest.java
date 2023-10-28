@@ -18,5 +18,5 @@ public class UpdatePasswordRequest {
     @NotBlank(message = "비밀번호를 입력해주세요.")
     @Min(value = 6, message =  "비밀번호가 너무 짧습니다.")
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=\\S+$).{6,20}$", message = "비밀번호는 영문,숫자를 포함해야 합니다.")
-    private String pwd;
+    private String password;
 }
