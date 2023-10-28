@@ -1,13 +1,13 @@
 package community.mingle.api.domain.member.service;
 
 import java.util.List;
-
 import community.mingle.api.domain.auth.controller.response.CountryResponse;
 import community.mingle.api.domain.member.entity.Country;
 import community.mingle.api.domain.member.repository.CountryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class CountryService {
@@ -19,7 +19,4 @@ public class CountryService {
                 .map(country -> new CountryResponse(country.getCountry()))
                 .collect(Collectors.toList());
     }
-
-
-
 }
