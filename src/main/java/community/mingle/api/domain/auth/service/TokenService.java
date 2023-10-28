@@ -31,9 +31,9 @@ public class TokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
 
-    public TokenResult createTokens(Long memberId, MemberRole memberRole, String hashedEmail) {
+    public TokenResult createTokens(Long memberId, MemberRole memberRole) {
         String accessToken = tokenHandler.createAccessToken(memberId, memberRole);
-        String refreshToken = tokenHandler.createRefreshToken(memberId, memberRole, member.getEmail());
+        String refreshToken = tokenHandler.createRefreshToken(memberId, memberRole);
         return new TokenResult(accessToken, refreshToken);
     }
 
