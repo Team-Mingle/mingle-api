@@ -85,4 +85,10 @@ public class Post extends AuditLoggingBase {
         this.fileAttached = fileAttached;
     }
 
+    public void updatePost (String title, String content, boolean isAnonymous){
+        this.title = title;
+        this.content = content;
+        this.anonymous = isAnonymous;
+    }
+
 }
