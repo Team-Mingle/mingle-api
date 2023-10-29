@@ -2,6 +2,7 @@ package community.mingle.api.domain.auth.service;
 
 import community.mingle.api.domain.auth.entity.RefreshToken;
 import community.mingle.api.domain.auth.repository.RefreshTokenRepository;
+import community.mingle.api.dto.security.CreatedTokenDto;
 import community.mingle.api.dto.security.TokenDto;
 import community.mingle.api.enums.MemberRole;
 import community.mingle.api.global.exception.CustomException;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import static community.mingle.api.global.exception.ErrorCode.TOKEN_EXPIRED;
@@ -31,13 +33,12 @@ public class TokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
 
-    public TokenResult createTokens(Long memberId, MemberRole memberRole, String email) {
+    @Transactional
+    public CreatedTokenDto createTokens(Long memberId, MemberRole memberRole, String email) {
         String accessToken = tokenHandler.createAccessToken(memberId, memberRole);
         String refreshToken = tokenHandler.createRefreshToken(memberId, memberRole, email);
-        return new TokenResult(accessToken, refreshToken);
-    }
-
-    public record TokenResult(String accessToken, String refreshToken) {
+        saveRefreshToken(email, refreshToken, Duration.of(30, ChronoUnit.DAYS));
+        return new CreatedTokenDto(accessToken, refreshToken);
     }
 
     /**
@@ -50,13 +51,11 @@ public class TokenService {
     /**
      * refresh token 유효성/DB 검사
      */
-    @Transactional
     public void validateRefreshToken(String token) {
         Optional<RefreshToken> refreshTokenOptional = findToken(token);
 
         refreshTokenOptional.ifPresent(refreshToken -> {
             if (LocalDateTime.now().isAfter(refreshToken.getExpiry())) {
-                refreshTokenRepository.delete(refreshToken);
                 throw new CustomException(TOKEN_EXPIRED);
             }
         });
@@ -67,12 +66,23 @@ public class TokenService {
         return refreshTokenRepository.findByToken(token);
     }
 
+
     @Transactional
     public void saveRefreshToken(String email, String token, Duration duration) {
         LocalDateTime expiry = LocalDateTime.now().plus(duration);
 
-//        RefreshToken refreshToken = RefreshToken.createRefreshToken(email, token, expiry);
-//        refreshTokenRepository.save(refreshToken);
+        refreshTokenRepository.findById(email)
+                .ifPresentOrElse(
+                        existingToken -> existingToken.updateRefreshtoken(token),
+                        () -> {
+                            RefreshToken newRefreshToken = RefreshToken.builder()
+                                    .email(email)
+                                    .token(token)
+                                    .expiry(expiry)
+                                    .build();
+                            refreshTokenRepository.save(newRefreshToken);
+                        }
+                );
     }
 
 }

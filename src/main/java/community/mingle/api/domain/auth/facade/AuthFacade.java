@@ -11,15 +11,13 @@ import community.mingle.api.domain.auth.controller.request.LoginMemberRequest;
 import community.mingle.api.domain.auth.controller.request.UpdatePasswordRequest;
 import community.mingle.api.domain.auth.controller.response.LoginMemberResponse;
 import community.mingle.api.domain.auth.service.TokenService;
-import community.mingle.api.domain.auth.service.TokenService.TokenResult;
 import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.dto.security.CreatedTokenDto;
 import community.mingle.api.dto.security.TokenDto;
 import community.mingle.api.enums.MemberRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 
 import static community.mingle.api.domain.auth.service.AuthService.FRESHMAN_EMAIL_DOMAIN;
 
@@ -59,13 +57,13 @@ public class AuthFacade {
 
         Member member = memberService.getMemberByEmail(loginMemberRequest.getEmail());
 
-//        authService.checkPassword(loginMemberRequest.getPassword(), member.getPassword());
+        authService.checkPassword(loginMemberRequest.getPassword(), member.getPassword());
         authService.checkMemberStatusActive(member);
 
         Long memberId = member.getId();
         MemberRole memberRole = member.getRole();
         String email = member.getEmail();
-        TokenResult tokens = tokenService.createTokens(memberId, memberRole, email);
+        CreatedTokenDto tokens = tokenService.createTokens(memberId, memberRole, email);
 
         memberService.updateFcmToken(member, loginMemberRequest.getFcmToken());
 
@@ -73,24 +71,22 @@ public class AuthFacade {
                 .memberId(member.getId())
                 .nickName(member.getNickname())
                 .univName(member.getUniversity().getName())
-                .accessToken(tokens.accessToken())
-                .refreshToken(tokens.refreshToken())
+                .accessToken(tokens.getAccessToken())
+                .refreshToken(tokens.getRefreshToken())
                 .build();
     }
 
-
     @Transactional
     public TokenResponse reissueAccessToken(String refreshToken, String email) {
-        //JWT, refresh token DB 유효성 검사
+
         TokenDto tokenDto = tokenService.verifyToken(refreshToken);
         tokenService.validateRefreshToken(refreshToken);
 
-        TokenResult tokens = tokenService.createTokens(tokenDto.getMemberId(), tokenDto.getMemberRole(), email);
-        tokenService.saveRefreshToken(email, tokens.refreshToken(), Duration.of(30, ChronoUnit.DAYS));
+        CreatedTokenDto tokens = tokenService.createTokens(tokenDto.getMemberId(), tokenDto.getMemberRole(), email);
 
         return TokenResponse.builder()
-                .accessToken(tokens.accessToken())
-                .refreshToken(tokens.refreshToken())
+                .accessToken(tokens.getAccessToken())
+                .refreshToken(tokens.getRefreshToken())
                 .build();
     }
 

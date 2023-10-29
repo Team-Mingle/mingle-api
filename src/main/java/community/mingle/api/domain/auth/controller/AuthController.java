@@ -7,6 +7,8 @@ import community.mingle.api.domain.auth.facade.TokenResponse;
 import community.mingle.api.domain.member.service.CountryService;
 import community.mingle.api.domain.member.service.UniversityService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -81,13 +83,15 @@ public class AuthController {
         return new ResponseEntity<>(authFacade.login(loginMemberRequest), HttpStatus.OK);
     }
 
-
     @Operation(summary = "토큰 재발급 api")
     @PostMapping("refresh-token")
     public ResponseEntity<TokenResponse> reissueAccessToken(
-            @RequestHeader(value = "Authorization") String refreshToken,
-            @RequestBody ReissueTokenRequest request) {
-        return new ResponseEntity<>(authFacade.reissueAccessToken(refreshToken, request.getEmail()), HttpStatus.OK);
+            @Parameter(in = ParameterIn.HEADER, description = "X-Refresh-Token", required = true)
+            @RequestHeader(value = "X-Refresh-Token") String refreshToken,
+            @RequestBody ReissueTokenRequest reissueTokenRequest
+    ) {
+        TokenResponse tokenResponse = authFacade.reissueAccessToken(refreshToken, reissueTokenRequest.getEmail());
+        return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
     }
 
     @Operation(summary = "비밀번호 재설정 api")
@@ -97,3 +101,4 @@ public class AuthController {
     }
 
 }
+

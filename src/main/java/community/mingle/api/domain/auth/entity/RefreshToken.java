@@ -4,6 +4,7 @@ import community.mingle.api.entitybase.AuditLoggingBase;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.sql.Ref;
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,14 +16,17 @@ import java.time.LocalDateTime;
 public class RefreshToken extends AuditLoggingBase {
 
     @Id
-    @Column(length = 255)
+    @Column(name = "email")
     private String email;
 
-    @Column(length = 255, nullable = false)
+    @Column(name = "token", nullable = false)
     private String token;
 
-    @Column(nullable = false)
+    @Column(name = "expiry", nullable = false)
     private LocalDateTime expiry;
+
+    public void updateRefreshtoken(String token) {
+        this.token = token;
+        this.expiry = LocalDateTime.now().plusDays(30);
+    }
 }
-
-

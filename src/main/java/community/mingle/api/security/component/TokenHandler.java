@@ -45,7 +45,8 @@ public class TokenHandler {
 
     public String createRefreshToken(Long memberId, MemberRole memberRole, String email) {
         try {
-            String token = JWT.create()
+
+            return JWT.create()
                     .withClaim("memberId", memberId)
                     .withClaim("memberRole", memberRole.toString())
                     .withExpiresAt(
@@ -58,14 +59,6 @@ public class TokenHandler {
                             )
                     )
                     .sign(tokenAlgorithm);
-            RefreshToken refreshToken = RefreshToken.builder()
-                    .email(email)
-                    .token(token)
-                    .expiry(LocalDateTime.now().plusDays(30))
-                    .build();
-            refreshTokenRepository.save(refreshToken);
-
-            return token;
         } catch (Exception e) {
             throw new CustomException(FAILED_TO_CREATEJWT);
         }
