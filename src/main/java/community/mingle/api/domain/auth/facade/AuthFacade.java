@@ -1,22 +1,22 @@
 package community.mingle.api.domain.auth.facade;
 
-import community.mingle.api.domain.auth.controller.request.VerificationCodeRequest;
-import community.mingle.api.domain.auth.controller.request.EmailRequest;
+import community.mingle.api.domain.auth.controller.request.*;
 import community.mingle.api.domain.auth.controller.response.*;
 import community.mingle.api.domain.auth.service.AuthService;
 import community.mingle.api.domain.member.service.MemberService;
-import community.mingle.api.domain.auth.controller.request.LoginMemberRequest;
-import community.mingle.api.domain.auth.controller.request.UpdatePasswordRequest;
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.dto.security.CreatedTokenDto;
 import community.mingle.api.dto.security.TokenDto;
 import community.mingle.api.enums.MemberRole;
+import community.mingle.api.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static community.mingle.api.domain.auth.service.AuthService.FRESHMAN_EMAIL_DOMAIN;
+import static community.mingle.api.global.exception.ErrorCode.MEMBER_ALREADY_EXIST;
+import static community.mingle.api.global.exception.ErrorCode.NICKNAME_DUPLICATED;
 
 @Service
 @RequiredArgsConstructor
@@ -50,9 +50,26 @@ public class AuthFacade {
     }
 
     @Transactional
+    public SignUpResponse signUp(SignUpRequest request) {
+        if (memberService.existsByEmail(request.getEmail())) {
+            throw new CustomException(MEMBER_ALREADY_EXIST);
+        }
+
+        if (memberService.existsByNickname(request.getNickname())) {
+            throw new CustomException(NICKNAME_DUPLICATED);
+        }
+
+        Member member = memberService.create(request.getUnivId(), request.getNickname(), request.getEmail(), request.getPassword());
+        return new SignUpResponse(member.getId());
+
+
+
+    }
+
+    @Transactional
     public LoginMemberResponse login(LoginMemberRequest loginMemberRequest) {
 
-        Member member = memberService.getMemberByEmail(loginMemberRequest.getEmail());
+        Member member = memberService.getByEmail(loginMemberRequest.getEmail());
 
         authService.checkPassword(loginMemberRequest.getPassword(), member.getPassword());
         authService.checkMemberStatusActive(member);
@@ -90,9 +107,9 @@ public class AuthFacade {
 
     @Transactional
     public UpdatePasswordResponse updatePassword(UpdatePasswordRequest updatePasswordRequest) {
-        Member member = memberService.getMemberByHashedEmail(updatePasswordRequest.getEmail());
-        authService.checkPassword(updatePasswordRequest.getPassword(), member.getPassword());
-        memberService.updatePassword(member, updatePasswordRequest.getPassword());
+        Member member = memberService.getByEmail(updatePasswordRequest.getEmail());
+        authService.checkPassword(updatePasswordRequest.getCurrentPassword(), member.getPassword());
+        memberService.updatePassword(member, updatePasswordRequest.getUpdatePassword());
         return new UpdatePasswordResponse(true);
     }
 }

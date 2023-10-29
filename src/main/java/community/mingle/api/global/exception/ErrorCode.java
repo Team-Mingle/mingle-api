@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ErrorCode {
+
+    //TODO errorcode 중복 정리하기
     MEMBER_DUPLICATED(409, "1002", "중복된 유저입니다."),
     MEMBER_DELETED(409, "1003", "삭제된 멤버입니다"),
     EMAIL_DUPLICATED(409, "1005", "중복된 이메일입니다."),
@@ -36,7 +38,11 @@ public enum ErrorCode {
 
     MEMBER_NOT_FOUND(404, "2005", "존재하지 않는 회원 정보입니다."),
 
-    FAILED_TO_CREATEJWT(500, "2005", "토큰 발급에 실패하였습니다." );
+    FAILED_TO_CREATEJWT(500, "2006", "토큰 발급에 실패하였습니다." ),
+    MEMBER_ALREADY_EXIST(409, "2007", "이미 가입된 회원입니다."),
+    NICKNAME_DUPLICATED(409, "2008", "이미 존재하는 닉네임입니다."),
+    UNIVERSITY_NOT_FOUND(404, "2009", "존재하지 않는 대학입니다.")
+    ;
     private final int status;
     private final String code;
     private final String message;
