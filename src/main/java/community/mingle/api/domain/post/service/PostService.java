@@ -1,18 +1,22 @@
 package community.mingle.api.domain.post.service;
 
-import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.domain.post.controller.response.PostCategoryResponse;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.repository.PostRepository;
 import community.mingle.api.enums.BoardType;
 import community.mingle.api.enums.CategoryType;
 import community.mingle.api.enums.ContentStatusType;
+import community.mingle.api.enums.MemberRole;
 import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -20,25 +24,41 @@ import java.util.Objects;
 public class PostService {
     private final PostRepository postRepository;
 
+
+    public List<PostCategoryResponse> getPostCategory(MemberRole memberRole) {
+        return getCategoriesByMemberRole(memberRole).stream()
+                .map(PostCategoryResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<CategoryType> getCategoriesByMemberRole(MemberRole memberRole) {
+        return switch (memberRole) {
+            case ADMIN -> Arrays.asList(CategoryType.FREE, CategoryType.QNA, CategoryType.KSA, CategoryType.MINGLE);
+            case KSA -> Arrays.asList(CategoryType.FREE, CategoryType.QNA, CategoryType.KSA);
+            default -> Arrays.asList(CategoryType.FREE, CategoryType.QNA);
+        };
+    }
+
+
     @Transactional
     public Post createPost(
-                String title,
-                String content,
-                BoardType boardType,
-                CategoryType categoryType,
-                boolean anonymous,
-                boolean fileAttached
+            String title,
+            String content,
+            BoardType boardType,
+            CategoryType categoryType,
+            boolean anonymous,
+            boolean fileAttached
     ) {
         //TODO 멤버세팅
 //        Member member = memberRepository.find(memberId);
         Post post = Post.builder()
-                        .title(title)
-                        .content(content)
-                        .boardType(boardType)
-                        .categoryType(categoryType)
-                        .anonymous(anonymous)
-                        .fileAttached(fileAttached)
-                        .build();
+                .title(title)
+                .content(content)
+                .boardType(boardType)
+                .categoryType(categoryType)
+                .anonymous(anonymous)
+                .fileAttached(fileAttached)
+                .build();
 
         return postRepository.save(post);
     }
@@ -53,9 +73,9 @@ public class PostService {
             throw new CustomException(ErrorCode.MODIFY_NOT_AUTHORIZED);
         }
 
-         post.updatePost(title, content, isAnonymous);
+        post.updatePost(title, content, isAnonymous);
 
-         return post;
+        return post;
     }
 
     @Transactional

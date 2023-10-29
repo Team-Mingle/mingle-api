@@ -3,13 +3,17 @@ package community.mingle.api.domain.post.controller;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
 import community.mingle.api.domain.post.controller.response.CreatePostResponse;
+import community.mingle.api.domain.post.controller.response.PostCategoryResponse;
 import community.mingle.api.domain.post.controller.response.UpdatePostResponse;
 import community.mingle.api.domain.post.facade.PostFacade;
 import community.mingle.api.enums.BoardType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/post")
@@ -17,6 +21,17 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
 
     private final PostFacade postFacade;
+
+
+    /**
+     * 카테고리 목록 조회 API
+     */
+    @GetMapping("/category")
+    public ResponseEntity<List<PostCategoryResponse>> getPostCategory() {
+        return new ResponseEntity<>(postFacade.getPostCategory(), HttpStatus.OK);
+    }
+
+
 
     /**
      * 게시물 생성 API

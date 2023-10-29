@@ -1,31 +1,39 @@
 package community.mingle.api.domain.post.facade;
 
+import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.comment.service.CommentService;
-import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
 import community.mingle.api.domain.post.controller.response.CreatePostResponse;
+import community.mingle.api.domain.post.controller.response.PostCategoryResponse;
 import community.mingle.api.domain.post.controller.response.UpdatePostResponse;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.service.PostImageService;
 import community.mingle.api.domain.post.service.PostService;
+import community.mingle.api.dto.security.TokenDto;
 import community.mingle.api.enums.BoardType;
-import community.mingle.api.enums.CategoryType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@Service
 @RequiredArgsConstructor
 @Transactional
+@Service
 public class PostFacade {
     private final PostService postService;
     private final PostImageService postImageService;
-
+    private final TokenService tokenService;
     private final CommentService commentService;
+
+    /**
+     * 게시물 카테고리 목록 조회
+     */
+    public List<PostCategoryResponse> getPostCategory(){
+        TokenDto tokenInfo = tokenService.getTokenInfo();
+        return postService.getPostCategory(tokenInfo.getMemberRole());
+    }
 
     @Transactional
     public CreatePostResponse createPost(CreatePostRequest createPostRequest, BoardType boardType) {

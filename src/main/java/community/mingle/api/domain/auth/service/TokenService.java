@@ -2,6 +2,7 @@ package community.mingle.api.domain.auth.service;
 
 import community.mingle.api.domain.auth.entity.RefreshToken;
 import community.mingle.api.domain.auth.repository.RefreshTokenRepository;
+import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.dto.security.CreatedTokenDto;
 import community.mingle.api.dto.security.TokenDto;
 import community.mingle.api.enums.MemberRole;
@@ -9,6 +10,7 @@ import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.security.component.TokenHandler;
 import community.mingle.api.security.component.TokenVerifier;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,5 +86,11 @@ public class TokenService {
                         }
                 );
     }
+
+
+    public TokenDto getTokenInfo() {
+        return (TokenDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
 
 }
