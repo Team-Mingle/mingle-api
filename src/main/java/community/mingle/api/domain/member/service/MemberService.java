@@ -1,5 +1,6 @@
 package community.mingle.api.domain.member.service;
 
+import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.entity.University;
 import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.domain.member.repository.UniversityRepository;
@@ -8,16 +9,13 @@ import community.mingle.api.enums.MemberStatus;
 import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.global.utils.EmailHasher;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
-import community.mingle.api.domain.member.entity.Member;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
-import static community.mingle.api.global.exception.ErrorCode.*;
+import static community.mingle.api.global.exception.ErrorCode.MEMBER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
