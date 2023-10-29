@@ -2,7 +2,6 @@ package community.mingle.api.security.component;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import community.mingle.api.domain.auth.entity.RefreshToken;
 import community.mingle.api.domain.auth.repository.RefreshTokenRepository;
 import community.mingle.api.enums.MemberRole;
 import community.mingle.api.global.exception.CustomException;
@@ -20,7 +19,6 @@ import static community.mingle.api.global.exception.ErrorCode.FAILED_TO_CREATEJW
 public class TokenHandler {
 
     private final Algorithm tokenAlgorithm;
-    private final RefreshTokenRepository refreshTokenRepository;
 
     public String createAccessToken(Long memberId, MemberRole memberRole) {
         try {
@@ -43,7 +41,7 @@ public class TokenHandler {
     }
 
 
-    public String createRefreshToken(Long memberId, MemberRole memberRole, String email) {
+    public String createRefreshToken(Long memberId, MemberRole memberRole) {
         try {
 
             return JWT.create()

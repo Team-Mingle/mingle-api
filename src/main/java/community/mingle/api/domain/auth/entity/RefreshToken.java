@@ -1,10 +1,12 @@
 package community.mingle.api.domain.auth.entity;
 
 import community.mingle.api.entitybase.AuditLoggingBase;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 
-import java.sql.Ref;
 import java.time.LocalDateTime;
 
 @Entity

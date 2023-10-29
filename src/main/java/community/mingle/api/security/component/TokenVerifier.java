@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 public class TokenVerifier {
-    private final Algorithm tokenAlgorithm;
     private final SecretsManagerService secretsManagerService;
     private final JWTVerifier tokenVerifier;
 

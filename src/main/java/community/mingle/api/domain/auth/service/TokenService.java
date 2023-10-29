@@ -36,7 +36,7 @@ public class TokenService {
     @Transactional
     public CreatedTokenDto createTokens(Long memberId, MemberRole memberRole, String email) {
         String accessToken = tokenHandler.createAccessToken(memberId, memberRole);
-        String refreshToken = tokenHandler.createRefreshToken(memberId, memberRole, email);
+        String refreshToken = tokenHandler.createRefreshToken(memberId, memberRole);
         saveRefreshToken(email, refreshToken, Duration.of(30, ChronoUnit.DAYS));
         return new CreatedTokenDto(accessToken, refreshToken);
     }
