@@ -82,6 +82,12 @@ public class AuthController {
         return new ResponseEntity<>(authFacade.login(loginMemberRequest), HttpStatus.OK);
     }
 
+    @Operation(summary = "회원가입 api")
+    @PostMapping("/sign-up")
+    public ResponseEntity<SignUpResponse> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
+        return new ResponseEntity<>(authFacade.signUp(signUpRequest), HttpStatus.OK);
+    }
+
     @Operation(summary = "토큰 재발급 api")
     @PostMapping("refresh-token")
     public ResponseEntity<TokenResponse> reissueAccessToken(
