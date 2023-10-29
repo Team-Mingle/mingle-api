@@ -15,8 +15,7 @@ public class LoginMemberRequest {
     private String email;
 
     @NotBlank(message = "비밀번호를 입력해주세요.")
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=\\S+$).{6,20}$", message = "비밀번호는 영문,숫자를 포함해야 합니다.")
-    private String pwd;
+    private String password;
 
     @NotBlank(message = "FCM 토큰을 입력해주세요.")
     private String fcmToken;

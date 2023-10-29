@@ -1,7 +1,6 @@
 package community.mingle.api.security.component;
 
 import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -20,7 +19,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Component
 @AllArgsConstructor
 public class TokenVerifier {
-    private final Algorithm tokenAlgorithm;
     private final SecretsManagerService secretsManagerService;
     private final JWTVerifier tokenVerifier;
 
@@ -43,7 +41,7 @@ public class TokenVerifier {
     public TokenDto verifyToken(String bearerToken) {
         try {
             DevTokenDto devToken = secretsManagerService.getJwtDevToken();
-            String token = bearerToken.substring(7);
+            String token = extractBearerToken(bearerToken);
 
             if (token.equals(devToken.getMingleUser())) {
                 return new TokenDto(5L, MemberRole.USER);
@@ -64,5 +62,12 @@ public class TokenVerifier {
     private TokenDto verifyIssuedToken(String token) {
         DecodedJWT verifiedJwt = tokenVerifier.verify(token);
         return new TokenDto(verifiedJwt.getClaim("memberId").asLong(), MemberRole.valueOf(verifiedJwt.getClaim("memberRole").asString()));
+    }
+
+    private String extractBearerToken(String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            return token.substring("Bearer ".length());
+        }
+        return token;
     }
 }

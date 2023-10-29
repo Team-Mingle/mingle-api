@@ -7,7 +7,6 @@ import community.mingle.api.global.exception.CustomException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -41,8 +40,9 @@ public class TokenHandler {
     }
 
 
-    public String createRefreshToken(Long memberId, MemberRole memberRole, String email) {
+    public String createRefreshToken(Long memberId, MemberRole memberRole) {
         try {
+
             return JWT.create()
                     .withClaim("memberId", memberId)
                     .withClaim("memberRole", memberRole.toString())

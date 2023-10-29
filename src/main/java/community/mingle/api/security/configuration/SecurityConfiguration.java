@@ -21,9 +21,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+
 @Configuration
 @RequiredArgsConstructor
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 @EnableMethodSecurity(
         securedEnabled = true,
         proxyTargetClass = true,
@@ -59,6 +60,8 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
+                .csrf(CsrfConfigurer::disable)
+                .cors(CorsConfigurer::disable)
                 .authorizeHttpRequests(it -> {
                     it.requestMatchers(
                             "/auth/**",
@@ -70,8 +73,6 @@ public class SecurityConfiguration {
                     .requestMatchers("/**")
                             .authenticated();
                 })
-                .csrf(CsrfConfigurer::disable)
-                .cors(CorsConfigurer::disable)
                 .exceptionHandling(it-> {
                         it.authenticationEntryPoint(authenticationEntryPoint());
                         it.accessDeniedHandler(accessDeniedHandler());

@@ -4,11 +4,25 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ErrorCode {
+    MEMBER_DUPLICATED(409, "1002", "중복된 유저입니다."),
+    MEMBER_DELETED(409, "1003", "삭제된 멤버입니다"),
+    EMAIL_DUPLICATED(409, "1005", "중복된 이메일입니다."),
+
+    CODE_GENERATION_FAILED(409, "1006", "코드 생성에 실패하였습니다."),
+    CODE_MATCH_FAILED(409, "1007", "코드 생성에 실패하였습니다."),
+    CODE_FOUND_FAILED(409, "1008", "존재하는 코드가 없습니다."),
+    CODE_VALIDITY_EXPIRED(409, "1009", "코드가 만료되었습니다."),
+    EMAIL_SEND_FAILED(409, "1010", "이메일 전송에 실패하였습니다."),
+    DATABASE_ERROR(500, "1100", "데이터베이스 연결에 실패하였습니다."),
 
     //TODO status 를 HttpStatus로 받아오기
-    MEMBER_DUPLICATED(409, "1002", "중복된 유저입니다."),
     TOKEN_EXPIRED(401, "2000", "토큰이 만료되었습니다."),
     AUTHENTICATION_FAILED(401, "2001", "잘못된 인증 정보입니다."),
+
+    POST_NOT_EXIST(400,"2200", "게시물이 존재하지 않습니다." ),
+    POST_DELETED_REPORTED(400,"2201", "삭제되거나 신고된 게시물입니다." ),
+
+    MODIFY_NOT_AUTHORIZED(400, "2205", "수정 권한이 없습니다"),
 
     FAIL_TO_REISSUE_TOKEN(401, "2002", "토큰 재발급에 실패하였습니다"),
 

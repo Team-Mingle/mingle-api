@@ -11,7 +11,7 @@ import lombok.Getter;
 @Builder
 public class LoginMemberResponse {
     private Long memberId;
-    private String email;
+    private String hashedEmail;
     private String nickName;
     private String univName;
     private String accessToken;

@@ -1,10 +1,11 @@
 package community.mingle.api.domain.auth.entity;
 
 import community.mingle.api.entitybase.AuditLoggingBase;
-import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -12,26 +13,22 @@ import java.time.LocalDateTime;
 @Getter
 @Table(name = "refresh_token")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class RefreshToken extends AuditLoggingBase {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(length = 255)
+    @Column(name = "email")
     private String email;
 
-    @Column(length = 255, nullable = false)
+    @Column(name = "token", nullable = false)
     private String token;
 
-    @Column(nullable = false)
+    @Column(name = "expiry", nullable = false)
     private LocalDateTime expiry;
 
-    public static RefreshToken createRefreshToken(String email, String token, LocalDateTime expiry) {
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.email = email;
-        refreshToken.token = token;
-        refreshToken.expiry = expiry;
-        return refreshToken;
+    public void updateRefreshtoken(String token) {
+        this.token = token;
+        this.expiry = LocalDateTime.now().plusDays(30);
     }
 }
-
-

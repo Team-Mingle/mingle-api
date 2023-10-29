@@ -21,7 +21,7 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 
 @EnableJpaRepositories(
-        basePackages = ProjectBaseConfiguration.PROJECT_NAME
+        basePackages = ProjectBaseConfiguration.BASE_PACKAGE
 )
 @Configuration
 @RequiredArgsConstructor
