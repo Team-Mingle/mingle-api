@@ -19,7 +19,6 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationCodeRepository authenticationCodeRepository;
 
 
     public Member getMemberByHashedEmail(String hashedEmail) {
