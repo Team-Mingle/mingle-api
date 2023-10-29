@@ -14,7 +14,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -79,7 +78,7 @@ public class AuthController {
 
     @Operation(summary = "로그인 api")
     @PostMapping("/login")
-    public ResponseEntity<LoginMemberResponse> login(@RequestBody @Validated LoginMemberRequest loginMemberRequest) {
+    public ResponseEntity<LoginMemberResponse> login(@Valid @RequestBody LoginMemberRequest loginMemberRequest) {
         return new ResponseEntity<>(authFacade.login(loginMemberRequest), HttpStatus.OK);
     }
 
@@ -95,9 +94,9 @@ public class AuthController {
     }
 
     @Operation(summary = "비밀번호 재설정 api")
-    @PatchMapping("/pwd")
-    public ResponseEntity<String> updatePwd(@RequestBody @Validated UpdatePasswordRequest request) {
-        return new ResponseEntity<>(authFacade.updatePwd(request), HttpStatus.OK);
+    @PatchMapping("/password")
+    public ResponseEntity<UpdatePasswordResponse> updatePassword(@Valid @RequestBody UpdatePasswordRequest request) {
+        return new ResponseEntity<>(authFacade.updatePassword(request), HttpStatus.OK);
     }
 
 }

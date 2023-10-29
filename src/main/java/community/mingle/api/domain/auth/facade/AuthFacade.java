@@ -2,14 +2,11 @@ package community.mingle.api.domain.auth.facade;
 
 import community.mingle.api.domain.auth.controller.request.VerificationCodeRequest;
 import community.mingle.api.domain.auth.controller.request.EmailRequest;
-import community.mingle.api.domain.auth.controller.response.SendVerificationCodeResponse;
-import community.mingle.api.domain.auth.controller.response.VerifyCodeResponse;
-import community.mingle.api.domain.auth.controller.response.VerifyEmailResponse;
+import community.mingle.api.domain.auth.controller.response.*;
 import community.mingle.api.domain.auth.service.AuthService;
 import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.domain.auth.controller.request.LoginMemberRequest;
 import community.mingle.api.domain.auth.controller.request.UpdatePasswordRequest;
-import community.mingle.api.domain.auth.controller.response.LoginMemberResponse;
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.dto.security.CreatedTokenDto;
@@ -65,10 +62,11 @@ public class AuthFacade {
         String email = member.getEmail();
         CreatedTokenDto tokens = tokenService.createTokens(memberId, memberRole, email);
 
-        memberService.updateFcmToken(member, loginMemberRequest.getFcmToken());
+        memberService.setFcmToken(member, loginMemberRequest.getFcmToken());
 
         return LoginMemberResponse.builder()
                 .memberId(member.getId())
+                .hashedEmail(member.getEmail())
                 .nickName(member.getNickname())
                 .univName(member.getUniversity().getName())
                 .accessToken(tokens.getAccessToken())
@@ -91,10 +89,10 @@ public class AuthFacade {
     }
 
     @Transactional
-    public String updatePwd(UpdatePasswordRequest updatePasswordRequest) {
+    public UpdatePasswordResponse updatePassword(UpdatePasswordRequest updatePasswordRequest) {
         Member member = memberService.getMemberByHashedEmail(updatePasswordRequest.getEmail());
         authService.checkPassword(updatePasswordRequest.getPassword(), member.getPassword());
-        memberService.updatePwd(member, updatePasswordRequest.getPassword());
-        return "비밀번호 변경에 성공하였습니다.";
+        memberService.updatePassword(member, updatePasswordRequest.getPassword());
+        return new UpdatePasswordResponse(true);
     }
 }
