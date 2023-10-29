@@ -40,8 +40,9 @@ public enum ErrorCode {
 
     FAILED_TO_CREATEJWT(500, "2006", "토큰 발급에 실패하였습니다." ),
     MEMBER_ALREADY_EXIST(409, "2007", "이미 가입된 회원입니다."),
-
-    NICKNAME_DUPLICATED(409, "2008", "이미 존재하는 닉네임입니다.");
+    NICKNAME_DUPLICATED(409, "2008", "이미 존재하는 닉네임입니다."),
+    UNIVERSITY_NOT_FOUND(404, "2009", "존재하지 않는 대학입니다.")
+    ;
     private final int status;
     private final String code;
     private final String message;

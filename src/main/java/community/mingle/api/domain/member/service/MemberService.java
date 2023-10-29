@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static community.mingle.api.global.exception.ErrorCode.MEMBER_NOT_FOUND;
+import static community.mingle.api.global.exception.ErrorCode.UNIVERSITY_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +51,7 @@ public class MemberService {
         String hashedEmail = EmailHasher.hashEmail(email);
         String encodedPassword = passwordEncoder.encode(password);
 
-        University university = universityRepository.findById(universityId).orElseThrow();
+        University university = universityRepository.findById(universityId).orElseThrow(() -> new CustomException(UNIVERSITY_NOT_FOUND));
 
         Member member = Member.builder()
                 .university(university)
