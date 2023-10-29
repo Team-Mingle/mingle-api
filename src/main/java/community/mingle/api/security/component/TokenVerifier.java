@@ -12,9 +12,14 @@ import community.mingle.api.global.exception.ErrorCode;
 import community.mingle.api.infra.SecretsManagerService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import java.util.Collection;
 
 @Component
 @AllArgsConstructor
@@ -22,12 +27,6 @@ public class TokenVerifier {
     private final SecretsManagerService secretsManagerService;
     private final JWTVerifier tokenVerifier;
 
-
-    public TokenDto getJwt(){ //service단에서 현재 토큰 추출: 이미 filter 통과 후 검증된 상태에서 호출
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        String token =  request.getHeader("Authorization");
-        return verifyIssuedToken(token);
-    }
 
     public TokenDto verify(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
