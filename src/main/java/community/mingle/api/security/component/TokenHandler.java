@@ -2,7 +2,6 @@ package community.mingle.api.security.component;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import community.mingle.api.domain.auth.repository.RefreshTokenRepository;
 import community.mingle.api.enums.MemberRole;
 import community.mingle.api.global.exception.CustomException;
 import lombok.AllArgsConstructor;
