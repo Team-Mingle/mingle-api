@@ -1,8 +1,10 @@
 package community.mingle.api.enums;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
+@Getter
 public enum ReportType {
     OBSCENE("음란"),
     AD("광고"),
