@@ -31,9 +31,7 @@ public class AuthFacade {
     }
 
     @Transactional
-    public SendVerificationCodeResponse sendVerificationCodeEmail(EmailRequest emailRequest) {
-
-        String email = emailRequest.getEmail();
+    public SendVerificationCodeResponse sendVerificationCodeEmail(String email) {
         String domain = authService.extractDomain(email);
         if (!domain.equals(FRESHMAN_EMAIL_DOMAIN)) {
             String authKey = authService.createCode();
@@ -111,5 +109,11 @@ public class AuthFacade {
         authService.checkPassword(updatePasswordRequest.getCurrentPassword(), member.getPassword());
         memberService.updatePassword(member, updatePasswordRequest.getUpdatePassword());
         return new UpdatePasswordResponse(true);
+    }
+
+    @Transactional
+    public SendVerificationCodeResponse sendVerificationCodeEmailForPwdReset(String email) {
+        memberService.getByEmail(email); //check member exists by email
+        return sendVerificationCodeEmail(email);
     }
 }

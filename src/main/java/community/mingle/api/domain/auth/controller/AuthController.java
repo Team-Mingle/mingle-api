@@ -63,7 +63,7 @@ public class AuthController {
     @PostMapping("/sendcode")
     public ResponseEntity<SendVerificationCodeResponse> sendCode(@Valid @RequestBody EmailRequest emailRequest) {
 
-        SendVerificationCodeResponse sendVerificationCodeResponse = authFacade.sendVerificationCodeEmail(emailRequest);
+        SendVerificationCodeResponse sendVerificationCodeResponse = authFacade.sendVerificationCodeEmail(emailRequest.getEmail());
         return ResponseEntity.ok().body(sendVerificationCodeResponse);
 
     }
@@ -103,6 +103,13 @@ public class AuthController {
     @PatchMapping("/password")
     public ResponseEntity<UpdatePasswordResponse> updatePassword(@Valid @RequestBody UpdatePasswordRequest request) {
         return new ResponseEntity<>(authFacade.updatePassword(request), HttpStatus.OK);
+    }
+
+    @Operation(summary = "비밀번호 재설정용 이메일 인증코드 전송 api")
+    @PostMapping("/sendcode/pwd")
+    public ResponseEntity<SendVerificationCodeResponse> sendCodeForPwdReset(@Valid @RequestBody EmailRequest emailRequest) {
+        SendVerificationCodeResponse sendVerificationCodeResponse = authFacade.sendVerificationCodeEmailForPwdReset(emailRequest.getEmail());
+        return ResponseEntity.ok().body(sendVerificationCodeResponse);
     }
 
 }
