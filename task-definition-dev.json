@@ -1,0 +1,93 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:289449549176:task-definition/mingle-api-dev-task-definition-v2:3",
+    "containerDefinitions": [
+        {
+            "name": "mingle-api-dev-server-v2",
+            "image": "289449549176.dkr.ecr.ap-northeast-2.amazonaws.com/mingle-api-dev-v2:latest",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "name": "mingle-api-dev-server-v2-7070-tcp",
+                    "containerPort": 7070,
+                    "hostPort": 7070,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/mingle-api-dev-task-definition-v2",
+                    "awslogs-region": "ap-northeast-2",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            }
+        }
+    ],
+    "family": "mingle-api-dev-task-definition-v2",
+    "taskRoleArn": "arn:aws:iam::289449549176:role/ecsTaskExecutionRole",
+    "executionRoleArn": "arn:aws:iam::289449549176:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "revision": 3,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.task-iam-role"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE"
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "512",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "registeredAt": "2023-10-23T10:44:35.556Z",
+    "registeredBy": "arn:aws:sts::289449549176:assumed-role/AWSReservedSSO_AdministratorAccess_959c246bdf906441/MingleHyeonwooJung",
+    "tags": [
+        {
+            "key": "Version",
+            "value": "mingle-v2"
+        }
+    ]
+}
