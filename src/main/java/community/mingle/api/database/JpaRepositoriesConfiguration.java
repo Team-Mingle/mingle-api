@@ -36,12 +36,20 @@ public class JpaRepositoriesConfiguration {
     public DataSource dataSource() {
         HikariDataSource hikariDataSource = new HikariDataSourceUtil().createHikariDataSource(
                 "mingle-db-connection",
+//                DataSourceConfig.builder()
+//                        .username("root")
+//                        .password("mingle")
+//                        .engine("mysql")
+//                        .host("localhost")
+//                        .port("7071")
+//                        .dbname("mingle")
+//                        .build()
                 DataSourceConfig.builder()
-                        .username("root")
-                        .password("mingle")
+                        .username("mingle")
+                        .password("unitorhku22!")
                         .engine("mysql")
-                        .host("localhost")
-                        .port("7071")
+                        .host("mingle-api-deb-db-v2.cljftsjqggfh.ap-northeast-2.rds.amazonaws.com")
+                        .port("3306")
                         .dbname("mingle")
                         .build()
         );
