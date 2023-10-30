@@ -52,7 +52,7 @@ public class PostFacade {
                                 createPostRequest.getContent(),
                                 boardType,
                                 createPostRequest.getCategoryType(),
-                                createPostRequest.getIsAnonymous(),
+                                createPostRequest.isAnonymous(),
                                 isFileAttached);
         if (isFileAttached) {
             postImageService.createPostImage(post, createPostRequest.getMultipartFile());
@@ -64,9 +64,7 @@ public class PostFacade {
 
     @Transactional
     public UpdatePostResponse updatePost(UpdatePostRequest updatePostRequest, BoardType boardType, Long postId) {
-
-//        Long memberIdByJwt = jwtService.getUserIdx();
-        Long memberIdByJwt = 1L;
+        Long memberIdByJwt = tokenService.getTokenInfo().getMemberId();
 
         Post post = postService.updatePost(memberIdByJwt,
                                     postId,
@@ -89,9 +87,7 @@ public class PostFacade {
 
     @Transactional
     public String deletePost(Long postId) {
-
-        //        Long memberIdByJwt = jwtService.getUserIdx();
-        Long memberIdByJwt = 1L;
+        Long memberIdByJwt = tokenService.getTokenInfo().getMemberId();
 
         postService.deletePost(memberIdByJwt, postId);
         commentService.deleteComment(postId);
