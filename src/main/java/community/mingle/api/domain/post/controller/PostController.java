@@ -8,6 +8,7 @@ import community.mingle.api.domain.post.controller.response.PostResponse;
 import community.mingle.api.domain.post.controller.response.UpdatePostResponse;
 import community.mingle.api.domain.post.facade.PostFacade;
 import community.mingle.api.enums.BoardType;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,7 @@ public class PostController {
     /**
      * 카테고리 목록 조회 API
      */
+    @Operation(summary = "카테고리 목록 조회 API")
     @GetMapping("/category")
     public ResponseEntity<List<PostCategoryResponse>> getPostCategory() {
         return new ResponseEntity<>(postFacade.getPostCategory(), HttpStatus.OK);
@@ -36,6 +38,7 @@ public class PostController {
     /**
      * 게시물 상세 API
      */
+    @Operation(summary = "게시물 상세 API")
     @GetMapping("/{postId}")
     public ResponseEntity<PostResponse> postDetail(@PathVariable Long postId) {
         return new ResponseEntity<>(postFacade.getPostDetail(postId), HttpStatus.OK);
@@ -45,6 +48,7 @@ public class PostController {
     /**
      * 게시물 생성 API
      */
+    @Operation(summary = "게시물 생성 API")
     @PostMapping("/{boardType}")
     public ResponseEntity<CreatePostResponse> createPost(@Valid @ModelAttribute CreatePostRequest createPostRequest, @PathVariable(value = "boardType") BoardType boardType) {
 
@@ -58,6 +62,7 @@ public class PostController {
     /**
      * 게시물 수정 API
      */
+    @Operation(summary = "게시물 수정 API")
     @PatchMapping("/{boardType}/{postId}")
     public ResponseEntity<UpdatePostResponse> updatePost(@Valid @ModelAttribute UpdatePostRequest updatePostRequest, @PathVariable(value = "boardType") BoardType boardType, @PathVariable Long postId) {
 
@@ -69,6 +74,7 @@ public class PostController {
     /**
      * 게시물 삭제 API
      */
+    @Operation(summary = "게시물 삭제 API")
     @PatchMapping("/{postId}")
     public ResponseEntity<String> deletePost(@PathVariable Long postId) {
 
