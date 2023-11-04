@@ -39,7 +39,9 @@ public class JpaRepositoriesConfiguration {
     @Bean
     @ConfigurationProperties("spring.datasource.hikari")
     public DataSource dataSource() throws IOException {
-        DataSourceConfig dataSourceConfig = secretsManagerService.getDataSourceConfig(profile);
+        DataSourceConfig dataSourceConfig =
+//                secretsManagerService.getDataSourceConfig(profile);
+        new DataSourceConfig("mingle", "unitorhku22!", "mysql", "mingle-api-deb-db-v2.cljftsjqggfh.ap-northeast-2.rds.amazonaws.com", "3306", "mingle");
 
         HikariDataSource hikariDataSource = new HikariDataSourceUtil()
                 .createHikariDataSource("mingle-db-connection",dataSourceConfig);
