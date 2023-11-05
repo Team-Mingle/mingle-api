@@ -39,7 +39,7 @@ public class PostFacade {
     /**
      * 게시물 카테고리 목록 조회
      */
-    public List<PostCategoryResponse> getPostCategory(){
+    public List<PostCategoryResponse> getPostCategory() {
         TokenDto tokenInfo = tokenService.getTokenInfo();
         return postService.getPostCategory(tokenInfo.getMemberRole());
     }
@@ -48,12 +48,12 @@ public class PostFacade {
     public CreatePostResponse createPost(CreatePostRequest createPostRequest, BoardType boardType) {
         boolean isFileAttached = (createPostRequest.getMultipartFile() != null) && (!createPostRequest.getMultipartFile().isEmpty());
         Post post = postService.createPost(
-                                createPostRequest.getTitle(),
-                                createPostRequest.getContent(),
-                                boardType,
-                                createPostRequest.getCategoryType(),
-                                createPostRequest.isAnonymous(),
-                                isFileAttached);
+                createPostRequest.getTitle(),
+                createPostRequest.getContent(),
+                boardType,
+                createPostRequest.getCategoryType(),
+                createPostRequest.isAnonymous(),
+                isFileAttached);
         if (isFileAttached) {
             postImageService.createPostImage(post, createPostRequest.getMultipartFile());
         }
@@ -67,20 +67,20 @@ public class PostFacade {
         Long memberIdByJwt = tokenService.getTokenInfo().getMemberId();
 
         Post post = postService.updatePost(memberIdByJwt,
-                                    postId,
-                                    updatePostRequest.getTitle(),
-                                    updatePostRequest.getContent(),
-                                    updatePostRequest.isAnonymous());
+                postId,
+                updatePostRequest.getTitle(),
+                updatePostRequest.getContent(),
+                updatePostRequest.isAnonymous());
 
         postImageService.updatePostImage(post, updatePostRequest.getImageIdsToDelete(), updatePostRequest.getImagesToAdd());
 
         return UpdatePostResponse.builder()
-                        .postId(postId)
-                        .categoryType(post.getCategoryType())
-                        .title(post.getTitle())
-                        .content(post.getContent())
-                        .isAnonymous(post.getAnonymous())
-                        .build();
+                .postId(postId)
+                .categoryType(post.getCategoryType())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .isAnonymous(post.getAnonymous())
+                .build();
 
 
     }
@@ -146,6 +146,7 @@ public class PostFacade {
                 .isReported(false)
                 .build();
     }
+
     private PostResponse buildDeletedPostResponse(PostResponse.PostResponseBuilder builder, Post post) {
         return builder.title("운영규칙 위반에 따라 삭제된 글입니다.")
                 .content("사유: 이용약관 제 12조 위반")
