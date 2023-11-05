@@ -1,11 +1,9 @@
 package community.mingle.api.domain.post.controller;
 
+import community.mingle.api.domain.comment.facade.CommentFacade;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
-import community.mingle.api.domain.post.controller.response.CreatePostResponse;
-import community.mingle.api.domain.post.controller.response.PostCategoryResponse;
-import community.mingle.api.domain.post.controller.response.PostResponse;
-import community.mingle.api.domain.post.controller.response.UpdatePostResponse;
+import community.mingle.api.domain.post.controller.response.*;
 import community.mingle.api.domain.post.facade.PostFacade;
 import community.mingle.api.enums.BoardType;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +21,7 @@ import java.util.List;
 public class PostController {
 
     private final PostFacade postFacade;
+    private final CommentFacade commentFacade;
 
 
     /**
@@ -43,6 +42,16 @@ public class PostController {
     public ResponseEntity<PostResponse> postDetail(@PathVariable Long postId) {
         return new ResponseEntity<>(postFacade.getPostDetail(postId), HttpStatus.OK);
     }
+
+    /**
+     * 게시물 상세 - 댓글 API
+     */
+    @Operation(summary = "게시물 상세 - 댓글 API")
+    @GetMapping("/{postId}/comment")
+    public ResponseEntity<List<CommentResponse>> postDetailComments(@PathVariable Long postId) {
+        return new ResponseEntity<>(commentFacade.getPostDetailComments(postId), HttpStatus.OK);
+    }
+
 
 
     /**

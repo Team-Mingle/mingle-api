@@ -1,0 +1,52 @@
+databaseChangeLog:
+  - changeSet:
+      id: add anonymousId to comment table
+      author: Taehyun Kim
+      changes:
+        - addColumn:
+            tableName: comment
+            columns:
+              - column:
+                  name: anonymous_id
+                  type : BIGINT
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: create-block-member-table
+      author: your_username
+      changes:
+        - createTable:
+            tableName: block_member
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: blocked_member_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_blocked_member
+                    references: member(id)
+              - column:
+                  name: blocker_member_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_blocker_member
+                    references: member(id)
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+

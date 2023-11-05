@@ -161,5 +161,9 @@ public class PostService {
         return post;
     }
 
+    public boolean isValidPost(Post post) {
+        return !post.getStatusType().equals(ContentStatusType.DELETED) && !post.getStatusType().equals(REPORTED);
+    }
+
 }
 
