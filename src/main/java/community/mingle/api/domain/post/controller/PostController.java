@@ -4,11 +4,13 @@ import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
 import community.mingle.api.domain.post.controller.response.CreatePostResponse;
 import community.mingle.api.domain.post.controller.response.PostCategoryResponse;
+import community.mingle.api.domain.post.controller.response.PostListResponse;
 import community.mingle.api.domain.post.controller.response.UpdatePostResponse;
 import community.mingle.api.domain.post.facade.PostFacade;
 import community.mingle.api.enums.BoardType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -66,6 +68,17 @@ public class PostController {
         String response = postFacade.deletePost(postId);
 
         return ResponseEntity.ok().body(response);
+    }
+
+    /**
+     * 베스트 게시판 조회 API
+     */
+    @GetMapping("/{boardType}/best")
+    public ResponseEntity<PostListResponse> getBestPost(@PathVariable(value = "boardType") BoardType boardType, Pageable pageable) {
+
+        PostListResponse postListResponse = postFacade.getBestPost(boardType, pageable);
+
+        return ResponseEntity.ok().body(postListResponse);
     }
 
 }

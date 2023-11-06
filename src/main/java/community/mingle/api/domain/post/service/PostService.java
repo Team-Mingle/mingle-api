@@ -1,7 +1,10 @@
 package community.mingle.api.domain.post.service;
 
+import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.domain.post.controller.response.PostCategoryResponse;
 import community.mingle.api.domain.post.entity.Post;
+import community.mingle.api.domain.post.repository.PostQueryRepository;
 import community.mingle.api.domain.post.repository.PostRepository;
 import community.mingle.api.enums.BoardType;
 import community.mingle.api.enums.CategoryType;
@@ -10,6 +13,8 @@ import community.mingle.api.enums.MemberRole;
 import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +28,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
+    private final PostQueryRepository postQueryRepository;
 
 
     public List<PostCategoryResponse> getPostCategory(MemberRole memberRole) {
@@ -98,6 +105,13 @@ public class PostService {
             throw new CustomException(ErrorCode.POST_DELETED_REPORTED);
         }
         return post;
+    }
+
+    public Page<Post> findBestPostWithMemberLikeComment(BoardType boardType, Long memberId, Pageable pageable) {
+        Member viewMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        return postQueryRepository.findBestPostWithMemberLikeComment(boardType, viewMember, pageable);
+
     }
 
 }

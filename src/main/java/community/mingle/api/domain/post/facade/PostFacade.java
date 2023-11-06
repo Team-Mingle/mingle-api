@@ -4,19 +4,20 @@ import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.comment.service.CommentService;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
-import community.mingle.api.domain.post.controller.response.CreatePostResponse;
-import community.mingle.api.domain.post.controller.response.PostCategoryResponse;
-import community.mingle.api.domain.post.controller.response.UpdatePostResponse;
+import community.mingle.api.domain.post.controller.response.*;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.service.PostImageService;
 import community.mingle.api.domain.post.service.PostService;
 import community.mingle.api.dto.security.TokenDto;
 import community.mingle.api.enums.BoardType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional
@@ -93,4 +94,28 @@ public class PostFacade {
 
     }
 
-}
+
+    public PostListResponse getBestPost(BoardType boardType, Pageable pageable) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+
+        Page<Post> postPage = postService.findBestPostWithMemberLikeComment(boardType, memberId, pageable);
+
+        //TODO to be replaced with builder implemented in DEV-117
+        List<PostResponse> postResponseList = postPage.stream()
+                .map(p -> PostResponse.builder()
+                        .postId(p.getId())
+                        .title(p.getTitle())
+                        .content(p.getContent())
+                        .build())
+                .collect(Collectors.toList());
+
+        return PostListResponse.builder()
+                .boardName(boardType.name())
+                .postResponseList(postResponseList)
+                .build();
+    }
+
+
+
+
+    }
