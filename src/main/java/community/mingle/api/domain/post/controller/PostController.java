@@ -81,4 +81,16 @@ public class PostController {
         return ResponseEntity.ok().body(postListResponse);
     }
 
+    /**
+     * 최신 게시판 조회 API
+     */
+
+    @GetMapping("/{boardType}/recent")
+    public ResponseEntity<PostListResponse> getRecentPost(@PathVariable(value = "boardType") BoardType boardType) {
+
+        PostListResponse postListResponse = postFacade.getRecentPost(boardType);
+
+        return ResponseEntity.ok().body(postListResponse);
+    }
+
 }

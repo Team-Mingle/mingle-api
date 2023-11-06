@@ -115,6 +115,25 @@ public class PostFacade {
                 .build();
     }
 
+    public PostListResponse getRecentPost(BoardType boardType) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        List<Post> postList = postService.findRecentPost(boardType, memberId);
+
+        //TODO to be replaced with builder implemented in DEV-117
+        List<PostResponse> postResponseList = postList.stream()
+                .map(p -> PostResponse.builder()
+                        .postId(p.getId())
+                        .title(p.getTitle())
+                        .content(p.getContent())
+                        .build())
+                .collect(Collectors.toList());
+
+        return PostListResponse.builder()
+                .boardName(boardType.name())
+                .postResponseList(postResponseList)
+                .build();
+    }
+
 
 
 

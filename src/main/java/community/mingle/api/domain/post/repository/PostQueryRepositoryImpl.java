@@ -69,4 +69,29 @@ public class PostQueryRepositoryImpl implements PostQueryRepository{
         return new PageImpl<>(postList, pageable, totalCount);
 
     }
+
+    @Override
+    public List<Post> findRecentPost(BoardType boardType, Member viewMember) {
+        List<Post> postList = jpaQueryFactory
+                .select(post)
+                .from(post)
+                .join(post.member, member)
+                .where(
+                        post.statusType.eq(ContentStatusType.ACTIVE),
+                        post.boardType.eq(boardType),
+                        post.member.id.notIn (
+                                JPAExpressions
+                                        .select(blockMember.blockedMember.id)
+                                        .from(blockMember)
+                                        .where(blockMember.blockerMember.id.eq(viewMember.getId()))
+                        )
+                )
+                .orderBy(post.createdAt.desc())
+                .offset(0)
+                .limit(4)
+                .fetch();
+
+        return postList;
+
+    }
 }

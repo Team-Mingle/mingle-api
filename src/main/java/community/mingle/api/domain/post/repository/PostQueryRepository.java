@@ -10,4 +10,5 @@ import java.util.List;
 
 public interface PostQueryRepository {
     Page<Post> findBestPostWithMemberLikeComment (BoardType boardType, Member viewMember, Pageable pageable);
+    List<Post> findRecentPost(BoardType boardType, Member viewMember);
 }
