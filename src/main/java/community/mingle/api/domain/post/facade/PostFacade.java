@@ -2,13 +2,16 @@ package community.mingle.api.domain.post.facade;
 
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.comment.service.CommentService;
+import community.mingle.api.domain.like.entity.PostLike;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
+import community.mingle.api.domain.post.controller.response.CreatePostLikeResponse;
 import community.mingle.api.domain.post.controller.response.CreatePostResponse;
 import community.mingle.api.domain.post.controller.response.PostCategoryResponse;
 import community.mingle.api.domain.post.controller.response.UpdatePostResponse;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.service.PostImageService;
+import community.mingle.api.domain.post.service.PostLikeService;
 import community.mingle.api.domain.post.service.PostService;
 import community.mingle.api.dto.security.TokenDto;
 import community.mingle.api.enums.BoardType;
@@ -24,6 +27,7 @@ import java.util.List;
 public class PostFacade {
     private final PostService postService;
     private final PostImageService postImageService;
+    private final PostLikeService postLikeService;
     private final TokenService tokenService;
     private final CommentService commentService;
 
@@ -90,7 +94,12 @@ public class PostFacade {
 
         String response = "게시물 삭제에 성공하였습니다";
         return response;
+    }
 
+    @Transactional
+    public CreatePostLikeResponse createPostLike(Long postId, Long memberId) {
+        postLikeService.create(postId, memberId);
+        return new CreatePostLikeResponse(true);
     }
 
 }
