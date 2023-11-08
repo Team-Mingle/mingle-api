@@ -1,5 +1,6 @@
 package community.mingle.api.domain.post.entity;
 
+import community.mingle.api.domain.comment.entity.Comment;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.entitybase.AuditLoggingBase;
 import community.mingle.api.enums.BoardType;
@@ -16,6 +17,8 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -73,6 +76,8 @@ public class Post extends AuditLoggingBase {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @OneToMany(mappedBy = "post")
+    private List<Comment> commentList = new ArrayList<>();
 
 
     @Builder

@@ -92,7 +92,7 @@ public class PostService {
 
     public Post findValidPost(Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_EXIST));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         if (post.getStatusType().equals(ContentStatusType.DELETED) || post.getStatusType().equals(ContentStatusType.REPORTED)) {
             throw new CustomException(ErrorCode.POST_DELETED_REPORTED);

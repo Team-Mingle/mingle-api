@@ -21,10 +21,12 @@ public enum ErrorCode {
     TOKEN_EXPIRED(401, "2000", "토큰이 만료되었습니다."),
     AUTHENTICATION_FAILED(401, "2001", "잘못된 인증 정보입니다."),
 
-    POST_NOT_EXIST(400,"2200", "게시물이 존재하지 않습니다." ),
+    POST_NOT_FOUND(400,"2200", "게시물이 존재하지 않습니다." ),
     POST_DELETED_REPORTED(400,"2201", "삭제되거나 신고된 게시물입니다." ),
 
     MODIFY_NOT_AUTHORIZED(400, "2205", "수정 권한이 없습니다"),
+
+    FAIL_TO_CREATE_COMMENT(400,"2206", "댓글을 생성할 수 없습니다." ),
 
     FAIL_TO_REISSUE_TOKEN(401, "2002", "토큰 재발급에 실패하였습니다"),
 

@@ -55,4 +55,7 @@ public class Comment extends AuditLoggingBase {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @Column(name = "anonymous_id")
+    private Long anonymousId;
+
 }
