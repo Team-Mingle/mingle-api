@@ -1,5 +1,7 @@
 package community.mingle.api.domain.post.service;
 
+import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.domain.post.controller.response.PostCategoryResponse;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.repository.PostRepository;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
 
 
     public List<PostCategoryResponse> getPostCategory(MemberRole memberRole) {
@@ -47,10 +50,11 @@ public class PostService {
             BoardType boardType,
             CategoryType categoryType,
             boolean anonymous,
-            boolean fileAttached
+            boolean fileAttached,
+            Long memberId
     ) {
         //TODO 멤버세팅
-//        Member member = memberRepository.find(memberId);
+        Member member = memberRepository.findById(memberId).orElseThrow();
         Post post = Post.builder()
                 .title(title)
                 .content(content)
@@ -58,6 +62,8 @@ public class PostService {
                 .categoryType(categoryType)
                 .anonymous(anonymous)
                 .fileAttached(fileAttached)
+                .member(member)
+                .statusType(ContentStatusType.ACTIVE)
                 .build();
 
         return postRepository.save(post);

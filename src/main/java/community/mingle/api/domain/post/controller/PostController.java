@@ -45,8 +45,8 @@ public class PostController {
     @PostMapping("/{boardType}")
     public ResponseEntity<CreatePostResponse> createPost(@Valid @ModelAttribute CreatePostRequest createPostRequest, @PathVariable(value = "boardType") BoardType boardType) {
 
-        //TODO ENUM 대소문자 및 일치하는 값 없는 경우 예외처리
-        CreatePostResponse createPostResponse = postFacade.createPost(createPostRequest, boardType);
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        CreatePostResponse createPostResponse = postFacade.createPost(createPostRequest, boardType, memberId);
         return ResponseEntity.ok().body(createPostResponse);
 
     }

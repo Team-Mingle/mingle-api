@@ -40,7 +40,7 @@ public class PostFacade {
     }
 
     @Transactional
-    public CreatePostResponse createPost(CreatePostRequest createPostRequest, BoardType boardType) {
+    public CreatePostResponse createPost(CreatePostRequest createPostRequest, BoardType boardType, Long memberId) {
         boolean isFileAttached = (createPostRequest.getMultipartFile() != null) && (!createPostRequest.getMultipartFile().isEmpty());
         Post post = postService.createPost(
                                 createPostRequest.getTitle(),
@@ -48,7 +48,9 @@ public class PostFacade {
                                 boardType,
                                 createPostRequest.getCategoryType(),
                                 createPostRequest.getIsAnonymous(),
-                                isFileAttached);
+                                isFileAttached,
+                                memberId
+        );
         if (isFileAttached) {
             postImageService.createPostImage(post, createPostRequest.getMultipartFile());
         }
