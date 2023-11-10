@@ -18,11 +18,13 @@ import community.mingle.api.enums.ContentStatusType;
 import community.mingle.api.enums.ContentType;
 import community.mingle.api.enums.MemberRole;
 import community.mingle.api.global.exception.CustomException;
+import community.mingle.api.enums.MemberRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static community.mingle.api.global.exception.ErrorCode.POST_NOT_EXIST;
 import static community.mingle.api.global.utils.DateTimeConverter.convertToDateAndTime;
@@ -36,23 +38,26 @@ public class PostFacade {
     private final TokenService tokenService;
     private final CommentService commentService;
 
-    /**
-     * 게시물 카테고리 목록 조회
-     */
     public List<PostCategoryResponse> getPostCategory(){
-        TokenDto tokenInfo = tokenService.getTokenInfo();
-        return postService.getPostCategory(tokenInfo.getMemberRole());
+        MemberRole memberRole = tokenService.getTokenInfo().getMemberRole();
+
+        return postService.getCategoriesByMemberRole(memberRole).stream()
+                .map(PostCategoryResponse::new)
+                .toList();
     }
+
 
     @Transactional
     public CreatePostResponse createPost(CreatePostRequest createPostRequest, BoardType boardType) {
         boolean isFileAttached = (createPostRequest.getMultipartFile() != null) && (!createPostRequest.getMultipartFile().isEmpty());
+        Long memberId = tokenService.getTokenInfo().getMemberId();
         Post post = postService.createPost(
+                                memberId,
                                 createPostRequest.getTitle(),
                                 createPostRequest.getContent(),
                                 boardType,
                                 createPostRequest.getCategoryType(),
-                                createPostRequest.isAnonymous(),
+                                createPostRequest.getIsAnonymous(),
                                 isFileAttached);
         if (isFileAttached) {
             postImageService.createPostImage(post, createPostRequest.getMultipartFile());

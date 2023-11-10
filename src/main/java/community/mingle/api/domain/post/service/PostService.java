@@ -1,6 +1,8 @@
 package community.mingle.api.domain.post.service;
 
 import community.mingle.api.domain.comment.entity.Comment;
+import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.domain.post.controller.response.PostCategoryResponse;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.entity.PostImage;
@@ -37,6 +39,7 @@ public class PostService {
                 .map(PostCategoryResponse::new)
                 .collect(Collectors.toList());
     }
+    private final MemberRepository memberRepository;
 
     public List<CategoryType> getCategoriesByMemberRole(MemberRole memberRole) {
         return switch (memberRole) {
@@ -49,6 +52,7 @@ public class PostService {
 
     @Transactional
     public Post createPost(
+            Long memberId,
             String title,
             String content,
             BoardType boardType,
@@ -56,16 +60,18 @@ public class PostService {
             boolean anonymous,
             boolean fileAttached
     ) {
-        //TODO 멤버세팅
-//        Member member = memberRepository.find(memberId);
+        Member member = memberRepository.findById(memberId).orElseThrow(()->new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         Post post = Post.builder()
                 .title(title)
                 .content(content)
                 .boardType(boardType)
                 .categoryType(categoryType)
                 .anonymous(anonymous)
+                .member(member)
+                .statusType(ContentStatusType.ACTIVE)
                 .fileAttached(fileAttached)
                 .build();
+
         return postRepository.save(post);
     }
 
