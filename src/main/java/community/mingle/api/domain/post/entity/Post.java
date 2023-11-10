@@ -1,5 +1,7 @@
 package community.mingle.api.domain.post.entity;
 
+import community.mingle.api.domain.comment.entity.Comment;
+import community.mingle.api.domain.like.entity.PostLike;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.entitybase.AuditLoggingBase;
 import community.mingle.api.enums.BoardType;
@@ -16,6 +18,8 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -73,6 +77,17 @@ public class Post extends AuditLoggingBase {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @OneToMany(mappedBy = "post")
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post")
+    private List<PostLike> postLikes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post")
+    private List<PostScrap> postScraps = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post")
+    private List<PostImage> postImages = new ArrayList<>();
 
 
     @Builder
@@ -94,6 +109,10 @@ public class Post extends AuditLoggingBase {
     public void deletePost() {
         this.deletedAt = LocalDateTime.now();
         this.statusType = ContentStatusType.INACTIVE;
+    }
+
+    public void updateView() {
+        this.viewCount += 1;
     }
 
 }

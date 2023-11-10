@@ -4,6 +4,7 @@ import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
 import community.mingle.api.domain.post.controller.response.CreatePostResponse;
 import community.mingle.api.domain.post.controller.response.PostCategoryResponse;
+import community.mingle.api.domain.post.controller.response.PostResponse;
 import community.mingle.api.domain.post.controller.response.UpdatePostResponse;
 import community.mingle.api.domain.post.facade.PostFacade;
 import community.mingle.api.enums.BoardType;
@@ -31,6 +32,14 @@ public class PostController {
         return new ResponseEntity<>(postFacade.getPostCategory(), HttpStatus.OK);
     }
 
+
+    /**
+     * 게시물 상세 API
+     */
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostResponse> postDetail(@PathVariable Long postId) {
+        return new ResponseEntity<>(postFacade.getPostDetail(postId), HttpStatus.OK);
+    }
 
 
     /**

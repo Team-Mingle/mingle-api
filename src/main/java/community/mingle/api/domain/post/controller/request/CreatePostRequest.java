@@ -2,6 +2,7 @@ package community.mingle.api.domain.post.controller.request;
 
 import community.mingle.api.enums.CategoryType;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +14,7 @@ import java.util.List;
 @Setter
 public class CreatePostRequest {
 
-    @NotBlank(message = "카테고리를 입력해주세요.")
+    @NotNull(message = "카테고리를 입력해주세요.")
     private CategoryType categoryType;
 
     @NotBlank(message = "제목을 입력해주세요.")
@@ -23,8 +24,8 @@ public class CreatePostRequest {
     @NotBlank(message = "본문을 입력해주세요.")
     private String content;
 
-    @NotBlank(message = "익명여부를 입력해주세요.")
-    private Boolean isAnonymous;
+    @NotNull(message = "익명여부를 입력해주세요.")
+    private boolean isAnonymous;
 
     private List<MultipartFile> multipartFile;
 
