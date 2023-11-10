@@ -6,6 +6,9 @@ spring:
 #logging:
 #  level:
 #    root: debug
+  servlet:
+    multipart:
+      max-file-size: 50MB
 
 logging.level:
   org.hibernate.SQL: debug
