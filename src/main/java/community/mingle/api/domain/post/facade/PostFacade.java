@@ -13,10 +13,7 @@ import community.mingle.api.domain.post.service.PostImageService;
 import community.mingle.api.domain.post.service.PostService;
 import community.mingle.api.domain.post.service.PostService.PostStatusDto;
 import community.mingle.api.dto.security.TokenDto;
-import community.mingle.api.enums.BoardType;
-import community.mingle.api.enums.ContentStatusType;
-import community.mingle.api.enums.ContentType;
-import community.mingle.api.enums.MemberRole;
+import community.mingle.api.enums.*;
 import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.enums.MemberRole;
 import lombok.RequiredArgsConstructor;
@@ -98,15 +95,11 @@ public class PostFacade {
         commentService.deleteComment(postId);
         postImageService.deletePostImage(postId);
 
-        String response = "게시물 삭제에 성공하였습니다";
-        return response;
+        return "게시물 삭제에 성공하였습니다";
 
     }
 
 
-    /**
-     * 게시물 상세 조회
-     */
     @Transactional
     public PostResponse getPostDetail(Long postId) {
         TokenDto tokenInfo = tokenService.getTokenInfo();
@@ -119,7 +112,7 @@ public class PostFacade {
 
         return switch (postStatus) {
             case INACTIVE -> throw new CustomException(POST_NOT_EXIST);
-            case DELETED -> buildDeletedPostResponse(basePostResponse, post);
+            case DELETED -> buildDeletedPostResponse(basePostResponse);
             case REPORTED -> buildReportedPostResponse(basePostResponse, post);
             default -> buildDefaultPostResponse(basePostResponse, post, postStatusDto); // ACTIVE, NOTIFIED
         };
@@ -151,7 +144,7 @@ public class PostFacade {
                 .isReported(false)
                 .build();
     }
-    private PostResponse buildDeletedPostResponse(PostResponse.PostResponseBuilder builder, Post post) {
+    private PostResponse buildDeletedPostResponse(PostResponse.PostResponseBuilder builder) {
         return builder.title("운영규칙 위반에 따라 삭제된 글입니다.")
                 .content("사유: 이용약관 제 12조 위반")
                 .isReported(true)
@@ -159,9 +152,9 @@ public class PostFacade {
     }
 
     private PostResponse buildReportedPostResponse(PostResponse.PostResponseBuilder builder, Post post) {
-        String reportedReason = postService.findReportedPostReason(post.getId(), ContentType.POST);
+        ReportType reportType = postService.findReportedPostReason(post.getId(), ContentType.POST);
         return builder.title("다른 사용자들의 신고에 의해 삭제된 글 입니다.")
-                .content("사유: " + reportedReason)
+                .content("사유: " + reportType.getDescription())
                 .isReported(true)
                 .build();
     }

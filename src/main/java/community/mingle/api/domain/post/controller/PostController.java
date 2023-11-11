@@ -45,17 +45,11 @@ public class PostController {
 
     }
 
-
-    /**
-     * 게시물 상세 API
-     */
+    @Operation(summary = "게시물 상세 API")
     @GetMapping("/{postId}")
     public ResponseEntity<PostResponse> postDetail(@PathVariable Long postId) {
         return new ResponseEntity<>(postFacade.getPostDetail(postId), HttpStatus.OK);
     }
-
-
-
 
 
     /**

@@ -90,19 +90,17 @@ public class PostService {
     public record PostStatusDto(boolean isMyPost, boolean isLiked, boolean isScraped, boolean isBlinded)  {
     }
 
-    public String findReportedPostReason(Long postId, ContentType tableType) {
+    public ReportType findReportedPostReason(Long postId, ContentType tableType) {
         List<Report> reportedPost = reportRepository.findAllByContentIdAndContentType(postId, tableType);
 
         if (reportedPost == null || reportedPost.isEmpty()) return null;
 
-        ReportType mostReportedReason = reportedPost.stream()
+        return reportedPost.stream()
                 .collect(Collectors.groupingBy(Report::getReportType, Collectors.counting()))
                 .entrySet().stream()
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
                 .orElse(null);
-
-        return (mostReportedReason != null) ? mostReportedReason.getDescription() : "욕설/인신공격/혐오/비하";
     }
     public String calculateNickname(Post post) {
         if (post.getAnonymous()) {
