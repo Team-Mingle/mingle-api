@@ -32,13 +32,6 @@ public class PostService {
     private final PostLikeRepository postLikeRepository;
     private final PostScrapRepository postScrapRepository;
     private final ReportRepository reportRepository;
-
-
-    public List<PostCategoryResponse> getPostCategory(MemberRole memberRole) {
-        return getCategoriesByMemberRole(memberRole).stream()
-                .map(PostCategoryResponse::new)
-                .collect(Collectors.toList());
-    }
     private final MemberRepository memberRepository;
 
     public List<CategoryType> getCategoriesByMemberRole(MemberRole memberRole) {
