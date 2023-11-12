@@ -1,7 +1,6 @@
 package community.mingle.api.domain.member.service;
 
 import community.mingle.api.domain.auth.controller.response.DomainResponse;
-import community.mingle.api.domain.member.entity.Country;
 import community.mingle.api.domain.member.entity.University;
 import community.mingle.api.domain.member.repository.UniversityRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +15,8 @@ import java.util.stream.Collectors;
 public class UniversityService {
     private final UniversityRepository universityRepository;
 
-    public List<DomainResponse> getDomains() {
-        List<University> domains = universityRepository.findAll();
+    public List<DomainResponse> getDomains(String countryName) {
+        List<University> domains = universityRepository.findAllByCountryName(countryName);
         return domains.stream()
                 .map(university -> new DomainResponse(university.getEmailDomain()))
                 .collect(Collectors.toList());

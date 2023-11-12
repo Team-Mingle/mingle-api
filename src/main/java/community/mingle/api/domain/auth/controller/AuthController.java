@@ -44,9 +44,9 @@ public class AuthController {
     }
 
     @Operation(summary = "학교 및 도메인 리스트 불러오기 api")
-    @GetMapping("/email-domains")
-    public ResponseEntity<List<DomainResponse>> getEmailDomains() {
-        List<DomainResponse> domainResponses = universityService.getDomains();
+    @GetMapping("/email-domains/{countryName}")
+    public ResponseEntity<List<DomainResponse>> getEmailDomains(@PathVariable String countryName) {
+        List<DomainResponse> domainResponses = universityService.getDomains(countryName);
         return ResponseEntity.ok().body(domainResponses);
     }
 
