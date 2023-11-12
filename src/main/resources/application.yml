@@ -3,12 +3,12 @@ server:
 spring:
   liquibase:
     change-log: db/db.changelog-main.yml
-#logging:
-#  level:
-#    root: debug
   servlet:
     multipart:
       max-file-size: 50MB
+logging:
+  level:
+    org.springframework.security: DEBUG
 
 logging.level:
   org.hibernate.SQL: debug

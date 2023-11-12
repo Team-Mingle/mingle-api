@@ -130,11 +130,11 @@ public class PostService {
 
 
     @Transactional
-    public Post updatePost(Long memberIdByJwt, Long postId, String title, String content, Boolean isAnonymous) {
+    public Post updatePost(Long memberId, Long postId, String title, String content, Boolean isAnonymous) {
 
         Post post = findValidPost(postId);
 
-        if (!Objects.equals(memberIdByJwt, post.getMember().getId())) {
+        if (!Objects.equals(memberId, post.getMember().getId())) {
             throw new CustomException(ErrorCode.MODIFY_NOT_AUTHORIZED);
         }
 

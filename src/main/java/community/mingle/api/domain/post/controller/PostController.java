@@ -4,7 +4,7 @@ import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
 import community.mingle.api.domain.post.controller.response.CreatePostResponse;
 import community.mingle.api.domain.post.controller.response.PostCategoryResponse;
-import community.mingle.api.domain.post.controller.response.PostResponse;
+import community.mingle.api.domain.post.controller.response.PostDetailResponse;
 import community.mingle.api.domain.post.controller.response.UpdatePostResponse;
 import community.mingle.api.domain.post.facade.PostFacade;
 import community.mingle.api.enums.BoardType;
@@ -36,31 +36,27 @@ public class PostController {
     }
 
     @Operation(summary = "게시물 생성 API")
-    @PostMapping(path = "/{boardType}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/{boardType}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CreatePostResponse> createPost(@Valid @ModelAttribute CreatePostRequest createPostRequest, @PathVariable(value = "boardType") BoardType boardType) {
 
         //TODO ENUM 대소문자 및 일치하는 값 없는 경우 예외처리
         CreatePostResponse createPostResponse = postFacade.createPost(createPostRequest, boardType);
-        return ResponseEntity.ok().body(createPostResponse);
-
+        return new ResponseEntity<>(createPostResponse, HttpStatus.OK);
     }
 
     @Operation(summary = "게시물 상세 API")
     @GetMapping("/{postId}")
-    public ResponseEntity<PostResponse> postDetail(@PathVariable Long postId) {
+    public ResponseEntity<PostDetailResponse> postDetail(@PathVariable Long postId) {
         return new ResponseEntity<>(postFacade.getPostDetail(postId), HttpStatus.OK);
     }
 
 
-    /**
-     * 게시물 수정 API
-     */
-    @PatchMapping("/{boardType}/{postId}")
-    public ResponseEntity<UpdatePostResponse> updatePost(@Valid @ModelAttribute UpdatePostRequest updatePostRequest, @PathVariable(value = "boardType") BoardType boardType, @PathVariable Long postId) {
+    @Operation(summary = "게시물 수정 API")
+    @PatchMapping(path ="/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UpdatePostResponse> updatePost(@Valid @ModelAttribute UpdatePostRequest updatePostRequest, @PathVariable Long postId) {
 
-        UpdatePostResponse updatePostResponse = postFacade.updatePost(updatePostRequest, boardType, postId);
+        UpdatePostResponse updatePostResponse = postFacade.updatePost(updatePostRequest, postId);
         return ResponseEntity.ok().body(updatePostResponse);
-
     }
 
     /**

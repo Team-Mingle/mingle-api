@@ -6,7 +6,7 @@ import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
 import community.mingle.api.domain.post.controller.response.CreatePostResponse;
 import community.mingle.api.domain.post.controller.response.PostCategoryResponse;
-import community.mingle.api.domain.post.controller.response.PostResponse;
+import community.mingle.api.domain.post.controller.response.PostDetailResponse;
 import community.mingle.api.domain.post.controller.response.UpdatePostResponse;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.service.PostImageService;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static community.mingle.api.global.exception.ErrorCode.POST_NOT_EXIST;
 import static community.mingle.api.global.utils.DateTimeConverter.convertToDateAndTime;
@@ -65,10 +64,11 @@ public class PostFacade {
     }
 
     @Transactional
-    public UpdatePostResponse updatePost(UpdatePostRequest updatePostRequest, BoardType boardType, Long postId) {
-        Long memberIdByJwt = tokenService.getTokenInfo().getMemberId();
+    public UpdatePostResponse updatePost(UpdatePostRequest updatePostRequest, Long postId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
 
-        Post post = postService.updatePost(memberIdByJwt,
+        Post post = postService.updatePost(
+                                    memberId,
                                     postId,
                                     updatePostRequest.getTitle(),
                                     updatePostRequest.getContent(),
@@ -101,12 +101,12 @@ public class PostFacade {
 
 
     @Transactional
-    public PostResponse getPostDetail(Long postId) {
+    public PostDetailResponse getPostDetail(Long postId) {
         TokenDto tokenInfo = tokenService.getTokenInfo();
         Post post = postService.getPost(postId);
         PostStatusDto postStatusDto = postService.getPostStatus(post, tokenInfo.getMemberId());
 
-        PostResponse.PostResponseBuilder basePostResponse = createBasePostResponseBuilder(post);
+        PostDetailResponse.PostDetailResponseBuilder basePostResponse = createBasePostDetailResponseBuilder(post);
         ContentStatusType postStatus = post.getStatusType();
         postService.updateView(post);
 
@@ -118,9 +118,9 @@ public class PostFacade {
         };
     }
 
-    private PostResponse.PostResponseBuilder createBasePostResponseBuilder(Post post) {
+    private PostDetailResponse.PostDetailResponseBuilder createBasePostDetailResponseBuilder(Post post) {
         String nickName = postService.calculateNickname(post);
-        return PostResponse.builder()
+        return PostDetailResponse.builder()
                 .postId(post.getId())
                 .nickname(nickName)
                 .isFileAttached(post.getFileAttached())
@@ -130,7 +130,7 @@ public class PostFacade {
                 .createdAt(convertToDateAndTime(post.getCreatedAt()));
     }
 
-    private PostResponse buildDefaultPostResponse(PostResponse.PostResponseBuilder builder, Post post, PostStatusDto postStatusDto) {
+    private PostDetailResponse buildDefaultPostResponse(PostDetailResponse.PostDetailResponseBuilder builder, Post post, PostStatusDto postStatusDto) {
         List<String> imageUrls = postService.collectPostImageUrls(post);
         return builder.title(post.getTitle())
                 .content(post.getContent())
@@ -144,14 +144,14 @@ public class PostFacade {
                 .isReported(false)
                 .build();
     }
-    private PostResponse buildDeletedPostResponse(PostResponse.PostResponseBuilder builder) {
+    private PostDetailResponse buildDeletedPostResponse(PostDetailResponse.PostDetailResponseBuilder builder) {
         return builder.title("운영규칙 위반에 따라 삭제된 글입니다.")
                 .content("사유: 이용약관 제 12조 위반")
                 .isReported(true)
                 .build();
     }
 
-    private PostResponse buildReportedPostResponse(PostResponse.PostResponseBuilder builder, Post post) {
+    private PostDetailResponse buildReportedPostResponse(PostDetailResponse.PostDetailResponseBuilder builder, Post post) {
         ReportType reportType = postService.findReportedPostReason(post.getId(), ContentType.POST);
         return builder.title("다른 사용자들의 신고에 의해 삭제된 글 입니다.")
                 .content("사유: " + reportType.getDescription())
