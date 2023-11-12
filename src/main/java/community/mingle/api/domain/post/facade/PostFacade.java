@@ -4,10 +4,7 @@ import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.comment.service.CommentService;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
-import community.mingle.api.domain.post.controller.response.CreatePostResponse;
-import community.mingle.api.domain.post.controller.response.PostCategoryResponse;
-import community.mingle.api.domain.post.controller.response.PostDetailResponse;
-import community.mingle.api.domain.post.controller.response.UpdatePostResponse;
+import community.mingle.api.domain.post.controller.response.*;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.service.PostImageService;
 import community.mingle.api.domain.post.service.PostService;
@@ -88,15 +85,16 @@ public class PostFacade {
     }
 
     @Transactional
-    public String deletePost(Long postId) {
-        Long memberIdByJwt = tokenService.getTokenInfo().getMemberId();
+    public DeletePostResponse deletePost(Long postId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
 
-        postService.deletePost(memberIdByJwt, postId);
+        postService.deletePost(memberId, postId);
         commentService.deleteComment(postId);
         postImageService.deletePostImage(postId);
 
-        return "게시물 삭제에 성공하였습니다";
-
+        return DeletePostResponse.builder()
+                .deleted(true)
+                .build();
     }
 
 

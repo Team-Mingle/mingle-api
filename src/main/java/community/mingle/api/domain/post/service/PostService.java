@@ -132,7 +132,7 @@ public class PostService {
     @Transactional
     public Post updatePost(Long memberId, Long postId, String title, String content, Boolean isAnonymous) {
 
-        Post post = findValidPost(postId);
+        Post post = getValidPost(postId);
 
         if (!Objects.equals(memberId, post.getMember().getId())) {
             throw new CustomException(ErrorCode.MODIFY_NOT_AUTHORIZED);
@@ -146,16 +146,16 @@ public class PostService {
     @Transactional
     public void deletePost(Long memberIdByJwt, Long postId) {
 
-        Post post = findValidPost(postId);
+        Post post = getValidPost(postId);
 
         if (!Objects.equals(memberIdByJwt, post.getMember().getId())) {
             throw new CustomException(ErrorCode.MODIFY_NOT_AUTHORIZED);
         }
 
-        post.deletePost();
+        postRepository.delete(post);
     }
 
-    public Post findValidPost(Long postId) {
+    public Post getValidPost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(POST_NOT_EXIST));
 

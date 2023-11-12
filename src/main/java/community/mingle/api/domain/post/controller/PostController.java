@@ -2,10 +2,7 @@ package community.mingle.api.domain.post.controller;
 
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
-import community.mingle.api.domain.post.controller.response.CreatePostResponse;
-import community.mingle.api.domain.post.controller.response.PostCategoryResponse;
-import community.mingle.api.domain.post.controller.response.PostDetailResponse;
-import community.mingle.api.domain.post.controller.response.UpdatePostResponse;
+import community.mingle.api.domain.post.controller.response.*;
 import community.mingle.api.domain.post.facade.PostFacade;
 import community.mingle.api.enums.BoardType;
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,15 +56,13 @@ public class PostController {
         return ResponseEntity.ok().body(updatePostResponse);
     }
 
-    /**
-     * 게시물 삭제 API
-     */
-    @PatchMapping("/{postId}")
-    public ResponseEntity<String> deletePost(@PathVariable Long postId) {
+    @Operation(summary = "게시물 삭제 API")
+    @PatchMapping("/delete/{postId}")
+    public ResponseEntity<DeletePostResponse> deletePost(@PathVariable Long postId) {
 
-        String response = postFacade.deletePost(postId);
+        DeletePostResponse deletePostResponse = postFacade.deletePost(postId);
 
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok().body(deletePostResponse);
     }
 
 }

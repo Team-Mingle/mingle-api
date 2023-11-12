@@ -23,7 +23,7 @@ import java.util.List;
 @Entity
 @SuperBuilder
 @Where(clause = "deleted_at IS NULL")
-@SQLDelete(sql = "UPDATE post SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLDelete(sql = "UPDATE post SET deleted_at = CURRENT_TIMESTAMP, status = 'INACTIVE' WHERE id = ?")
 @Table(name = "post")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -95,10 +95,10 @@ public class Post extends AuditLoggingBase {
         this.anonymous = isAnonymous;
     }
 
-    public void deletePost() {
-        this.deletedAt = LocalDateTime.now();
-        this.statusType = ContentStatusType.INACTIVE;
-    }
+//    public void deletePost() {
+//        this.deletedAt = LocalDateTime.now();
+//        this.statusType = ContentStatusType.INACTIVE;
+//    }
 
     public void updateView() {
         this.viewCount += 1;
