@@ -3,7 +3,6 @@ package community.mingle.api.domain.post.service;
 import community.mingle.api.domain.comment.entity.Comment;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.repository.MemberRepository;
-import community.mingle.api.domain.post.controller.response.PostCategoryResponse;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.entity.PostImage;
 import community.mingle.api.domain.post.repository.PostLikeRepository;
