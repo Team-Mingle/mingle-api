@@ -10,10 +10,8 @@ import community.mingle.api.enums.ContentStatusType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -23,10 +21,12 @@ import java.util.List;
 
 @Getter
 @Entity
+@SuperBuilder
 @Where(clause = "deleted_at IS NULL")
-@SQLDelete(sql = "UPDATE post SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLDelete(sql = "UPDATE post SET deleted_at = CURRENT_TIMESTAMP, status = 'INACTIVE' WHERE id = ?")
 @Table(name = "post")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Post extends AuditLoggingBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -89,27 +89,16 @@ public class Post extends AuditLoggingBase {
     @OneToMany(mappedBy = "post")
     private List<PostImage> postImages = new ArrayList<>();
 
-
-    @Builder
-    public Post(String title, String content, BoardType boardType, CategoryType categoryType, boolean anonymous, boolean fileAttached) {
-        this.title = title;
-        this.content = content;
-        this.boardType = boardType;
-        this.categoryType = categoryType;
-        this.anonymous = anonymous;
-        this.fileAttached = fileAttached;
-    }
-
     public void updatePost (String title, String content, boolean isAnonymous){
         this.title = title;
         this.content = content;
         this.anonymous = isAnonymous;
     }
 
-    public void deletePost() {
-        this.deletedAt = LocalDateTime.now();
-        this.statusType = ContentStatusType.INACTIVE;
-    }
+//    public void deletePost() {
+//        this.deletedAt = LocalDateTime.now();
+//        this.statusType = ContentStatusType.INACTIVE;
+//    }
 
     public void updateView() {
         this.viewCount += 1;

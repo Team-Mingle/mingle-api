@@ -18,7 +18,7 @@ public class PostImageService {
     private final PostImageRepository postImageRepository;
 
     @Transactional
-    public List<PostImage> createPostImage(Post post, List<MultipartFile> images) {
+    public void createPostImage(Post post, List<MultipartFile> images) {
         List<PostImage> postImages = new ArrayList<>();
 
         //TODO image url 설정하기
@@ -30,7 +30,7 @@ public class PostImageService {
             postImages.add(postImage);
         }
 
-        return postImageRepository.saveAll(postImages);
+        postImageRepository.saveAll(postImages);
     }
 
     @Transactional

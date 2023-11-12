@@ -4,20 +4,15 @@ import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.comment.service.CommentService;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
-import community.mingle.api.domain.post.controller.response.CreatePostResponse;
-import community.mingle.api.domain.post.controller.response.PostCategoryResponse;
-import community.mingle.api.domain.post.controller.response.PostResponse;
-import community.mingle.api.domain.post.controller.response.UpdatePostResponse;
+import community.mingle.api.domain.post.controller.response.*;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.service.PostImageService;
 import community.mingle.api.domain.post.service.PostService;
 import community.mingle.api.domain.post.service.PostService.PostStatusDto;
 import community.mingle.api.dto.security.TokenDto;
-import community.mingle.api.enums.BoardType;
-import community.mingle.api.enums.ContentStatusType;
-import community.mingle.api.enums.ContentType;
-import community.mingle.api.enums.MemberRole;
+import community.mingle.api.enums.*;
 import community.mingle.api.global.exception.CustomException;
+import community.mingle.api.enums.MemberRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,24 +31,29 @@ public class PostFacade {
     private final TokenService tokenService;
     private final CommentService commentService;
 
-    /**
-     * 게시물 카테고리 목록 조회
-     */
-    public List<PostCategoryResponse> getPostCategory() {
-        TokenDto tokenInfo = tokenService.getTokenInfo();
-        return postService.getPostCategory(tokenInfo.getMemberRole());
+
+    public List<PostCategoryResponse> getPostCategory(){
+        MemberRole memberRole = tokenService.getTokenInfo().getMemberRole();
+
+        return postService.getCategoriesByMemberRole(memberRole).stream()
+                .map(PostCategoryResponse::new)
+                .toList();
     }
+
 
     @Transactional
     public CreatePostResponse createPost(CreatePostRequest createPostRequest, BoardType boardType) {
         boolean isFileAttached = (createPostRequest.getMultipartFile() != null) && (!createPostRequest.getMultipartFile().isEmpty());
+        Long memberId = tokenService.getTokenInfo().getMemberId();
         Post post = postService.createPost(
-                createPostRequest.getTitle(),
-                createPostRequest.getContent(),
-                boardType,
-                createPostRequest.getCategoryType(),
-                createPostRequest.isAnonymous(),
-                isFileAttached);
+
+                                memberId,
+                                createPostRequest.getTitle(),
+                                createPostRequest.getContent(),
+                                boardType,
+                                createPostRequest.getCategoryType(),
+                                createPostRequest.getIsAnonymous(),
+                                isFileAttached);
         if (isFileAttached) {
             postImageService.createPostImage(post, createPostRequest.getMultipartFile());
         }
@@ -63,14 +63,16 @@ public class PostFacade {
     }
 
     @Transactional
-    public UpdatePostResponse updatePost(UpdatePostRequest updatePostRequest, BoardType boardType, Long postId) {
-        Long memberIdByJwt = tokenService.getTokenInfo().getMemberId();
+    public UpdatePostResponse updatePost(UpdatePostRequest updatePostRequest, Long postId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
 
-        Post post = postService.updatePost(memberIdByJwt,
-                postId,
-                updatePostRequest.getTitle(),
-                updatePostRequest.getContent(),
-                updatePostRequest.isAnonymous());
+
+        Post post = postService.updatePost(
+                                    memberId,
+                                    postId,
+                                    updatePostRequest.getTitle(),
+                                    updatePostRequest.getContent(),
+                                    updatePostRequest.isAnonymous());
 
         postImageService.updatePostImage(post, updatePostRequest.getImageIdsToDelete(), updatePostRequest.getImagesToAdd());
 
@@ -86,43 +88,40 @@ public class PostFacade {
     }
 
     @Transactional
-    public String deletePost(Long postId) {
-        Long memberIdByJwt = tokenService.getTokenInfo().getMemberId();
+    public DeletePostResponse deletePost(Long postId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
 
-        postService.deletePost(memberIdByJwt, postId);
+        postService.deletePost(memberId, postId);
         commentService.deleteComment(postId);
         postImageService.deletePostImage(postId);
 
-        String response = "게시물 삭제에 성공하였습니다";
-        return response;
-
+        return DeletePostResponse.builder()
+                .deleted(true)
+                .build();
     }
 
 
-    /**
-     * 게시물 상세 조회
-     */
     @Transactional
-    public PostResponse getPostDetail(Long postId) {
+    public PostDetailResponse getPostDetail(Long postId) {
         TokenDto tokenInfo = tokenService.getTokenInfo();
         Post post = postService.getPost(postId);
         PostStatusDto postStatusDto = postService.getPostStatus(post, tokenInfo.getMemberId());
 
-        PostResponse.PostResponseBuilder basePostResponse = createBasePostResponseBuilder(post);
+        PostDetailResponse.PostDetailResponseBuilder basePostResponse = createBasePostDetailResponseBuilder(post);
         ContentStatusType postStatus = post.getStatusType();
         postService.updateView(post);
 
         return switch (postStatus) {
             case INACTIVE -> throw new CustomException(POST_NOT_EXIST);
-            case DELETED -> buildDeletedPostResponse(basePostResponse, post);
+            case DELETED -> buildDeletedPostResponse(basePostResponse);
             case REPORTED -> buildReportedPostResponse(basePostResponse, post);
             default -> buildDefaultPostResponse(basePostResponse, post, postStatusDto); // ACTIVE, NOTIFIED
         };
     }
 
-    private PostResponse.PostResponseBuilder createBasePostResponseBuilder(Post post) {
+    private PostDetailResponse.PostDetailResponseBuilder createBasePostDetailResponseBuilder(Post post) {
         String nickName = postService.calculateNickname(post);
-        return PostResponse.builder()
+        return PostDetailResponse.builder()
                 .postId(post.getId())
                 .nickname(nickName)
                 .isFileAttached(post.getFileAttached())
@@ -132,7 +131,7 @@ public class PostFacade {
                 .createdAt(convertToDateAndTime(post.getCreatedAt()));
     }
 
-    private PostResponse buildDefaultPostResponse(PostResponse.PostResponseBuilder builder, Post post, PostStatusDto postStatusDto) {
+    private PostDetailResponse buildDefaultPostResponse(PostDetailResponse.PostDetailResponseBuilder builder, Post post, PostStatusDto postStatusDto) {
         List<String> imageUrls = postService.collectPostImageUrls(post);
         return builder.title(post.getTitle())
                 .content(post.getContent())
@@ -147,17 +146,17 @@ public class PostFacade {
                 .build();
     }
 
-    private PostResponse buildDeletedPostResponse(PostResponse.PostResponseBuilder builder, Post post) {
+    private PostDetailResponse buildDeletedPostResponse(PostDetailResponse.PostDetailResponseBuilder builder) {
         return builder.title("운영규칙 위반에 따라 삭제된 글입니다.")
                 .content("사유: 이용약관 제 12조 위반")
                 .isReported(true)
                 .build();
     }
 
-    private PostResponse buildReportedPostResponse(PostResponse.PostResponseBuilder builder, Post post) {
-        String reportedReason = postService.findReportedPostReason(post.getId(), ContentType.POST);
+    private PostDetailResponse buildReportedPostResponse(PostDetailResponse.PostDetailResponseBuilder builder, Post post) {
+        ReportType reportType = postService.findReportedPostReason(post.getId(), ContentType.POST);
         return builder.title("다른 사용자들의 신고에 의해 삭제된 글 입니다.")
-                .content("사유: " + reportedReason)
+                .content("사유: " + reportType.getDescription())
                 .isReported(true)
                 .build();
     }

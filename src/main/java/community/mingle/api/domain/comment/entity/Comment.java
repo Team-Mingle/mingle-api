@@ -19,7 +19,7 @@ import java.util.List;
 @Entity
 @Table(name = "comment")
 @Where(clause = "deleted_at IS NULL")
-@SQLDelete(sql = "UPDATE comment SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLDelete(sql = "UPDATE comment SET deleted_at = CURRENT_TIMESTAMP, status = 'INACTIVE' WHERE id = ?")
 public class Comment extends AuditLoggingBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

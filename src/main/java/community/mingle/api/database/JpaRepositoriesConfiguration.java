@@ -1,7 +1,8 @@
 package community.mingle.api.database;
 
-import community.mingle.api.configuration.ProjectBaseConfiguration;
 import com.zaxxer.hikari.HikariDataSource;
+import community.mingle.api.configuration.ProjectBaseConfiguration;
+import community.mingle.api.infra.SecretsManagerService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.cfg.AvailableSettings;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -18,6 +19,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.util.HashMap;
 
 @EnableJpaRepositories(
@@ -30,28 +32,24 @@ public class JpaRepositoriesConfiguration {
     private final String basePackage;
     private final String projectName;
     private final ConfigurableListableBeanFactory beanFactory;
+    private final SecretsManagerService secretsManagerService;
+    private final String profile;
+
     @Primary
     @Bean
     @ConfigurationProperties("spring.datasource.hikari")
-    public DataSource dataSource() {
-        HikariDataSource hikariDataSource = new HikariDataSourceUtil().createHikariDataSource(
-                "mingle-db-connection",
-                DataSourceConfig.builder()
-                        .username("root")
-                        .password("mingle")
-                        .engine("mysql")
-                        .host("localhost")
-                        .port("7071")
-                        .dbname("mingle")
-                        .build()
-        );
+    public DataSource dataSource() throws IOException {
+        DataSourceConfig dataSourceConfig = secretsManagerService.getDataSourceConfig(profile);
+
+        HikariDataSource hikariDataSource = new HikariDataSourceUtil()
+                .createHikariDataSource("mingle-db-connection",dataSourceConfig);
 
         return new LazyConnectionDataSourceProxy(hikariDataSource);
     }
 
     @Primary
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws IOException {
 
         HashMap<String, Object> jpaPropertyMap = new HashMap<>(){{
             put(AvailableSettings.DIALECT, "org.hibernate.dialect.MySQLDialect");
@@ -71,7 +69,7 @@ public class JpaRepositoriesConfiguration {
 
     @Primary
     @Bean
-    public PlatformTransactionManager transactionManager() {
+    public PlatformTransactionManager transactionManager() throws IOException {
         JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
         jpaTransactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
         jpaTransactionManager.setPersistenceUnitName(projectName);
