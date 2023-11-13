@@ -31,6 +31,7 @@ public class PostFacade {
     private final TokenService tokenService;
     private final CommentService commentService;
 
+
     public List<PostCategoryResponse> getPostCategory(){
         MemberRole memberRole = tokenService.getTokenInfo().getMemberRole();
 
@@ -45,6 +46,7 @@ public class PostFacade {
         boolean isFileAttached = (createPostRequest.getMultipartFile() != null) && (!createPostRequest.getMultipartFile().isEmpty());
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Post post = postService.createPost(
+
                                 memberId,
                                 createPostRequest.getTitle(),
                                 createPostRequest.getContent(),
@@ -64,6 +66,7 @@ public class PostFacade {
     public UpdatePostResponse updatePost(UpdatePostRequest updatePostRequest, Long postId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
 
+
         Post post = postService.updatePost(
                                     memberId,
                                     postId,
@@ -74,12 +77,12 @@ public class PostFacade {
         postImageService.updatePostImage(post, updatePostRequest.getImageIdsToDelete(), updatePostRequest.getImagesToAdd());
 
         return UpdatePostResponse.builder()
-                        .postId(postId)
-                        .categoryType(post.getCategoryType())
-                        .title(post.getTitle())
-                        .content(post.getContent())
-                        .isAnonymous(post.getAnonymous())
-                        .build();
+                .postId(postId)
+                .categoryType(post.getCategoryType())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .isAnonymous(post.getAnonymous())
+                .build();
 
 
     }
@@ -142,6 +145,7 @@ public class PostFacade {
                 .isReported(false)
                 .build();
     }
+
     private PostDetailResponse buildDeletedPostResponse(PostDetailResponse.PostDetailResponseBuilder builder) {
         return builder.title("운영규칙 위반에 따라 삭제된 글입니다.")
                 .content("사유: 이용약관 제 12조 위반")

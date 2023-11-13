@@ -1,5 +1,6 @@
 package community.mingle.api.domain.post.controller;
 
+import community.mingle.api.domain.comment.facade.CommentFacade;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
 import community.mingle.api.domain.post.controller.response.*;
@@ -24,6 +25,7 @@ import java.util.List;
 public class PostController {
 
     private final PostFacade postFacade;
+    private final CommentFacade commentFacade;
 
 
     @Operation(summary = "카테고리 목록 조회 API")
@@ -41,10 +43,16 @@ public class PostController {
         return new ResponseEntity<>(createPostResponse, HttpStatus.OK);
     }
 
-    @Operation(summary = "게시물 상세 API")
+    @Operation(summary = "게시물 상세 - 본문 API")
     @GetMapping("/{postId}")
     public ResponseEntity<PostDetailResponse> postDetail(@PathVariable Long postId) {
         return new ResponseEntity<>(postFacade.getPostDetail(postId), HttpStatus.OK);
+    }
+
+    @Operation(summary = "게시물 상세 - 댓글 API")
+    @GetMapping("/{postId}/comment")
+    public ResponseEntity<List<PostDetailCommentResponse>> postDetailComments(@PathVariable Long postId) {
+        return new ResponseEntity<>(commentFacade.getPostDetailComments(postId), HttpStatus.OK);
     }
 
 
@@ -55,6 +63,7 @@ public class PostController {
         UpdatePostResponse updatePostResponse = postFacade.updatePost(updatePostRequest, postId);
         return ResponseEntity.ok().body(updatePostResponse);
     }
+
 
     @Operation(summary = "게시물 삭제 API")
     @PatchMapping("/delete/{postId}")
