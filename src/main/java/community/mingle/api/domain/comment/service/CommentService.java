@@ -2,6 +2,7 @@ package community.mingle.api.domain.comment.service;
 
 
 import community.mingle.api.domain.comment.entity.Comment;
+import community.mingle.api.domain.comment.repository.CommentQueryRepository;
 import community.mingle.api.domain.comment.repository.CommentRepository;
 import community.mingle.api.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import static community.mingle.api.global.exception.ErrorCode.COMMENT_NOT_FOUND;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
+    private final CommentQueryRepository commentQueryRepository;
 
     @Transactional
     public void deleteComment(Long postId) {
@@ -28,12 +30,12 @@ public class CommentService {
     }
 
 
-    public List<Comment> findComments(Long postId, Long memberIdByJwt) {
-        return commentRepository.findComments(postId, memberIdByJwt);
+    public List<Comment> findComments(Long postId, Long memberId) {
+        return commentQueryRepository.findComments(postId, memberId, false);
     }
 
-    public List<Comment> findCoComments(Long postId, Long memberIdByJwt) {
-        return commentRepository.findCoComments(postId, memberIdByJwt);
+    public List<Comment> findCoComments(Long postId, Long memberId) {
+        return commentQueryRepository.findComments(postId, memberId, true);
     }
 
     public Map<Comment, List<Comment>> getCommentsWithCoCommentsMap(Long postId, Long memberIdByJwt) {

@@ -43,18 +43,15 @@ public class PostController {
         return new ResponseEntity<>(createPostResponse, HttpStatus.OK);
     }
 
-    @Operation(summary = "게시물 상세 API")
+    @Operation(summary = "게시물 상세 - 본문 API")
     @GetMapping("/{postId}")
     public ResponseEntity<PostDetailResponse> postDetail(@PathVariable Long postId) {
         return new ResponseEntity<>(postFacade.getPostDetail(postId), HttpStatus.OK);
     }
 
-    /**
-     * 게시물 상세 - 댓글 API
-     */
     @Operation(summary = "게시물 상세 - 댓글 API")
     @GetMapping("/{postId}/comment")
-    public ResponseEntity<List<CommentResponse>> postDetailComments(@PathVariable Long postId) {
+    public ResponseEntity<List<PostDetailCommentResponse>> postDetailComments(@PathVariable Long postId) {
         return new ResponseEntity<>(commentFacade.getPostDetailComments(postId), HttpStatus.OK);
     }
 

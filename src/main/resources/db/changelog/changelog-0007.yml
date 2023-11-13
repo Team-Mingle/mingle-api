@@ -13,7 +13,7 @@ databaseChangeLog:
                     nullable: false
   - changeSet:
       id: create-block-member-table
-      author: your_username
+      author: Taehyun Kim
       changes:
         - createTable:
             tableName: block_member

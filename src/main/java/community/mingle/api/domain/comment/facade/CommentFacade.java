@@ -5,7 +5,7 @@ import community.mingle.api.domain.comment.entity.Comment;
 import community.mingle.api.domain.comment.service.CommentService;
 import community.mingle.api.domain.post.controller.response.CoCommentDto;
 import community.mingle.api.domain.post.controller.response.CommentDto;
-import community.mingle.api.domain.post.controller.response.CommentResponse;
+import community.mingle.api.domain.post.controller.response.PostDetailCommentResponse;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.service.PostService;
 import community.mingle.api.enums.MemberRole;
@@ -31,14 +31,11 @@ public class CommentFacade {
     private final TokenService tokenService;
     private final CommentService commentService;
 
-    /**
-     * 게시물 상세 - 댓글 목록
-     */
-    public List<CommentResponse> getPostDetailComments(Long postId) {
+    public List<PostDetailCommentResponse> getPostDetailComments(Long postId) {
         Post post = postService.getPost(postId);
         if (!postService.isValidPost(post)) return new ArrayList<>();
         Long memberIdByJwt = tokenService.getTokenInfo().getMemberId();
-        List<CommentResponse> responseList = new ArrayList<>();
+        List<PostDetailCommentResponse> responseList = new ArrayList<>();
 
         Map<Comment, List<Comment>> commentListMap = commentService.getCommentsWithCoCommentsMap(postId, memberIdByJwt);
         Map<CommentDto, List<CoCommentDto>> commentDtoListMap = new HashMap<>();
@@ -56,8 +53,8 @@ public class CommentFacade {
         return responseList;
     }
 
-    private CommentResponse createCommentResponse(CommentDto commentDto, List<CoCommentDto> coCommentDtoList) {
-        return CommentResponse.builder()
+    private PostDetailCommentResponse createCommentResponse(CommentDto commentDto, List<CoCommentDto> coCommentDtoList) {
+        return PostDetailCommentResponse.builder()
                 .commentId(commentDto.getCommentId())
                 .nickname(commentDto.getNickname())
                 .content(commentDto.getContent())

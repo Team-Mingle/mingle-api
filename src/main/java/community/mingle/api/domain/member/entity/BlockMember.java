@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class BlockMember extends AuditLoggingBase {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name ="block_member_id")
+    @Column(name ="id")
     private Long blockMemberId;
 
     @ManyToOne(fetch = FetchType.LAZY)

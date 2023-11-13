@@ -3,12 +3,11 @@ package community.mingle.api.domain.post.controller.response;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Builder
-public class CommentResponse {
+public class PostDetailCommentResponse {
 
     private final Long commentId;
     private final String nickname;
