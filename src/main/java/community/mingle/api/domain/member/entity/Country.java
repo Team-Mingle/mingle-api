@@ -13,7 +13,7 @@ import lombok.Getter;
 public class Country {
     @Id
     @Size(max = 45)
-    @Column(name = "country", nullable = false, length = 45)
-    private String country;
+    @Column(name = "name", nullable = false, length = 45)
+    private String name;
 
 }

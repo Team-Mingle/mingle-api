@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: modify country pk from country to name
+      author: Hyeonwoo Jung
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: university
+            constraintName: university_ibfk_1
+        - renameColumn:
+            tableName: country
+            oldColumnName: country
+            newColumnName: name
+            columnDataType: varchar(45)
+        - addForeignKeyConstraint:
+            baseTableName: university
+            baseColumnNames: country
+            referencedTableName: country
+            referencedColumnNames: name
+            constraintName: university_ibfk_1
