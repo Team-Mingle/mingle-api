@@ -116,9 +116,17 @@ public class PostFacade {
 
 
     @Transactional
-    public CreatePostLikeResponse createPostLike(Long postId, Long memberId) {
+    public CreatePostLikeResponse createPostLike(Long postId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
         postLikeService.create(postId, memberId);
         return new CreatePostLikeResponse(true);
+    }
+
+    @Transactional
+    public DeletePostLikeResponse deletePostLike(Long postLikeId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        postLikeService.delete(postLikeId, memberId);
+        return new DeletePostLikeResponse(true);
     }
 
 
