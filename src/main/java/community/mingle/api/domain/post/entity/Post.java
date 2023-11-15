@@ -78,16 +78,16 @@ public class Post extends AuditLoggingBase {
     private LocalDateTime deletedAt;
 
     @OneToMany(mappedBy = "post")
-    private List<Comment> comments = new ArrayList<>();
+    private List<PostLike> postLikeList = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
-    private List<PostLike> postLikes = new ArrayList<>();
+    private List<Comment> commentList = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
-    private List<PostScrap> postScraps = new ArrayList<>();
+    private List<PostScrap> postScrapList = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
-    private List<PostImage> postImages = new ArrayList<>();
+    private List<PostImage> postImageList = new ArrayList<>();
 
     public void updatePost (String title, String content, boolean isAnonymous){
         this.title = title;

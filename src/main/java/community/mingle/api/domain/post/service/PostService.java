@@ -3,17 +3,17 @@ package community.mingle.api.domain.post.service;
 import community.mingle.api.domain.comment.entity.Comment;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.repository.MemberRepository;
+import community.mingle.api.domain.post.controller.response.PostCategoryResponse;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.entity.PostImage;
-import community.mingle.api.domain.post.repository.PostLikeRepository;
-import community.mingle.api.domain.post.repository.PostRepository;
-import community.mingle.api.domain.post.repository.PostScrapRepository;
-import community.mingle.api.domain.post.repository.ReportRepository;
+import community.mingle.api.domain.post.repository.*;
 import community.mingle.api.domain.report.entity.Report;
 import community.mingle.api.enums.*;
 import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,10 +28,18 @@ import static community.mingle.api.global.exception.ErrorCode.POST_NOT_EXIST;
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
     private final PostLikeRepository postLikeRepository;
     private final PostScrapRepository postScrapRepository;
     private final ReportRepository reportRepository;
-    private final MemberRepository memberRepository;
+    private final PostQueryRepository postQueryRepository;
+
+
+    public List<PostCategoryResponse> getPostCategory(MemberRole memberRole) {
+        return getCategoriesByMemberRole(memberRole).stream()
+                .map(PostCategoryResponse::new)
+                .collect(Collectors.toList());
+    }
 
     public List<CategoryType> getCategoriesByMemberRole(MemberRole memberRole) {
         return switch (memberRole) {
@@ -105,13 +113,13 @@ public class PostService {
     }
 
     public int calculateActiveCommentCount(Post post) {
-        List<Comment> commentList = post.getComments();
+        List<Comment> commentList = post.getCommentList();
         return (int) commentList.stream().filter(ac -> ac.getStatusType().equals(ContentStatusType.ACTIVE)).count();
     }
 
     public List<String> collectPostImageUrls(Post post) {
         if (post.getFileAttached()) {
-            return post.getPostImages().stream().map(PostImage::getUrl).collect(Collectors.toList());
+            return post.getPostImageList().stream().map(PostImage::getUrl).collect(Collectors.toList());
         }
         return new ArrayList<>();
     }
@@ -155,6 +163,10 @@ public class PostService {
             throw new CustomException(ErrorCode.POST_DELETED_REPORTED);
         }
         return post;
+    }
+
+    public Page<Post> findBestPosts(PageRequest pageRequest) {
+        return postQueryRepository.pageBestPosts(pageRequest);
     }
 
     public boolean isValidPost(Post post) {

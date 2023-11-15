@@ -14,10 +14,13 @@ import community.mingle.api.enums.*;
 import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.enums.MemberRole;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static community.mingle.api.global.exception.ErrorCode.POST_NOT_EXIST;
 import static community.mingle.api.global.utils.DateTimeConverter.convertToDateAndTime;
@@ -101,6 +104,33 @@ public class PostFacade {
     }
 
 
+    public List<PostPreviewResponse> getBestPost(PageRequest pageRequest) {
+
+        TokenDto tokenInfo = tokenService.getTokenInfo();
+
+        Page<Post> postPage = postService.findBestPosts(pageRequest);
+
+        return postPage.stream()
+                .map(post -> {
+                    PostStatusDto postStatusDto = postService.getPostStatus(post, tokenInfo.getMemberId());
+                    String nickName = postService.calculateNickname(post);
+
+                    return PostPreviewResponse.builder()
+                            .postId(post.getId())
+                            .title(post.getTitle())
+                            .content(post.getContent())
+                            .nickname(nickName)
+                            .isFileAttached(post.getFileAttached())
+                            .likeCount(post.getPostLikeList().size())
+                            .commentCount(post.getCommentList().size())
+                            .isBlinded(postStatusDto.isBlinded())
+                            .createdAt(convertToDateAndTime(post.getCreatedAt()))
+                            .viewCount(post.getViewCount())
+                            .build();
+                }).collect(Collectors.toList());
+
+    }
+
     @Transactional
     public PostDetailResponse getPostDetail(Long postId) {
         TokenDto tokenInfo = tokenService.getTokenInfo();
@@ -135,8 +165,8 @@ public class PostFacade {
         List<String> imageUrls = postService.collectPostImageUrls(post);
         return builder.title(post.getTitle())
                 .content(post.getContent())
-                .likeCount(post.getPostLikes().size())
-                .scrapCount(post.getPostScraps().size())
+                .likeCount(post.getPostLikeList().size())
+                .scrapCount(post.getPostScrapList().size())
                 .commentCount(postService.calculateActiveCommentCount(post))
                 .postImgUrl(imageUrls)
                 .isMyPost(postStatusDto.isMyPost())
