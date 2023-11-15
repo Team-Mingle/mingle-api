@@ -60,6 +60,6 @@ public class PostQueryRepository {
     }
 
     private BooleanExpression postLikeCountGreaterThanOrEqual(int minPostLikeCount) {
-        return postLike.count().goe(minPostLikeCount);
+        return post.postLikeList.size().goe(minPostLikeCount);
     }
 }
