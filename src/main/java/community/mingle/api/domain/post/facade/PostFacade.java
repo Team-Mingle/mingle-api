@@ -15,7 +15,7 @@ import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.enums.MemberRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,24 +104,31 @@ public class PostFacade {
     }
 
 
-    public PostListResponse getBestPost(BoardType boardType, Pageable pageable) {
-        Long memberId = tokenService.getTokenInfo().getMemberId();
+    public List<PostPreviewResponse> getBestPost(PageRequest pageRequest) {
 
-        Page<Post> postPage = postService.findBestPostWithMemberLikeComment(boardType, memberId, pageable);
+        TokenDto tokenInfo = tokenService.getTokenInfo();
 
-        //TODO to be replaced with builder implemented in DEV-117
-        List<PostResponse> postResponseList = postPage.stream()
-                .map(p -> PostResponse.builder()
-                        .postId(p.getId())
-                        .title(p.getTitle())
-                        .content(p.getContent())
-                        .build())
-                .collect(Collectors.toList());
+        Page<Post> postPage = postService.findBestPosts(pageRequest);
 
-        return PostListResponse.builder()
-                .boardName(boardType.name())
-                .postResponseList(postResponseList)
-                .build();
+        return postPage.stream()
+                .map(post -> {
+                    PostStatusDto postStatusDto = postService.getPostStatus(post, tokenInfo.getMemberId());
+                    String nickName = postService.calculateNickname(post);
+
+                    return PostPreviewResponse.builder()
+                            .postId(post.getId())
+                            .title(post.getTitle())
+                            .content(post.getContent())
+                            .nickname(nickName)
+                            .isFileAttached(post.getFileAttached())
+                            .likeCount(post.getPostLikeList().size())
+                            .commentCount(post.getCommentList().size())
+                            .isBlinded(postStatusDto.isBlinded())
+                            .createdAt(convertToDateAndTime(post.getCreatedAt()))
+                            .viewCount(post.getViewCount())
+                            .build();
+                }).collect(Collectors.toList());
+
     }
 
     @Transactional

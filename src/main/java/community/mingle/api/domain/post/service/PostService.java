@@ -13,6 +13,7 @@ import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -165,10 +166,8 @@ public class PostService {
         return post;
     }
 
-    public Page<Post> findBestPostWithMemberLikeComment(BoardType boardType, Long memberId, Pageable pageable) {
-        Member viewMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-        return postQueryRepository.findBestPostWithMemberLikeComment(boardType, viewMember, pageable);
+    public Page<Post> findBestPosts(PageRequest pageRequest) {
+        return postQueryRepository.pageBestPosts(pageRequest);
     }
 
     public boolean isValidPost(Post post) {

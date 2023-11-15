@@ -9,5 +9,5 @@ import java.util.List;
 @Builder
 public class PostListResponse {
     private String boardName;
-    private List<PostResponse> postResponseList;
+    private List<PostPreviewResponse> postPreviewResponseList;
 }
