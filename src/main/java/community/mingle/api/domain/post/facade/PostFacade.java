@@ -88,8 +88,6 @@ public class PostFacade {
                 .content(post.getContent())
                 .isAnonymous(post.getAnonymous())
                 .build();
-
-
     }
 
     @Transactional
@@ -104,6 +102,16 @@ public class PostFacade {
                 .deleted(true)
                 .build();
     }
+
+    public List<PostPreviewResponse> getPostList(BoardType boardType, CategoryType categoryType, PageRequest pageRequest) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        List<Post> postList = postService.pagePostsByBoardTypeAndCategory(boardType, categoryType, pageRequest);
+
+        return postList.stream()
+                .map(post -> mapToPostPreviewResponse(post, memberId))
+                .collect(Collectors.toList());
+    }
+
 
     public List<PostPreviewResponse> getRecentPost(BoardType boardType) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
@@ -195,6 +203,7 @@ public class PostFacade {
     }
 
     private PostPreviewResponse mapToPostPreviewResponse(Post post, Long memberId) {
+        MemberRole memberRole = tokenService.getTokenInfo().getMemberRole();
         PostStatusDto postStatusDto = postService.getPostStatus(post, memberId);
         String nickName = postService.calculateNickname(post);
 
@@ -203,12 +212,15 @@ public class PostFacade {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .nickname(nickName)
-                .isFileAttached(post.getFileAttached())
+                .viewCount(post.getViewCount())
+                .createdAt(convertToDateAndTime(post.getCreatedAt()))
+                .boardType(post.getBoardType())
+                .memberRole(memberRole)
+                .categoryType(post.getCategoryType())
                 .likeCount(post.getPostLikeList().size())
                 .commentCount(post.getCommentList().size())
+                .isFileAttached(post.getFileAttached())
                 .isBlinded(postStatusDto.isBlinded())
-                .createdAt(convertToDateAndTime(post.getCreatedAt()))
-                .viewCount(post.getViewCount())
                 .build();
     }
 

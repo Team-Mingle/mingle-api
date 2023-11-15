@@ -105,6 +105,12 @@ public class PostService {
                 .map(Map.Entry::getKey)
                 .orElse(null);
     }
+
+    public List<Post> pagePostsByBoardTypeAndCategory(BoardType boardType, CategoryType categoryType, PageRequest pageRequest) {
+        Page<Post> pagePosts = postRepository.findAllByBoardTypeAndCategoryType(boardType, categoryType, pageRequest);
+        return pagePosts.toList();
+    }
+
     public String calculateNickname(Post post) {
         if (post.getAnonymous()) {
             return "익명";
