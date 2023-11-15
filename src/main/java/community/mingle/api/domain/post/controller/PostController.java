@@ -6,7 +6,6 @@ import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
 import community.mingle.api.domain.post.controller.response.*;
 import community.mingle.api.domain.post.facade.PostFacade;
-import community.mingle.api.domain.post.service.PostLikeService;
 import community.mingle.api.enums.BoardType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

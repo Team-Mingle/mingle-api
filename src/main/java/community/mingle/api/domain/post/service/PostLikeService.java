@@ -11,8 +11,7 @@ import community.mingle.api.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import static community.mingle.api.global.exception.ErrorCode.MEMBER_NOT_FOUND;
-import static community.mingle.api.global.exception.ErrorCode.POST_NOT_EXIST;
+import static community.mingle.api.global.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +24,9 @@ public class PostLikeService {
     public PostLike create(Long postId, Long memberId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_EXIST));
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        if (postLikeRepository.existsByPostIdAndMemberId(postId, memberId)) {
+            throw new CustomException(POST_LIKE_ALREADY_EXIST);
+        }
 
         PostLike postLike = PostLike.builder()
                 .post(post)
