@@ -4,7 +4,6 @@ import community.mingle.api.domain.auth.controller.request.*;
 import community.mingle.api.domain.auth.controller.response.*;
 import community.mingle.api.domain.auth.facade.AuthFacade;
 import community.mingle.api.domain.auth.facade.TokenResponse;
-import community.mingle.api.domain.auth.service.AuthService;
 import community.mingle.api.domain.member.service.CountryService;
 import community.mingle.api.domain.member.service.UniversityService;
 import community.mingle.api.enums.PolicyType;
