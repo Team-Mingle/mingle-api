@@ -84,6 +84,13 @@ public class AuthController {
         return new ResponseEntity<>(policyResponse, HttpStatus.OK);
     }
 
+    @Operation(summary = "서비스 이용약관 불러오기 api")
+    @GetMapping("/terms-and-conditions")
+    public ResponseEntity<PolicyResponse> termsAndConditions() {
+        PolicyResponse policyResponse = authFacade.getPolicy(PolicyType.TERMS_AND_CONDITIONS);
+        return new ResponseEntity<>(policyResponse, HttpStatus.OK);
+    }
+
     @Operation(summary = "로그인 api")
     @PostMapping("/login")
     public ResponseEntity<LoginMemberResponse> login(@Valid @RequestBody LoginMemberRequest loginMemberRequest) {
