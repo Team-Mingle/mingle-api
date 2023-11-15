@@ -136,17 +136,26 @@ public class CommentService {
         Set<Long> commentIdList = post.getCommentList().stream()
                 .map(Comment::getId)
                 .collect(Collectors.toSet());
+
+        List<Long> commentIdListWithoutCoComment = post.getCommentList().stream()
+                .filter(comment -> comment.getParentCommentId() == null)
+                .map(Comment::getId)
+                .toList();
+
         if (parentCommentId != null) {
-            if (!commentIdList.contains(parentCommentId)) {
+            //parentCommentId가 해당 게시물의 댓글이 아니거나 parentCommentId가 대댓글일 경우 에러 (parentCommentId는 대댓글이 아닌 댓글이여야함)
+            if (!commentIdList.contains(parentCommentId) || !commentIdListWithoutCoComment.contains(parentCommentId)) {
                 throw new CustomException(FAIL_TO_CREATE_COMMENT);
             }
         }
+
         if (mentionCommentId != null) {
             if (!commentIdList.contains(mentionCommentId)) {
                 throw new CustomException(FAIL_TO_CREATE_COMMENT);
             }
         }
     }
+
     private Long calculateAnonymousId(Post post, Member member) {
         Optional<List<Comment>> comments = commentRepository.findAllByPostId(post.getId());
 
