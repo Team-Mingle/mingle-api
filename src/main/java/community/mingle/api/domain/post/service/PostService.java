@@ -21,6 +21,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static community.mingle.api.enums.ContentStatusType.REPORTED;
+import static community.mingle.api.global.exception.ErrorCode.MEMBER_NOT_FOUND;
 import static community.mingle.api.global.exception.ErrorCode.POST_NOT_EXIST;
 
 
@@ -165,8 +166,9 @@ public class PostService {
         return post;
     }
 
-    public Page<Post> findBestPosts(PageRequest pageRequest) {
-        return postQueryRepository.pageBestPosts(pageRequest);
+    public Page<Post> findBestPosts(Long viewerMemberId, PageRequest pageRequest) {
+        Member viewerMember = memberRepository.findById(viewerMemberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        return postQueryRepository.pageBestPosts(viewerMember, pageRequest);
     }
 
     public boolean isValidPost(Post post) {

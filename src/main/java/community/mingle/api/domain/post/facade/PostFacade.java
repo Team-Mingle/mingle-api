@@ -103,50 +103,26 @@ public class PostFacade {
                 .build();
     }
 
-    public PostListResponse getRecentPost(BoardType boardType) {
+    public List<PostPreviewResponse> getRecentPost(BoardType boardType) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         List<Post> postList = postService.findRecentPost(boardType, memberId);
 
-        //TODO to be replaced with builder implemented in DEV-117
-        List<PostResponse> postResponseList = postList.stream()
-                .map(p -> PostResponse.builder()
-                        .postId(p.getId())
-                        .title(p.getTitle())
-                        .content(p.getContent())
-                        .build())
+        return postList.stream()
+                .map(post -> mapToPostPreviewResponse(post, memberId))
                 .collect(Collectors.toList());
 
-        return PostListResponse.builder()
-                .boardName(boardType.name())
-                .postResponseList(postResponseList)
-                .build();
     }
 
 
     public List<PostPreviewResponse> getBestPost(PageRequest pageRequest) {
 
-        TokenDto tokenInfo = tokenService.getTokenInfo();
+        Long memberId = tokenService.getTokenInfo().getMemberId();
 
-        Page<Post> postPage = postService.findBestPosts(pageRequest);
+        Page<Post> postPage = postService.findBestPosts(memberId ,pageRequest);
 
         return postPage.stream()
-                .map(post -> {
-                    PostStatusDto postStatusDto = postService.getPostStatus(post, tokenInfo.getMemberId());
-                    String nickName = postService.calculateNickname(post);
-
-                    return PostPreviewResponse.builder()
-                            .postId(post.getId())
-                            .title(post.getTitle())
-                            .content(post.getContent())
-                            .nickname(nickName)
-                            .isFileAttached(post.getFileAttached())
-                            .likeCount(post.getPostLikeList().size())
-                            .commentCount(post.getCommentList().size())
-                            .isBlinded(postStatusDto.isBlinded())
-                            .createdAt(convertToDateAndTime(post.getCreatedAt()))
-                            .viewCount(post.getViewCount())
-                            .build();
-                }).collect(Collectors.toList());
+                .map(post -> mapToPostPreviewResponse(post, memberId))
+                .collect(Collectors.toList());
 
     }
 
@@ -207,6 +183,24 @@ public class PostFacade {
         return builder.title("다른 사용자들의 신고에 의해 삭제된 글 입니다.")
                 .content("사유: " + reportType.getDescription())
                 .isReported(true)
+                .build();
+    }
+
+    private PostPreviewResponse mapToPostPreviewResponse(Post post, Long memberId) {
+        PostStatusDto postStatusDto = postService.getPostStatus(post, memberId);
+        String nickName = postService.calculateNickname(post);
+
+        return PostPreviewResponse.builder()
+                .postId(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .nickname(nickName)
+                .isFileAttached(post.getFileAttached())
+                .likeCount(post.getPostLikeList().size())
+                .commentCount(post.getCommentList().size())
+                .isBlinded(postStatusDto.isBlinded())
+                .createdAt(convertToDateAndTime(post.getCreatedAt()))
+                .viewCount(post.getViewCount())
                 .build();
     }
 
