@@ -3,6 +3,7 @@ package community.mingle.api.domain.comment.facade;
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.comment.controller.request.CreateCommentRequest;
 import community.mingle.api.domain.comment.controller.response.CreateCommentResponse;
+import community.mingle.api.domain.comment.controller.response.DeleteCommentResponse;
 import community.mingle.api.domain.comment.entity.Comment;
 import community.mingle.api.domain.comment.service.CommentService;
 import community.mingle.api.domain.post.controller.response.CoCommentDto;
@@ -66,7 +67,13 @@ public class CommentFacade {
                 createCommentRequest.getContent(),
                 createCommentRequest.isAnonymous());
         return new CreateCommentResponse(comment.getId());
+    }
 
+    @Transactional
+    public DeleteCommentResponse delete(Long commentId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        commentService.delete(commentId, memberId);
+        return new DeleteCommentResponse(true);
     }
 
     private PostDetailCommentResponse createCommentResponse(CommentDto commentDto, List<CoCommentDto> coCommentDtoList) {

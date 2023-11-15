@@ -97,7 +97,7 @@ public class PostFacade {
         Long memberId = tokenService.getTokenInfo().getMemberId();
 
         postService.deletePost(memberId, postId);
-        commentService.deleteComment(postId);
+        commentService.deleteAllByPostId(postId);
         postImageService.deletePostImage(postId);
 
         return DeletePostResponse.builder()
