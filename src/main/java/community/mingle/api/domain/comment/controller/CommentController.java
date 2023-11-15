@@ -3,7 +3,6 @@ package community.mingle.api.domain.comment.controller;
 import community.mingle.api.domain.comment.controller.request.CreateCommentRequest;
 import community.mingle.api.domain.comment.controller.response.CreateCommentResponse;
 import community.mingle.api.domain.comment.facade.CommentFacade;
-import community.mingle.api.enums.BoardType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

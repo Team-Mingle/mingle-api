@@ -8,7 +8,6 @@ import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.repository.PostRepository;
-import community.mingle.api.enums.ContentStatusType;
 import community.mingle.api.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
