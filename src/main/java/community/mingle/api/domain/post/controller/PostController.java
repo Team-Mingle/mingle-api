@@ -1,5 +1,6 @@
 package community.mingle.api.domain.post.controller;
 
+import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.comment.facade.CommentFacade;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
@@ -28,6 +29,7 @@ import java.util.List;
 public class PostController {
 
     private final PostFacade postFacade;
+    private final TokenService tokenService;
     private final CommentFacade commentFacade;
 
 
@@ -95,6 +97,15 @@ public class PostController {
         List<PostPreviewResponse> postPreviewResponseList = postFacade.getRecentPost(boardType);
 
         return ResponseEntity.ok().body(postPreviewResponseList);
+    }
+
+
+    @Operation(summary = "게시물 좋아요 생성")
+    @PostMapping("/like/{postId}")
+    public ResponseEntity<CreatePostLikeResponse> createPostLike(@PathVariable Long postId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        CreatePostLikeResponse createPostLikeResponse = postFacade.createPostLike(postId, memberId);
+        return ResponseEntity.ok().body(createPostLikeResponse);
     }
 
 }

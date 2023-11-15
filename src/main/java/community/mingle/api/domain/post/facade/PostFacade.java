@@ -7,12 +7,12 @@ import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
 import community.mingle.api.domain.post.controller.response.*;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.service.PostImageService;
+import community.mingle.api.domain.post.service.PostLikeService;
 import community.mingle.api.domain.post.service.PostService;
 import community.mingle.api.domain.post.service.PostService.PostStatusDto;
 import community.mingle.api.dto.security.TokenDto;
 import community.mingle.api.enums.*;
 import community.mingle.api.global.exception.CustomException;
-import community.mingle.api.enums.MemberRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +31,7 @@ import static community.mingle.api.global.utils.DateTimeConverter.convertToDateA
 public class PostFacade {
     private final PostService postService;
     private final PostImageService postImageService;
+    private final PostLikeService postLikeService;
     private final TokenService tokenService;
     private final CommentService commentService;
 
@@ -56,7 +57,8 @@ public class PostFacade {
                                 boardType,
                                 createPostRequest.getCategoryType(),
                                 createPostRequest.getIsAnonymous(),
-                                isFileAttached);
+                                isFileAttached
+        );
         if (isFileAttached) {
             postImageService.createPostImage(post, createPostRequest.getMultipartFile());
         }
@@ -110,7 +112,13 @@ public class PostFacade {
         return postList.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))
                 .collect(Collectors.toList());
+    }
 
+
+    @Transactional
+    public CreatePostLikeResponse createPostLike(Long postId, Long memberId) {
+        postLikeService.create(postId, memberId);
+        return new CreatePostLikeResponse(true);
     }
 
 

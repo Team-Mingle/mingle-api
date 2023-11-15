@@ -71,6 +71,8 @@ public class PostService {
                 .member(member)
                 .statusType(ContentStatusType.ACTIVE)
                 .fileAttached(fileAttached)
+                .member(member)
+                .statusType(ContentStatusType.ACTIVE)
                 .build();
 
         return postRepository.save(post);
