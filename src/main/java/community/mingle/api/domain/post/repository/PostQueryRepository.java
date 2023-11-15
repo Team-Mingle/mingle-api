@@ -3,8 +3,6 @@ package community.mingle.api.domain.post.repository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import community.mingle.api.domain.like.entity.QPostLike;
-import community.mingle.api.domain.member.entity.Member;
-import community.mingle.api.domain.member.entity.QMember;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.entity.QPost;
 import community.mingle.api.enums.BoardType;
