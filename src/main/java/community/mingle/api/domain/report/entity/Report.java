@@ -35,6 +35,9 @@ public class Report extends AuditLoggingBase {
     @JoinColumn(name = "reported_member_id", nullable = false)
     private Member reportedMember;
 
+    @Column(name = "content_id", nullable = false)
+    private Long contentId;
+
     @Size(max = 200)
     @Column(name = "reason", length = 200)
     private String reason;

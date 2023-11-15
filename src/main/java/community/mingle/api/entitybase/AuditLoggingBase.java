@@ -4,7 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -17,8 +17,8 @@ import java.time.LocalDateTime;
 @Getter
 @MappedSuperclass
 @SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-@NoArgsConstructor
 public abstract class AuditLoggingBase {
 
     @NotNull

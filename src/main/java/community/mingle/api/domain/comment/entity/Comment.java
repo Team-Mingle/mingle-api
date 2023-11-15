@@ -1,5 +1,6 @@
 package community.mingle.api.domain.comment.entity;
 
+import community.mingle.api.domain.like.entity.CommentLike;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.entitybase.AuditLoggingBase;
@@ -11,12 +12,14 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
 @Table(name = "comment")
 @Where(clause = "deleted_at IS NULL")
-@SQLDelete(sql = "UPDATE comment SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLDelete(sql = "UPDATE comment SET deleted_at = CURRENT_TIMESTAMP, status = 'INACTIVE' WHERE id = ?")
 public class Comment extends AuditLoggingBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,5 +57,11 @@ public class Comment extends AuditLoggingBase {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    @Column(name = "anonymous_id")
+    private Long anonymousId;
+
+    @OneToMany(mappedBy = "comment")
+    private List<CommentLike> commentLikes = new ArrayList<>();
 
 }

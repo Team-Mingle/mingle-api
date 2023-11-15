@@ -1,24 +1,30 @@
 package community.mingle.api.domain.post.entity;
 
+import community.mingle.api.domain.comment.entity.Comment;
+import community.mingle.api.domain.like.entity.PostLike;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.entitybase.AuditLoggingBase;
 import community.mingle.api.enums.BoardType;
 import community.mingle.api.enums.CategoryType;
 import community.mingle.api.enums.ContentStatusType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
 @Where(clause = "deleted_at IS NULL")
-@SQLDelete(sql = "UPDATE post SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLDelete(sql = "UPDATE post SET deleted_at = CURRENT_TIMESTAMP, status = 'INACTIVE' WHERE id = ?")
 @Table(name = "post")
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -64,6 +70,17 @@ public class Post extends AuditLoggingBase {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @OneToMany(mappedBy = "post")
+    private List<PostLike> postLikeList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post")
+    private List<Comment> commentList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post")
+    private List<PostScrap> postScrapList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post")
+    private List<PostImage> postImageList = new ArrayList<>();
 
     public void updatePost (String title, String content, boolean isAnonymous){
         this.title = title;
@@ -71,9 +88,13 @@ public class Post extends AuditLoggingBase {
         this.anonymous = isAnonymous;
     }
 
-    public void deletePost() {
-        this.deletedAt = LocalDateTime.now();
-        this.statusType = ContentStatusType.INACTIVE;
+//    public void deletePost() {
+//        this.deletedAt = LocalDateTime.now();
+//        this.statusType = ContentStatusType.INACTIVE;
+//    }
+
+    public void updateView() {
+        this.viewCount += 1;
     }
 
 }
