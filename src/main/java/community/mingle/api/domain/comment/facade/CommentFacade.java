@@ -1,6 +1,8 @@
 package community.mingle.api.domain.comment.facade;
 
 import community.mingle.api.domain.auth.service.TokenService;
+import community.mingle.api.domain.comment.controller.request.CreateCommentRequest;
+import community.mingle.api.domain.comment.controller.response.CreateCommentResponse;
 import community.mingle.api.domain.comment.entity.Comment;
 import community.mingle.api.domain.comment.service.CommentService;
 import community.mingle.api.domain.post.controller.response.CoCommentDto;
@@ -51,6 +53,20 @@ public class CommentFacade {
                 responseList.add(createCommentResponse(commentDto, coCommentDtoList)));
 
         return responseList;
+    }
+
+    @Transactional
+    public CreateCommentResponse create(CreateCommentRequest createCommentRequest) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Comment comment = commentService.create(
+                memberId,
+                createCommentRequest.getPostId(),
+                createCommentRequest.getParentCommentId(),
+                createCommentRequest.getMentionId(),
+                createCommentRequest.getContent(),
+                createCommentRequest.isAnonymous());
+        return new CreateCommentResponse(comment.getId());
+
     }
 
     private PostDetailCommentResponse createCommentResponse(CommentDto commentDto, List<CoCommentDto> coCommentDtoList) {

@@ -4,28 +4,65 @@ package community.mingle.api.domain.comment.service;
 import community.mingle.api.domain.comment.entity.Comment;
 import community.mingle.api.domain.comment.repository.CommentQueryRepository;
 import community.mingle.api.domain.comment.repository.CommentRepository;
+import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.domain.member.repository.MemberRepository;
+import community.mingle.api.domain.post.entity.Post;
+import community.mingle.api.domain.post.repository.PostRepository;
+import community.mingle.api.enums.ContentStatusType;
 import community.mingle.api.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static community.mingle.api.enums.ContentStatusType.*;
-import static community.mingle.api.global.exception.ErrorCode.COMMENT_NOT_FOUND;
+import static community.mingle.api.global.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
     private final CommentQueryRepository commentQueryRepository;
+    private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
+
+    @Transactional
+    public Comment create(
+            Long memberId,
+            Long postId,
+            Long parentCommentId,
+            Long mentionId,
+            String content,
+            boolean isAnonymous
+    ) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_EXIST));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
+        checkValidity(post, parentCommentId, mentionId);
+        Long anonymousId;
+        if (isAnonymous) {
+            anonymousId = calculateAnonymousId(post, member);
+        } else anonymousId = 0L;
+
+        Comment comment = Comment.builder()
+                .post(post)
+                .member(member)
+                .parentCommentId(parentCommentId)
+                .mentionId(mentionId)
+                .content(content)
+                .anonymous(isAnonymous)
+                .statusType(ACTIVE)
+                .anonymousId(anonymousId)
+                .build();
+
+        return commentRepository.save(comment);
+    }
 
     @Transactional
     public void deleteComment(Long postId) {
-        List<Comment> comments = commentRepository.findAllByPostId(postId);
+        List<Comment> comments = commentRepository.findAllByPostId(postId).orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
         commentRepository.deleteAll(comments);
     }
 
@@ -95,5 +132,44 @@ public class CommentService {
         return comment.getCommentLikes().stream()
                 .anyMatch(c -> c.getMember().getId().equals(memberId));
     }
+
+    private void checkValidity(Post post, Long parentCommentId, Long mentionCommentId) {
+        Set<Long> commentIdList = post.getCommentList().stream()
+                .map(Comment::getId)
+                .collect(Collectors.toSet());
+        if (parentCommentId != null) {
+            if (!commentIdList.contains(parentCommentId)) {
+                throw new CustomException(FAIL_TO_CREATE_COMMENT);
+            }
+        }
+        if (mentionCommentId != null) {
+            if (!commentIdList.contains(mentionCommentId)) {
+                throw new CustomException(FAIL_TO_CREATE_COMMENT);
+            }
+        }
+    }
+    private Long calculateAnonymousId(Post post, Member member) {
+        Optional<List<Comment>> comments = commentRepository.findAllByPostId(post.getId());
+
+        //해당 게시글에 댓글이 없을 경우
+        if (comments.isEmpty()) {
+            return 1L;
+        }
+
+        Optional<Comment> resultComment = comments.flatMap(commentList -> commentList.stream()
+                .filter(comment -> comment.getMember().equals(member) && comment.getAnonymous())
+                .findFirst());
+
+        //해당 게시글에 유저가 익명으로 댓글을 쓴 적이 있을 경우
+        if (resultComment.isPresent()) {
+            return resultComment.get().getAnonymousId();
+        }
+        //해당 게시글에 유저가 익명으로 댓글을 처음쓰는 경우
+        else return comments.get().stream()
+                .map(Comment::getAnonymousId)
+                .max(Long::compareTo)
+                .orElse(1L);
+    }
+
 
 }

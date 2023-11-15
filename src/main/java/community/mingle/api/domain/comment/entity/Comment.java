@@ -7,7 +7,11 @@ import community.mingle.api.entitybase.AuditLoggingBase;
 import community.mingle.api.enums.ContentStatusType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -20,6 +24,9 @@ import java.util.List;
 @Table(name = "comment")
 @Where(clause = "deleted_at IS NULL")
 @SQLDelete(sql = "UPDATE comment SET deleted_at = CURRENT_TIMESTAMP, status = 'INACTIVE' WHERE id = ?")
+@SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Comment extends AuditLoggingBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
