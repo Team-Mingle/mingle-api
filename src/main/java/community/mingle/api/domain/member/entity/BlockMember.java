@@ -1,6 +1,5 @@
 package community.mingle.api.domain.member.entity;
 
-
 import community.mingle.api.entitybase.AuditLoggingBase;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -13,9 +12,9 @@ import lombok.NoArgsConstructor;
 @Table(name="block_member")
 public class BlockMember extends AuditLoggingBase {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name ="block_member_id")
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name ="id")
     private Long blockMemberId;
 
     @ManyToOne(fetch = FetchType.LAZY)

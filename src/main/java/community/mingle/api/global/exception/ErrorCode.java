@@ -24,7 +24,7 @@ public enum ErrorCode {
     POST_NOT_EXIST(400,"2200", "게시물이 존재하지 않습니다." ),
     POST_DELETED_REPORTED(400,"2201", "삭제되거나 신고된 게시물입니다." ),
 
-    MODIFY_NOT_AUTHORIZED(400, "2205", "수정 권한이 없습니다"),
+    MODIFY_NOT_AUTHORIZED(403, "2205", "수정 권한이 없습니다"),
 
     FAIL_TO_REISSUE_TOKEN(401, "2002", "토큰 재발급에 실패하였습니다"),
 
@@ -41,8 +41,11 @@ public enum ErrorCode {
     FAILED_TO_CREATEJWT(500, "2006", "토큰 발급에 실패하였습니다." ),
     MEMBER_ALREADY_EXIST(409, "2007", "이미 가입된 회원입니다."),
     NICKNAME_DUPLICATED(409, "2008", "이미 존재하는 닉네임입니다."),
-    UNIVERSITY_NOT_FOUND(404, "2009", "존재하지 않는 대학입니다.")
-    ;
+    UNIVERSITY_NOT_FOUND(404, "2009", "존재하지 않는 대학입니다."),
+
+    COMMENT_NOT_FOUND(404, "3000", "존재하지 않는 멘션 댓글입니다."),
+    INTERNAL_SERVER_ERROR(500, "500", "INTERNAL SERVER ERROR");
+
     private final int status;
     private final String code;
     private final String message;
