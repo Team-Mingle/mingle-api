@@ -25,13 +25,12 @@ public class PostLikeService {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_EXIST));
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
         if (postLikeRepository.existsByPostIdAndMemberId(postId, memberId)) {
-            throw new CustomException(POST_LIKE_ALREADY_EXIST);
+            throw new CustomException(LIKE_ALREADY_EXIST);
         }
 
         PostLike postLike = PostLike.builder()
                 .post(post)
                 .member(member)
-                .contentType(ContentType.POST)
                 .build();
 
         return postLikeRepository.save(postLike);

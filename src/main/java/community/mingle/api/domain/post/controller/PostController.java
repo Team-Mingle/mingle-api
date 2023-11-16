@@ -100,11 +100,10 @@ public class PostController {
     }
 
 
-    @Operation(summary = "게시물 좋아요 생성")
+    @Operation(summary = "게시물 좋아요 생성 API")
     @PostMapping("/like/{postId}")
     public ResponseEntity<CreatePostLikeResponse> createPostLike(@PathVariable Long postId) {
-        Long memberId = tokenService.getTokenInfo().getMemberId();
-        CreatePostLikeResponse createPostLikeResponse = postFacade.createPostLike(postId, memberId);
+        CreatePostLikeResponse createPostLikeResponse = postFacade.createPostLike(postId);
         return ResponseEntity.ok().body(createPostLikeResponse);
     }
 

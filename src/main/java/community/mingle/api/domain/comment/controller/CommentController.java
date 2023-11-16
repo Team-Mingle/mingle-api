@@ -1,6 +1,7 @@
 package community.mingle.api.domain.comment.controller;
 
 import community.mingle.api.domain.comment.controller.request.CreateCommentRequest;
+import community.mingle.api.domain.comment.controller.response.CreateCommentLikeResponse;
 import community.mingle.api.domain.comment.controller.response.CreateCommentResponse;
 import community.mingle.api.domain.comment.controller.response.DeleteCommentResponse;
 import community.mingle.api.domain.comment.facade.CommentFacade;
@@ -33,6 +34,13 @@ public class CommentController {
     public ResponseEntity<DeleteCommentResponse> delete(@PathVariable Long commentId) {
         DeleteCommentResponse deleteCommentResponse = commentFacade.delete(commentId);
         return new ResponseEntity<>(deleteCommentResponse, HttpStatus.OK);
+    }
+
+    @Operation(summary = "댓글 좋아요 생성 API")
+    @PatchMapping("/like/{commentId}")
+    public ResponseEntity<CreateCommentLikeResponse> createCommentLike(@PathVariable Long commentId) {
+        CreateCommentLikeResponse createCommentLikeResponse = commentFacade.createCommentLike(commentId);
+        return new ResponseEntity<>(createCommentLikeResponse, HttpStatus.OK);
     }
 
 }
