@@ -1,6 +1,5 @@
-package community.mingle.api.domain.post.controller.response;
+package community.mingle.api.dto.comment;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
