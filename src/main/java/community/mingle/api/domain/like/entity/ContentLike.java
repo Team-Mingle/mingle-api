@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "content_type")
 @Table(name = "content_like")
 public class ContentLike extends AuditLoggingBase {
     @Id
@@ -34,9 +35,4 @@ public class ContentLike extends AuditLoggingBase {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
-
-    @NotNull
-    @Column(name = "content_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private ContentType contentType;
 }

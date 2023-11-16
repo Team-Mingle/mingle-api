@@ -4,6 +4,7 @@ import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.comment.controller.request.CreateCommentRequest;
 import community.mingle.api.domain.comment.controller.response.CreateCommentLikeResponse;
 import community.mingle.api.domain.comment.controller.response.CreateCommentResponse;
+import community.mingle.api.domain.comment.controller.response.DeleteCommentLikeResponse;
 import community.mingle.api.domain.comment.controller.response.DeleteCommentResponse;
 import community.mingle.api.domain.comment.entity.Comment;
 import community.mingle.api.domain.comment.service.CommentLikeService;
@@ -84,6 +85,13 @@ public class CommentFacade {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         commentLikeService.create(commentId, memberId);
         return new CreateCommentLikeResponse(true);
+    }
+
+    @Transactional
+    public DeleteCommentLikeResponse deleteCommentLike(Long commentId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        commentLikeService.delete(commentId, memberId);
+        return new DeleteCommentLikeResponse(true);
     }
 
     private PostDetailCommentResponse createCommentResponse(CommentDto commentDto, List<CoCommentDto> coCommentDtoList) {
