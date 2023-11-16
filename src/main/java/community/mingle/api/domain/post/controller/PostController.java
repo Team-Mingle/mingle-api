@@ -52,6 +52,8 @@ public class PostController {
 
     @Operation(summary = "게시물 리스트 API")
     @GetMapping("/{boardType}/{categoryType}")
+
+    //TODO status에 따른 title, content 변경
     public ResponseEntity<List<PostPreviewResponse>> pagePosts(@PathVariable BoardType boardType, @PathVariable CategoryType categoryType, @Parameter Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
         List<PostPreviewResponse> postPreviewResponseList = postFacade.getPostList(boardType, categoryType, pageRequest);
