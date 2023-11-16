@@ -1,8 +1,9 @@
 package community.mingle.api.domain.post.controller.response;
 
-import lombok.Data;
+import lombok.Builder;
 
-@Data
-public class CreatePostLikeResponse {
-    private final Boolean created;
+@Builder
+public record CreatePostLikeResponse(
+        Boolean created
+) {
 }

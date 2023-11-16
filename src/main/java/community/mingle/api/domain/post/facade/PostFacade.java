@@ -116,7 +116,8 @@ public class PostFacade {
 
 
     @Transactional
-    public CreatePostLikeResponse createPostLike(Long postId, Long memberId) {
+    public CreatePostLikeResponse createPostLike(Long postId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
         postLikeService.create(postId, memberId);
         return new CreatePostLikeResponse(true);
     }
@@ -187,7 +188,7 @@ public class PostFacade {
     }
 
     private PostDetailResponse buildReportedPostResponse(PostDetailResponse.PostDetailResponseBuilder builder, Post post) {
-        ReportType reportType = postService.findReportedPostReason(post.getId(), ContentType.POST);
+        ReportType reportType = postService.findReportedPostReason(post.getId());
         return builder.title("다른 사용자들의 신고에 의해 삭제된 글 입니다.")
                 .content("사유: " + reportType.getDescription())
                 .isReported(true)
