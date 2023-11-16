@@ -59,7 +59,16 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long postId) {
+    public void delete(Long commentId, Long memberId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
+        if (!comment.getMember().getId().equals(memberId)) {
+            throw new CustomException(MODIFY_NOT_AUTHORIZED);
+        }
+        commentRepository.delete(comment);
+    }
+
+    @Transactional
+    public void deleteAllByPostId(Long postId) {
         List<Comment> comments = commentRepository.findAllByPostId(postId);
         commentRepository.deleteAll(comments);
     }
