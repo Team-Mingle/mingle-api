@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: add policy table
+      author: Hyeonwoo Jung
+      changes:
+        - createTable:
+            tableName: policy
+            columns:
+              - column:
+                  name: type
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: content
+                  type: text
+                  constraints:
+                    nullable: false
