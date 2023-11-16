@@ -60,10 +60,10 @@ public class CommentFacade {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Comment comment = commentService.create(
                 memberId,
-                createCommentRequest.getPostId(),
-                createCommentRequest.getParentCommentId(),
-                createCommentRequest.getMentionId(),
-                createCommentRequest.getContent(),
+                createCommentRequest.postId(),
+                createCommentRequest.parentCommentId(),
+                createCommentRequest.mentionId(),
+                createCommentRequest.content(),
                 createCommentRequest.isAnonymous());
         return new CreateCommentResponse(comment.getId());
 
