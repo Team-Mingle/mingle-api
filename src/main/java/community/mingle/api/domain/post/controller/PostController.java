@@ -29,7 +29,6 @@ import java.util.List;
 public class PostController {
 
     private final PostFacade postFacade;
-    private final TokenService tokenService;
     private final CommentFacade commentFacade;
 
 

@@ -6,7 +6,6 @@ import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.repository.PostLikeRepository;
 import community.mingle.api.domain.post.repository.PostRepository;
-import community.mingle.api.enums.ContentType;
 import community.mingle.api.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
