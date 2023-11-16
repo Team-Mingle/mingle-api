@@ -40,11 +40,10 @@ public class CommentService {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
         checkValidity(post, parentCommentId, mentionId);
-        Long anonymousId;
+        Long anonymousId = 0L;
         if (isAnonymous) {
             anonymousId = calculateAnonymousId(post, member);
-        } else anonymousId = 0L;
-
+        }
         Comment comment = Comment.builder()
                 .post(post)
                 .member(member)
@@ -70,7 +69,7 @@ public class CommentService {
 
     @Transactional
     public void deleteAllByPostId(Long postId) {
-        List<Comment> comments = commentRepository.findAllByPostId(postId).orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
+        List<Comment> comments = commentRepository.findAllByPostId(postId);
         commentRepository.deleteAll(comments);
     }
 
@@ -146,16 +145,14 @@ public class CommentService {
                 .map(Comment::getId)
                 .collect(Collectors.toSet());
 
-        List<Long> commentIdListWithoutCoComment = post.getCommentList().stream()
+        Set<Long> commentIdListWithoutCoComment = post.getCommentList().stream()
                 .filter(comment -> comment.getParentCommentId() == null)
                 .map(Comment::getId)
-                .toList();
+                .collect(Collectors.toSet());
 
-        if (parentCommentId != null) {
-            //parentCommentId가 해당 게시물의 댓글이 아니거나 parentCommentId가 대댓글일 경우 에러 (parentCommentId는 대댓글이 아닌 댓글이여야함)
-            if (!commentIdList.contains(parentCommentId) || !commentIdListWithoutCoComment.contains(parentCommentId)) {
-                throw new CustomException(FAIL_TO_CREATE_COMMENT);
-            }
+        //parentCommentId가 해당 게시물의 댓글이 아니거나 parentCommentId가 대댓글일 경우 에러 (parentCommentId는 대댓글이 아닌 댓글이여야함)
+        if (parentCommentId != null && !commentIdListWithoutCoComment.contains(parentCommentId)) {
+            throw new CustomException(FAIL_TO_CREATE_COMMENT);
         }
 
         if (mentionCommentId != null) {
@@ -166,23 +163,23 @@ public class CommentService {
     }
 
     private Long calculateAnonymousId(Post post, Member member) {
-        Optional<List<Comment>> comments = commentRepository.findAllByPostId(post.getId());
+        List<Comment> commentList = commentRepository.findAllByPostId(post.getId());
 
         //해당 게시글에 댓글이 없을 경우
-        if (comments.isEmpty()) {
+        if (commentList.isEmpty()) {
             return 1L;
         }
 
-        Optional<Comment> resultComment = comments.flatMap(commentList -> commentList.stream()
+        Optional<Comment> resultComment = commentList.stream()
                 .filter(comment -> comment.getMember().equals(member) && comment.getAnonymous())
-                .findFirst());
+                .findFirst();
 
         //해당 게시글에 유저가 익명으로 댓글을 쓴 적이 있을 경우
         if (resultComment.isPresent()) {
             return resultComment.get().getAnonymousId();
         }
         //해당 게시글에 유저가 익명으로 댓글을 처음쓰는 경우
-        else return comments.get().stream()
+        else return commentList.stream()
                 .map(Comment::getAnonymousId)
                 .max(Long::compareTo)
                 .orElse(1L);
