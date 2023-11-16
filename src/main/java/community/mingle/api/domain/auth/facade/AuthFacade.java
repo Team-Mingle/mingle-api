@@ -2,6 +2,7 @@ package community.mingle.api.domain.auth.facade;
 
 import community.mingle.api.domain.auth.controller.request.*;
 import community.mingle.api.domain.auth.controller.response.*;
+import community.mingle.api.domain.auth.entity.Policy;
 import community.mingle.api.domain.auth.service.AuthService;
 import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.domain.auth.service.TokenService;
@@ -9,6 +10,7 @@ import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.dto.security.CreatedTokenDto;
 import community.mingle.api.dto.security.TokenDto;
 import community.mingle.api.enums.MemberRole;
+import community.mingle.api.enums.PolicyType;
 import community.mingle.api.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -115,5 +117,11 @@ public class AuthFacade {
     public SendVerificationCodeResponse sendVerificationCodeEmailForPwdReset(String email) {
         memberService.getByEmail(email); //check member exists by email
         return sendVerificationCodeEmail(email);
+    }
+
+    public PolicyResponse getPolicy(PolicyType policyType) {
+        Policy policy = authService.getPolicy(policyType);
+        return new PolicyResponse(policy.getContent());
+
     }
 }

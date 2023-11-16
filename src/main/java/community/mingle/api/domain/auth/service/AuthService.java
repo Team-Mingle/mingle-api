@@ -1,10 +1,13 @@
 package community.mingle.api.domain.auth.service;
 
 import community.mingle.api.domain.auth.entity.AuthenticationCode;
+import community.mingle.api.domain.auth.entity.Policy;
 import community.mingle.api.domain.auth.repository.AuthenticationCodeRepository;
+import community.mingle.api.domain.auth.repository.PolicyRepository;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.enums.MemberStatus;
+import community.mingle.api.enums.PolicyType;
 import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.global.exception.ErrorCode;
 import community.mingle.api.global.utils.EmailHasher;
@@ -39,6 +42,7 @@ public class AuthService {
 
     public static final String VERIFICATION_CODE_EMAIL_SUBJECT = "Mingle의 이메일 인증번호를 확인하세요";
     public static final String FRESHMAN_EMAIL_DOMAIN = "freshman.mingle.com";
+    private final PolicyRepository policyRepository;
 
 
     public String createCode() {
@@ -124,6 +128,10 @@ public class AuthService {
         if (member.getStatus().equals(MemberStatus.REPORTED)) {
             throw new CustomException(MEMBER_REPORTED_ERROR);
         }
+    }
+
+    public Policy getPolicy(PolicyType policyType) {
+        return policyRepository.findById(policyType.getDbPolicyName()).orElseThrow(() -> new CustomException(POLICY_NOT_FOUND));
     }
 
 

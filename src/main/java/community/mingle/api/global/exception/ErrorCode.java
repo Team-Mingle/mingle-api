@@ -44,8 +44,12 @@ public enum ErrorCode {
     UNIVERSITY_NOT_FOUND(404, "2009", "존재하지 않는 대학입니다."),
 
     COMMENT_NOT_FOUND(404, "3000", "존재하지 않는 멘션 댓글입니다."),
+    LIKE_ALREADY_EXIST(409, "2010", "이미 좋아요를 눌렀습니다."),
+    FAIL_TO_CREATE_COMMENT(400, "2011", "댓글 생성에 실패했습니다."),
+    LIKE_NOT_FOUND(404, "2010", "좋아요를 찾을 수 없습니다."),
     POST_LIKE_ALREADY_EXIST(409, "2010", "이미 좋아요를 눌렀습니다."),
     POST_LIKE_NOT_FOUND(404, "2011", "좋아요를 찾을 수 없습니다."),
+    POLICY_NOT_FOUND(404, "2010", "해당 정책을 찾을 수 없습니다."),
     INTERNAL_SERVER_ERROR(500, "500", "INTERNAL SERVER ERROR");
 
     private final int status;

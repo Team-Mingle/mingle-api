@@ -6,7 +6,6 @@ import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.repository.PostLikeRepository;
 import community.mingle.api.domain.post.repository.PostRepository;
-import community.mingle.api.enums.ContentType;
 import community.mingle.api.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,13 +26,12 @@ public class PostLikeService {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_EXIST));
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
         if (postLikeRepository.existsByPostIdAndMemberId(postId, memberId)) {
-            throw new CustomException(POST_LIKE_ALREADY_EXIST);
+            throw new CustomException(LIKE_ALREADY_EXIST);
         }
 
         PostLike postLike = PostLike.builder()
                 .post(post)
                 .member(member)
-                .contentType(ContentType.POST)
                 .build();
 
         return postLikeRepository.save(postLike);
