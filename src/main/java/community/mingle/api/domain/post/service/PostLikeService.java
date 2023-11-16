@@ -9,6 +9,7 @@ import community.mingle.api.domain.post.repository.PostRepository;
 import community.mingle.api.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static community.mingle.api.global.exception.ErrorCode.*;
 
@@ -20,6 +21,7 @@ public class PostLikeService {
     private final PostLikeRepository postLikeRepository;
     private final MemberRepository memberRepository;
 
+    @Transactional
     public PostLike create(Long postId, Long memberId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_EXIST));
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
@@ -34,4 +36,14 @@ public class PostLikeService {
 
         return postLikeRepository.save(postLike);
     }
+
+    @Transactional
+    public void delete(Long postLikeId, Long memberId) {
+        PostLike postLike = postLikeRepository.findById(postLikeId).orElseThrow(() -> new CustomException(POST_LIKE_NOT_FOUND));
+        if (!postLike.getMember().getId().equals(memberId)) {
+            throw new CustomException(MODIFY_NOT_AUTHORIZED);
+        }
+        postLikeRepository.deleteById(postLikeId);
+    }
+
 }

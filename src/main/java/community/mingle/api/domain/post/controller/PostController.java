@@ -106,4 +106,12 @@ public class PostController {
         return ResponseEntity.ok().body(createPostLikeResponse);
     }
 
+    @Operation(summary = "게시물 좋아요 삭제 API")
+    @PatchMapping("/like/delete/{postLikeId}")
+    public ResponseEntity<DeletePostLikeResponse> deletePostLike(@PathVariable Long postLikeId) {
+        DeletePostLikeResponse deletePostLikeResponse = postFacade.deletePostLike(postLikeId);
+
+        return ResponseEntity.ok().body(deletePostLikeResponse);
+    }
+
 }

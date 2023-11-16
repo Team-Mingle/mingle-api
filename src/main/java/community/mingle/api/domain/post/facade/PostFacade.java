@@ -122,6 +122,13 @@ public class PostFacade {
         return new CreatePostLikeResponse(true);
     }
 
+    @Transactional
+    public DeletePostLikeResponse deletePostLike(Long postLikeId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        postLikeService.delete(postLikeId, memberId);
+        return new DeletePostLikeResponse(true);
+    }
+
 
     public List<PostPreviewResponse> getBestPost(PageRequest pageRequest) {
 
