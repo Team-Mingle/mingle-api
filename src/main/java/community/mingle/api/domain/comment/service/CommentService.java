@@ -142,7 +142,7 @@ public class CommentService {
                 .collect(Collectors.toSet());
 
         //parentCommentId가 해당 게시물의 댓글이 아니거나 parentCommentId가 대댓글일 경우 에러 (parentCommentId는 대댓글이 아닌 댓글이여야함)
-        if (parentCommentId != null && (!commentIdList.contains(parentCommentId) || !commentIdListWithoutCoComment.contains(parentCommentId))) {
+        if (parentCommentId != null && !commentIdListWithoutCoComment.contains(parentCommentId)) {
             throw new CustomException(FAIL_TO_CREATE_COMMENT);
         }
 
