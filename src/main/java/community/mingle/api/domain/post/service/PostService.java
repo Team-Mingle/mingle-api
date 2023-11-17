@@ -7,6 +7,7 @@ import community.mingle.api.domain.post.controller.response.PostCategoryResponse
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.entity.PostImage;
 import community.mingle.api.domain.post.repository.*;
+import community.mingle.api.domain.report.entity.PostReport;
 import community.mingle.api.domain.report.entity.Report;
 import community.mingle.api.enums.*;
 import community.mingle.api.global.exception.CustomException;
@@ -32,7 +33,7 @@ public class PostService {
     private final MemberRepository memberRepository;
     private final PostLikeRepository postLikeRepository;
     private final PostScrapRepository postScrapRepository;
-    private final ReportRepository reportRepository;
+    private final PostReportRepository postReportRepository;
     private final PostQueryRepository postQueryRepository;
 
 
@@ -71,7 +72,6 @@ public class PostService {
                 .member(member)
                 .statusType(ContentStatusType.ACTIVE)
                 .fileAttached(fileAttached)
-                .member(member)
                 .statusType(ContentStatusType.ACTIVE)
                 .build();
 
@@ -93,12 +93,12 @@ public class PostService {
     public record PostStatusDto(boolean isMyPost, boolean isLiked, boolean isScraped, boolean isBlinded)  {
     }
 
-    public ReportType findReportedPostReason(Long postId, ContentType tableType) {
-        List<Report> reportedPost = reportRepository.findAllByContentIdAndContentType(postId, tableType);
+    public ReportType findReportedPostReason(Long postId) {
+        List<PostReport> postReportList = postReportRepository.findAllByContentId(postId);
 
-        if (reportedPost == null || reportedPost.isEmpty()) return null;
+        if (postReportList == null || postReportList.isEmpty()) return null;
 
-        return reportedPost.stream()
+        return postReportList.stream()
                 .collect(Collectors.groupingBy(Report::getReportType, Collectors.counting()))
                 .entrySet().stream()
                 .max(Map.Entry.comparingByValue())

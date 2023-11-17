@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "post_like")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@DiscriminatorValue("POST")
 public class PostLike extends ContentLike {
 
     @NotNull

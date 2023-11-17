@@ -6,6 +6,7 @@ import community.mingle.api.domain.auth.facade.AuthFacade;
 import community.mingle.api.domain.auth.facade.TokenResponse;
 import community.mingle.api.domain.member.service.CountryService;
 import community.mingle.api.domain.member.service.UniversityService;
+import community.mingle.api.enums.PolicyType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -74,6 +75,20 @@ public class AuthController {
 
         VerifyCodeResponse verifyCodeResponse = authFacade.verifyCode(verificationCodeRequest);
         return ResponseEntity.ok().body(verifyCodeResponse);
+    }
+
+    @Operation(summary = "개인정보 처리방침 불러오기 api")
+    @GetMapping("/privacy-policy")
+    public ResponseEntity<PolicyResponse> privacyPolicy() {
+        PolicyResponse policyResponse = authFacade.getPolicy(PolicyType.PRIVACY_POLICY);
+        return new ResponseEntity<>(policyResponse, HttpStatus.OK);
+    }
+
+    @Operation(summary = "서비스 이용약관 불러오기 api")
+    @GetMapping("/terms-and-conditions")
+    public ResponseEntity<PolicyResponse> termsAndConditions() {
+        PolicyResponse policyResponse = authFacade.getPolicy(PolicyType.TERMS_AND_CONDITIONS);
+        return new ResponseEntity<>(policyResponse, HttpStatus.OK);
     }
 
     @Operation(summary = "로그인 api")
