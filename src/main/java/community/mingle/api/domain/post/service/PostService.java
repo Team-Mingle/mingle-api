@@ -6,6 +6,7 @@ import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.entity.PostImage;
 import community.mingle.api.domain.post.repository.*;
+import community.mingle.api.domain.report.entity.PostReport;
 import community.mingle.api.domain.report.entity.Report;
 import community.mingle.api.dto.post.PostStatusDto;
 import community.mingle.api.enums.*;
@@ -32,7 +33,7 @@ public class PostService {
     private final MemberRepository memberRepository;
     private final PostLikeRepository postLikeRepository;
     private final PostScrapRepository postScrapRepository;
-    private final ReportRepository reportRepository;
+    private final PostReportRepository postReportRepository;
     private final PostQueryRepository postQueryRepository;
 
     @Transactional
@@ -55,7 +56,6 @@ public class PostService {
                 .member(member)
                 .statusType(ContentStatusType.ACTIVE)
                 .fileAttached(fileAttached)
-                .member(member)
                 .statusType(ContentStatusType.ACTIVE)
                 .build();
 
@@ -76,6 +76,18 @@ public class PostService {
         Member viewMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         return postQueryRepository.findRecentPost(boardType, viewMember);
+    }
+    public ReportType getReportedPostReason(Long postId) {
+        List<PostReport> postReportList = postReportRepository.findAllByContentId(postId);
+
+        if (postReportList == null || postReportList.isEmpty()) return null;
+
+        return postReportList.stream()
+                .collect(Collectors.groupingBy(Report::getReportType, Collectors.counting()))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
     }
 
     public List<Post> pagePostsByBoardTypeAndCategory(BoardType boardType, CategoryType categoryType, PageRequest pageRequest) {
@@ -125,19 +137,6 @@ public class PostService {
         return new PostStatusDto(isMyPost, isLiked, isScraped, false);
     }
 
-    public ReportType getReportedPostReason(Long postId, ContentType tableType) {
-        List<Report> reportedPost = reportRepository.findAllByContentIdAndContentType(postId, tableType);
-
-        if (reportedPost == null || reportedPost.isEmpty()) return null;
-
-        return reportedPost.stream()
-                .collect(Collectors.groupingBy(Report::getReportType, Collectors.counting()))
-                .entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
-                .orElse(null);
-    }
-
     public String calculateNickname(Post post) {
         if (post.getAnonymous()) {
             return "익명";
@@ -158,7 +157,7 @@ public class PostService {
     }
 
     public String contentByStatus(Post post) {
-        ReportType reportType = getReportedPostReason(post.getId(), ContentType.POST);
+        ReportType reportType = getReportedPostReason(post.getId());
         return switch (post.getStatusType()) {
             case INACTIVE -> throw new CustomException(POST_NOT_EXIST);
             case REPORTED -> "사유: " + reportType.getDescription();

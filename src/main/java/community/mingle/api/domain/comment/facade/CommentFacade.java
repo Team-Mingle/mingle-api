@@ -1,7 +1,13 @@
 package community.mingle.api.domain.comment.facade;
 
 import community.mingle.api.domain.auth.service.TokenService;
+import community.mingle.api.domain.comment.controller.request.CreateCommentRequest;
+import community.mingle.api.domain.comment.controller.response.CreateCommentLikeResponse;
+import community.mingle.api.domain.comment.controller.response.CreateCommentResponse;
+import community.mingle.api.domain.comment.controller.response.DeleteCommentLikeResponse;
+import community.mingle.api.domain.comment.controller.response.DeleteCommentResponse;
 import community.mingle.api.domain.comment.entity.Comment;
+import community.mingle.api.domain.comment.service.CommentLikeService;
 import community.mingle.api.domain.comment.service.CommentService;
 import community.mingle.api.dto.comment.CoCommentDto;
 import community.mingle.api.dto.comment.CommentDto;
@@ -30,6 +36,7 @@ public class CommentFacade {
     private final PostService postService;
     private final TokenService tokenService;
     private final CommentService commentService;
+    private final CommentLikeService commentLikeService;
 
     public List<PostDetailCommentResponse> getPostDetailComments(Long postId) {
         Post post = postService.getPost(postId);
@@ -53,7 +60,42 @@ public class CommentFacade {
         return responseList;
     }
 
+    @Transactional
+    public CreateCommentResponse create(CreateCommentRequest createCommentRequest) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Comment comment = commentService.create(
+                memberId,
+                createCommentRequest.postId(),
+                createCommentRequest.parentCommentId(),
+                createCommentRequest.mentionId(),
+                createCommentRequest.content(),
+                createCommentRequest.isAnonymous());
+        return new CreateCommentResponse(comment.getId());
+    }
+
+    @Transactional
+    public DeleteCommentResponse delete(Long commentId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        commentService.delete(commentId, memberId);
+        return new DeleteCommentResponse(true);
+    }
+
+    @Transactional
+    public CreateCommentLikeResponse createCommentLike(Long commentId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        commentLikeService.create(commentId, memberId);
+        return new CreateCommentLikeResponse(true);
+    }
+
+    @Transactional
+    public DeleteCommentLikeResponse deleteCommentLike(Long commentId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        commentLikeService.delete(commentId, memberId);
+        return new DeleteCommentLikeResponse(true);
+    }
+
     private PostDetailCommentResponse createCommentResponse(CommentDto commentDto, List<CoCommentDto> coCommentDtoList) {
+        //TODO isAdmin -> role, isDeleted/isReported -> status 변경가능?
         return PostDetailCommentResponse.builder()
                 .commentId(commentDto.getCommentId())
                 .nickname(commentDto.getNickname())
@@ -71,6 +113,7 @@ public class CommentFacade {
     }
 
     private CommentDto createCommentDto(Comment comment, Long memberId, Long postAuthorId) {
+        //TODO isAdmin -> role, isDeleted/isReported -> status 변경가능?
         return CommentDto.builder()
                 .commentId(comment.getId())
                 .nickname(commentService.getDisplayName(comment, postAuthorId))
@@ -87,6 +130,7 @@ public class CommentFacade {
     }
 
     public CoCommentDto createCoCommentDto(Comment coComment, Long memberId, Long postAuthorId) {
+        //TODO isAdmin -> role, isDeleted/isReported -> status 변경가능?
         return CoCommentDto.builder()
                 .commentId(coComment.getId())
                 .parentCommentId(coComment.getParentCommentId()) //
