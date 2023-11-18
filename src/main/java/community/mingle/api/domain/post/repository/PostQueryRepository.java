@@ -97,4 +97,34 @@ public class PostQueryRepository {
     private BooleanExpression postLikeCountGreaterThanOrEqual(int minPostLikeCount) {
         return post.postLikeList.size().goe(minPostLikeCount);
     }
+
+    public Page<Post> findSearchPosts(String keyword, Member viewerMember, PageRequest pageRequest) {
+        List<Post> postList = jpaQueryFactory
+                .selectFrom(post)
+                .where(
+                        post.title.contains(keyword)
+                            .or(post.content.contains(keyword)),
+                        post.member.university.country.name.eq(viewerMember.getUniversity().getCountry().getName()),
+                        viewablePostCondition(post, viewerMember)
+                )
+                .orderBy(post.createdAt.desc())
+                .offset(pageRequest.getOffset())
+                .limit(pageRequest.getPageSize())
+                .fetch();
+
+        long postTotalCount = jpaQueryFactory
+                .selectFrom(post)
+                .where(
+                        post.title.contains(keyword)
+                                .or(post.content.contains(keyword)),
+                        post.member.university.country.name.eq(viewerMember.getUniversity().getCountry().getName()),
+                        viewablePostCondition(post, viewerMember)
+                )
+                .orderBy(post.createdAt.desc())
+                .offset(pageRequest.getOffset())
+                .limit(pageRequest.getPageSize())
+                .stream().count();
+
+        return new PageImpl<>(postList, pageRequest, postTotalCount);
+    }
 }

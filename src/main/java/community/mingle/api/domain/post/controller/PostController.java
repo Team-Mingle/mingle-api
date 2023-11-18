@@ -126,4 +126,12 @@ public class PostController {
         return ResponseEntity.ok().body(deletePostLikeResponse);
     }
 
+
+    @Operation(summary = "게시물 검색 API")
+    @GetMapping("search")
+    public ResponseEntity<List<PostPreviewResponse>> searchPost(@RequestParam(value = "keyword") String keyword, @Parameter Pageable pageable) {
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
+        List<PostPreviewResponse> searchPostPreviewResponseList = postFacade.getSearchPostList(keyword, pageRequest);
+        return new ResponseEntity<>(searchPostPreviewResponseList, HttpStatus.OK);
+    }
 }
