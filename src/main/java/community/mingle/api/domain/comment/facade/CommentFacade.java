@@ -9,8 +9,8 @@ import community.mingle.api.domain.comment.controller.response.DeleteCommentResp
 import community.mingle.api.domain.comment.entity.Comment;
 import community.mingle.api.domain.comment.service.CommentLikeService;
 import community.mingle.api.domain.comment.service.CommentService;
-import community.mingle.api.domain.post.controller.response.CoCommentDto;
-import community.mingle.api.domain.post.controller.response.CommentDto;
+import community.mingle.api.dto.comment.CoCommentDto;
+import community.mingle.api.dto.comment.CommentDto;
 import community.mingle.api.domain.post.controller.response.PostDetailCommentResponse;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.service.PostService;

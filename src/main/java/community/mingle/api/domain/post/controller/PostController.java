@@ -7,7 +7,9 @@ import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
 import community.mingle.api.domain.post.controller.response.*;
 import community.mingle.api.domain.post.facade.PostFacade;
 import community.mingle.api.enums.BoardType;
+import community.mingle.api.enums.CategoryType;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +47,16 @@ public class PostController {
         //TODO ENUM 대소문자 및 일치하는 값 없는 경우 예외처리
         CreatePostResponse createPostResponse = postFacade.createPost(createPostRequest, boardType);
         return new ResponseEntity<>(createPostResponse, HttpStatus.OK);
+    }
+
+    @Operation(summary = "게시물 리스트 API")
+    @GetMapping("/{boardType}/{categoryType}")
+
+    //TODO status에 따른 title, content 변경
+    public ResponseEntity<List<PostPreviewResponse>> pagePosts(@PathVariable BoardType boardType, @PathVariable CategoryType categoryType, @Parameter Pageable pageable) {
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
+        List<PostPreviewResponse> postPreviewResponseList = postFacade.getPostList(boardType, categoryType, pageRequest);
+        return new ResponseEntity<>(postPreviewResponseList, HttpStatus.OK);
     }
 
     @Operation(summary = "게시물 상세 - 본문 API")
