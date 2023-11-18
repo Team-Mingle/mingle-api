@@ -1,13 +1,11 @@
-package community.mingle.api.domain.post.controller.response;
+package community.mingle.api.dto.comment;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 @Getter
 @SuperBuilder
 public class CommentDto {
-
     private final Long commentId;
     private final String nickname;
     private final String content;
