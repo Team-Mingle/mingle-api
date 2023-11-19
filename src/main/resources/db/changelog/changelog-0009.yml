@@ -21,6 +21,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     primaryKey: true
+                  autoIncrement: true
               - column:
                   name: course_code
                   type: varchar(45)
@@ -43,12 +44,12 @@ databaseChangeLog:
                     nullable: true
               - column:
                   name: start_time
-                  type: timestamp
+                  type: time
                   constraints:
                     nullable: true
               - column:
                   name: end_time
-                  type: timestamp
+                  type: time
                   constraints:
                     nullable: true
               - column:
@@ -108,6 +109,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     primaryKey: true
+                  autoIncrement: true
               - column:
                   name: semester
                   type: varchar(45)
@@ -133,6 +135,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     primaryKey: true
+                  autoIncrement: true
               - column:
                   name: course_id
                   type: bigint
