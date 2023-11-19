@@ -4,8 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import community.mingle.api.domain.like.entity.QPostLike;
-import community.mingle.api.domain.member.entity.Member;
-import community.mingle.api.domain.member.entity.QBlockMember;
+import community.mingle.api.domain.member.entity.*;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.entity.QPost;
 import community.mingle.api.enums.BoardType;
@@ -28,6 +27,8 @@ public class PostQueryRepository {
     private final QPost post = QPost.post;
     private final QPostLike postLike = QPostLike.postLike;
     private final QBlockMember blockMember = QBlockMember.blockMember;
+    private final QMember member = QMember.member;
+
 
     private static final int BEST_TOTAL_POST_LIKE_COUNT = 10;
     private static final int BEST_UNIV_POST_LIKE_COUNT = 5;
@@ -101,6 +102,7 @@ public class PostQueryRepository {
     public Page<Post> findSearchPosts(String keyword, Member viewerMember, PageRequest pageRequest) {
         List<Post> postList = jpaQueryFactory
                 .selectFrom(post)
+                .leftJoin(post.member, member)
                 .where(
                         post.title.contains(keyword)
                             .or(post.content.contains(keyword)),
@@ -110,10 +112,11 @@ public class PostQueryRepository {
                 .orderBy(post.createdAt.desc())
                 .offset(pageRequest.getOffset())
                 .limit(pageRequest.getPageSize())
-                .fetch();
+                .fetchJoin().fetch();
 
         long postTotalCount = jpaQueryFactory
                 .selectFrom(post)
+                .leftJoin(post.member, member)
                 .where(
                         post.title.contains(keyword)
                                 .or(post.content.contains(keyword)),
