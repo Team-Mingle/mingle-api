@@ -51,15 +51,15 @@ public class AuthFacade {
 
     @Transactional
     public SignUpResponse signUp(SignUpRequest request) {
-        if (memberService.existsByEmail(request.getEmail())) {
+        if (memberService.existsByEmail(request.email())) {
             throw new CustomException(MEMBER_ALREADY_EXIST);
         }
 
-        if (memberService.existsByNickname(request.getNickname())) {
+        if (memberService.existsByNickname(request.nickname())) {
             throw new CustomException(NICKNAME_DUPLICATED);
         }
 
-        Member member = memberService.create(request.getUnivId(), request.getNickname(), request.getEmail(), request.getPassword());
+        Member member = memberService.create(request.univId(), request.nickname(), request.email(), request.password());
         return new SignUpResponse(member.getId());
 
 

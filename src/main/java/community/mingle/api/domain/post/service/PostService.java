@@ -157,10 +157,12 @@ public class PostService {
     }
 
     public String contentByStatus(Post post) {
-        ReportType reportType = getReportedPostReason(post.getId());
         return switch (post.getStatusType()) {
             case INACTIVE -> throw new CustomException(POST_NOT_EXIST);
-            case REPORTED -> "사유: " + reportType.getDescription();
+            case REPORTED -> {
+                ReportType reportType = getReportedPostReason(post.getId());
+                yield "사유: " + reportType.getDescription();
+            }
             case DELETED -> "사유: 이용약관 제 12조 위반";
             default -> post.getTitle();
         };
@@ -197,6 +199,9 @@ public class PostService {
     }
 
 
-
+    public List<Post> getPostByKeyword(String keyword, Long viewerMemberId, PageRequest pageRequest) {
+        Member viewerMember = memberRepository.findById(viewerMemberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        return postQueryRepository.findSearchPosts(keyword, viewerMember, pageRequest).toList();
+    }
 }
 

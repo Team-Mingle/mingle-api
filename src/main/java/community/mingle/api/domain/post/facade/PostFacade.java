@@ -157,6 +157,15 @@ public class PostFacade {
         return mapToPostDetailResponse(post, memberId);
     }
 
+    public List<PostPreviewResponse> getSearchPostList(String keyword, PageRequest pageRequest) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        List<Post> postList = postService.getPostByKeyword(keyword, memberId, pageRequest);
+
+        return postList.stream()
+                .map(post -> mapToPostPreviewResponse(post, memberId))
+                .collect(Collectors.toList());
+    }
+
     private PostDetailResponse mapToPostDetailResponse(Post post, Long memberId) {
         PostStatusDto postStatusDto = postService.getPostStatus(post, memberId);
         List<String> imageUrls = postService.collectPostImageUrls(post);
