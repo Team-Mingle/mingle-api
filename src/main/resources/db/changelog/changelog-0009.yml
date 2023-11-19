@@ -24,7 +24,7 @@ databaseChangeLog:
                   autoIncrement: true
               - column:
                   name: course_code
-                  type: varchar(45)
+                  type: varchar(1023)
                   constraints:
                     nullable: true
               - column:
@@ -34,7 +34,7 @@ databaseChangeLog:
                     nullable: true
               - column:
                   name: semester
-                  type: varchar(45)
+                  type: varchar(1023)
                   constraints:
                     nullable: true
               - column:
@@ -54,17 +54,17 @@ databaseChangeLog:
                     nullable: true
               - column:
                   name: venue
-                  type: varchar(45)
+                  type: varchar(1023)
                   constraints:
                     nullable: true
               - column:
                   name: professor
-                  type: varchar(45)
+                  type: varchar(1023)
                   constraints:
                     nullable: true
               - column:
                   name: subclass
-                  type: varchar(45)
+                  type: varchar(1023)
                   constraints:
                     nullable: true
               - column:
@@ -112,7 +112,7 @@ databaseChangeLog:
                   autoIncrement: true
               - column:
                   name: semester
-                  type: varchar(45)
+                  type: varchar(1023)
                   constraints:
                     nullable: false
               - column:
