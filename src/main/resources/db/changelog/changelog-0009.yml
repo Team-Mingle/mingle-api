@@ -1,0 +1,159 @@
+databaseChangeLog:
+  - changeSet:
+      id: add course, timetable table
+      author: Hyeonwoo Jung
+      changes:
+        - createTable:
+            tableName: course_type
+            columns:
+              - column:
+                  name: type
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+        - createTable:
+            tableName: course
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: course_code
+                  type: varchar(45)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: semester
+                  type: varchar(45)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: day_of_week
+                  type: enum('SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT')
+                  constraints:
+                    nullable: true
+              - column:
+                  name: start_time
+                  type: timestamp
+                  constraints:
+                    nullable: true
+              - column:
+                  name: end_time
+                  type: timestamp
+                  constraints:
+                    nullable: true
+              - column:
+                  name: venue
+                  type: varchar(45)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: professor
+                  type: varchar(45)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: subclass
+                  type: varchar(45)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: memo
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: prerequisite
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: university_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: course
+            baseColumnNames: type
+            referencedTableName: course_type
+            referencedColumnNames: type
+            constraintName: course_course_type_fk
+        - addForeignKeyConstraint:
+            baseTableName: course
+            baseColumnNames: university_id
+            referencedTableName: university
+            referencedColumnNames: id
+            constraintName: course_university_id_fk
+
+        - createTable:
+            tableName: timetable
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: semester
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: order_number
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_pinned
+                  type: tinyint
+                  constraints:
+                    nullable: false
+
+        - createTable: 
+            tableName: course_timetable
+            columns:
+              - column: 
+                  name: id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: course_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: timetable_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+        
+        - addForeignKeyConstraint: 
+            baseTableName: course_timetable
+            baseColumnNames: course_id
+            referencedTableName: course
+            referencedColumnNames: id
+            constraintName: course_timetable_course_id_fk
+        
+        - addForeignKeyConstraint: 
+            baseTableName: course_timetable
+            baseColumnNames: timetable_id
+            referencedTableName: member
+            referencedColumnNames: id
+            constraintName: course_timetable_member_id_fk
