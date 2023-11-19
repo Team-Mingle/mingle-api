@@ -21,6 +21,7 @@ public class JavaMailSenderConfiguration {
         javaMailSender.setHost("smtp-relay.gmail.com");
         javaMailSender.setPort(25);
         javaMailSender.setUsername("admin@mingle.community");
+        //TODO security manager
         javaMailSender.setPassword("scqmxysuzzxqphdm");
         javaMailSender.setJavaMailProperties(properties);
 

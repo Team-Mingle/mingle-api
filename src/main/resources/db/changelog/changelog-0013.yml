@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: modify foreign key constraint for course_timetable table
+      author: Hyeonwoo Jung
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: course_timetable
+            constraintName: course_timetable_member_id_fk
+        - addForeignKeyConstraint:
+            baseTableName: course_timetable
+            baseColumnNames: timetable_id
+            referencedTableName: timetable
+            referencedColumnNames: id
+            constraintName: course_timetable_timetable_id_fk
+        - addColumn:
+            tableName: timetable
+            columns:
+              - column:
+                  name: member_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: timetable
+            baseColumnNames: member_id
+            referencedTableName: member
+            referencedColumnNames: id
+            constraintName: timetable_member_id_fk
+        - modifyDataType:
+            tableName: timetable
+            columnName: is_pinned
+            newDataType: BIT(1)
