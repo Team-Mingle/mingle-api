@@ -24,6 +24,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -45,11 +46,31 @@ public class AuthService {
     private final PolicyRepository policyRepository;
 
 
+    public void verifyEmail(String email) {
+
+        String hashedEmail = EmailHasher.hashEmail(email);
+
+        Optional<Member> member = memberRepository.findByEmail(hashedEmail);
+        if (member.isPresent()) {
+            throw new CustomException(ErrorCode.EMAIL_DUPLICATED);
+        }
+    }
+
     public String createCode() {
 
         Random random = new Random();
         return String.valueOf(random.nextInt(888888) + 111111);
 
+    }
+
+    @Transactional
+    public void registerAuthEmail(String email, String code) {
+        String hashedEmail = EmailHasher.hashEmail(email);
+        AuthenticationCode authenticationCode = AuthenticationCode.builder()
+                .email(hashedEmail)
+                .authToken(code)
+                .build();
+        authenticationCodeRepository.save(authenticationCode);
     }
 
     public void sendAuthEmail(String emailTo, String authKey) {
@@ -76,25 +97,7 @@ public class AuthService {
         }
     }
 
-    public void verifyEmail (String email) {
 
-        String hashedEmail = EmailHasher.hashEmail(email);
-
-        Optional<Member> member = memberRepository.findByEmail(hashedEmail);
-        if (member.isPresent()) {
-            throw new CustomException(ErrorCode.EMAIL_DUPLICATED);
-        }
-    }
-
-    @Transactional
-    public void registerAuthEmail(String email, String code) {
-        String hashedEmail = EmailHasher.hashEmail(email);
-        AuthenticationCode authenticationCode = AuthenticationCode.builder()
-                .email(hashedEmail)
-                .authToken(code)
-                .build();
-        authenticationCodeRepository.save(authenticationCode);
-    }
 
     public Boolean verifyCode(String email, String code) {
 
@@ -137,8 +140,8 @@ public class AuthService {
 
     private AuthenticationCode getAuthenticationCode(String email) {
         String hashedEmail = EmailHasher.hashEmail(email);
-        return authenticationCodeRepository.findByEmail(hashedEmail)
-                .orElseThrow(() -> new CustomException(ErrorCode.CODE_FOUND_FAILED));
+        return authenticationCodeRepository.findFirstByEmailOrderByCreatedAtDesc(hashedEmail)
+                .orElseThrow(() -> new CustomException(CODE_FOUND_FAILED));
     }
 
     private void checkCodeMatch(String inputCode, String storedCode) {
