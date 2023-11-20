@@ -10,8 +10,7 @@ public enum ErrorCode {
     MEMBER_DELETED(409, "1003", "삭제된 멤버입니다"),
     EMAIL_DUPLICATED(409, "1005", "중복된 이메일입니다."),
 
-    CODE_GENERATION_FAILED(409, "1006", "코드 생성에 실패하였습니다."),
-    CODE_MATCH_FAILED(409, "1007", "코드 생성에 실패하였습니다."),
+    CODE_MATCH_FAILED(409, "1007", "인증번호가 일치하지 않습니다."),
     CODE_FOUND_FAILED(409, "1008", "존재하는 코드가 없습니다."),
     CODE_VALIDITY_EXPIRED(409, "1009", "코드가 만료되었습니다."),
     EMAIL_SEND_FAILED(409, "1010", "이메일 전송에 실패하였습니다."),
