@@ -47,15 +47,4 @@ public class CourseTime extends AuditLoggingBase {
     @Column(name = "deleted_at")
     private Instant deletedAt;
 
-    public CourseTime updateCourseTime(
-        DayOfWeek dayOfWeek,
-        LocalTime startTime,
-        LocalTime endTime
-    ) {
-        this.dayOfWeek = dayOfWeek;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        return this;
-    }
-
 }

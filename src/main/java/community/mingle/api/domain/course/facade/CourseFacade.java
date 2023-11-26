@@ -176,12 +176,4 @@ public class CourseFacade {
                         !dto.endTime().equals(courseTime.getEndTime()))
         );
     }
-
-    private boolean areCourseTimesEqual(CourseTimeDto dto, CourseTime courseTime) {
-        return dto.dayOfWeek().equals(courseTime.getDayOfWeek()) &&
-                dto.startTime().equals(courseTime.getStartTime()) &&
-                dto.endTime().equals(courseTime.getEndTime());
-    }
-
-
 }
