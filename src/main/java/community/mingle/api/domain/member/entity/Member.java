@@ -11,6 +11,8 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -65,6 +67,12 @@ public class Member extends AuditLoggingBase {
 
     @Column(name = "fcm_token")
     private String fcmToken;
+
+    @OneToMany(mappedBy = "blockedMember")
+    private List<BlockMember> blockedMember= new ArrayList<>();
+
+    @OneToMany(mappedBy = "blockerMember")
+    private List<BlockMember> blockerMember= new ArrayList<>();
 
     public void setFcmToken(String fcmToken) {
         this.fcmToken = fcmToken;

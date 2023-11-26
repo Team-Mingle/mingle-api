@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: add updated_at to post_image table
+      author: Taehyun Kim
+      changes:
+        - addColumn:
+            tableName: post_image
+            columns:
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false

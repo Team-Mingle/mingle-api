@@ -42,7 +42,8 @@ public class SecretsManagerService {
     }
 
     public DevTokenDto getJwtDevToken() throws IOException {
-        return getSecretValue("mingle-api/jwt-dev-token", DevTokenDto.class);
+        DevTokenDto secretValue = getSecretValue("mingle-api/jwt-dev-token", DevTokenDto.class);
+        return secretValue;
     }
 
     public String getS3BucketName() {

@@ -1,14 +1,21 @@
 package community.mingle.api.domain.post.controller;
 
+import community.mingle.api.domain.auth.service.TokenService;
+import community.mingle.api.domain.comment.facade.CommentFacade;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
 import community.mingle.api.domain.post.controller.response.*;
 import community.mingle.api.domain.post.facade.PostFacade;
 import community.mingle.api.enums.BoardType;
+import community.mingle.api.enums.CategoryType;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +31,7 @@ import java.util.List;
 public class PostController {
 
     private final PostFacade postFacade;
+    private final CommentFacade commentFacade;
 
 
     @Operation(summary = "카테고리 목록 조회 API")
@@ -41,10 +49,26 @@ public class PostController {
         return new ResponseEntity<>(createPostResponse, HttpStatus.OK);
     }
 
-    @Operation(summary = "게시물 상세 API")
+    @Operation(summary = "게시물 리스트 API")
+    @GetMapping("/{boardType}/{categoryType}")
+
+    //TODO status에 따른 title, content 변경
+    public ResponseEntity<List<PostPreviewResponse>> pagePosts(@PathVariable BoardType boardType, @PathVariable CategoryType categoryType, @Parameter Pageable pageable) {
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
+        List<PostPreviewResponse> postPreviewResponseList = postFacade.getPostList(boardType, categoryType, pageRequest);
+        return new ResponseEntity<>(postPreviewResponseList, HttpStatus.OK);
+    }
+
+    @Operation(summary = "게시물 상세 - 본문 API")
     @GetMapping("/{postId}")
     public ResponseEntity<PostDetailResponse> postDetail(@PathVariable Long postId) {
         return new ResponseEntity<>(postFacade.getPostDetail(postId), HttpStatus.OK);
+    }
+
+    @Operation(summary = "게시물 상세 - 댓글 API")
+    @GetMapping("/{postId}/comment")
+    public ResponseEntity<List<PostDetailCommentResponse>> postDetailComments(@PathVariable Long postId) {
+        return new ResponseEntity<>(commentFacade.getPostDetailComments(postId), HttpStatus.OK);
     }
 
 
@@ -56,6 +80,7 @@ public class PostController {
         return ResponseEntity.ok().body(updatePostResponse);
     }
 
+
     @Operation(summary = "게시물 삭제 API")
     @PatchMapping("/delete/{postId}")
     public ResponseEntity<DeletePostResponse> deletePost(@PathVariable Long postId) {
@@ -65,4 +90,48 @@ public class PostController {
         return ResponseEntity.ok().body(deletePostResponse);
     }
 
+    @Operation(summary = "베스트 게시판 조회 API")
+    @GetMapping("/best")
+    public ResponseEntity<List<PostPreviewResponse>> getBestPost(Pageable pageable) {
+
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
+        List<PostPreviewResponse> postPreviewResponseList = postFacade.getBestPost(pageRequest);
+
+        return ResponseEntity.ok().body(postPreviewResponseList);
+    }
+
+
+    @Operation(summary = "최신 게시판 조회 API")
+    @GetMapping("/{boardType}/recent")
+    public ResponseEntity<List<PostPreviewResponse>> getRecentPost(@PathVariable(value = "boardType") BoardType boardType) {
+
+        List<PostPreviewResponse> postPreviewResponseList = postFacade.getRecentPost(boardType);
+
+        return ResponseEntity.ok().body(postPreviewResponseList);
+    }
+
+
+    @Operation(summary = "게시물 좋아요 생성 API")
+    @PostMapping("/like/{postId}")
+    public ResponseEntity<CreatePostLikeResponse> createPostLike(@PathVariable Long postId) {
+        CreatePostLikeResponse createPostLikeResponse = postFacade.createPostLike(postId);
+        return ResponseEntity.ok().body(createPostLikeResponse);
+    }
+
+    @Operation(summary = "게시물 좋아요 삭제 API")
+    @PatchMapping("/like/delete/{postLikeId}")
+    public ResponseEntity<DeletePostLikeResponse> deletePostLike(@PathVariable Long postLikeId) {
+        DeletePostLikeResponse deletePostLikeResponse = postFacade.deletePostLike(postLikeId);
+
+        return ResponseEntity.ok().body(deletePostLikeResponse);
+    }
+
+
+    @Operation(summary = "게시물 검색 API")
+    @GetMapping("search")
+    public ResponseEntity<List<PostPreviewResponse>> searchPost(@RequestParam(value = "keyword") String keyword, @Parameter Pageable pageable) {
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
+        List<PostPreviewResponse> searchPostPreviewResponseList = postFacade.getSearchPostList(keyword, pageRequest);
+        return new ResponseEntity<>(searchPostPreviewResponseList, HttpStatus.OK);
+    }
 }

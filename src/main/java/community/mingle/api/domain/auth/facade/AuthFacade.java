@@ -2,6 +2,7 @@ package community.mingle.api.domain.auth.facade;
 
 import community.mingle.api.domain.auth.controller.request.*;
 import community.mingle.api.domain.auth.controller.response.*;
+import community.mingle.api.domain.auth.entity.Policy;
 import community.mingle.api.domain.auth.service.AuthService;
 import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.domain.auth.service.TokenService;
@@ -9,6 +10,7 @@ import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.dto.security.CreatedTokenDto;
 import community.mingle.api.dto.security.TokenDto;
 import community.mingle.api.enums.MemberRole;
+import community.mingle.api.enums.PolicyType;
 import community.mingle.api.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -49,15 +51,15 @@ public class AuthFacade {
 
     @Transactional
     public SignUpResponse signUp(SignUpRequest request) {
-        if (memberService.existsByEmail(request.getEmail())) {
+        if (memberService.existsByEmail(request.email())) {
             throw new CustomException(MEMBER_ALREADY_EXIST);
         }
 
-        if (memberService.existsByNickname(request.getNickname())) {
+        if (memberService.existsByNickname(request.nickname())) {
             throw new CustomException(NICKNAME_DUPLICATED);
         }
 
-        Member member = memberService.create(request.getUnivId(), request.getNickname(), request.getEmail(), request.getPassword());
+        Member member = memberService.create(request.univId(), request.nickname(), request.email(), request.password());
         return new SignUpResponse(member.getId());
 
 
@@ -92,7 +94,7 @@ public class AuthFacade {
     @Transactional
     public TokenResponse reissueAccessToken(String refreshToken, String email) {
 
-        TokenDto tokenDto = tokenService.verifyToken(refreshToken);
+        TokenDto tokenDto = tokenService.verifyToken(refreshToken); //TODO 로직 변경해야함
         tokenService.validateRefreshToken(refreshToken);
 
         CreatedTokenDto tokens = tokenService.createTokens(tokenDto.getMemberId(), tokenDto.getMemberRole(), email);
@@ -115,5 +117,11 @@ public class AuthFacade {
     public SendVerificationCodeResponse sendVerificationCodeEmailForPwdReset(String email) {
         memberService.getByEmail(email); //check member exists by email
         return sendVerificationCodeEmail(email);
+    }
+
+    public PolicyResponse getPolicy(PolicyType policyType) {
+        Policy policy = authService.getPolicy(policyType);
+        return new PolicyResponse(policy.getContent());
+
     }
 }

@@ -9,7 +9,6 @@ spring:
 logging:
   level:
     org.springframework.security: DEBUG
-
-logging.level:
-  org.hibernate.SQL: debug
-  org.hibernate.type: trace
+    org.hibernate.SQL: debug
+    org.hibernate.type: trace
+    root: error

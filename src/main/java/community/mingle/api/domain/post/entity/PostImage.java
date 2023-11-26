@@ -10,6 +10,8 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Entity
 @SuperBuilder
@@ -32,5 +34,8 @@ public class PostImage extends AuditLoggingBase {
     @NotNull
     @Column(name = "url", nullable = false)
     private String url;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
 }
