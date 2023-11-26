@@ -5,6 +5,7 @@ import community.mingle.api.domain.course.controller.request.CreatePersonalCours
 import community.mingle.api.domain.course.controller.response.CreatePersonalCourseResponse;
 import community.mingle.api.domain.course.controller.response.GetCourseDetailResponse;
 import community.mingle.api.domain.course.entity.Course;
+import community.mingle.api.domain.course.entity.CourseTime;
 import community.mingle.api.domain.course.service.CourseService;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static community.mingle.api.global.exception.ErrorCode.COURSE_TIME_CONFLICT;
 
@@ -52,20 +54,25 @@ public class CourseFacade {
                 request.venue()
         );
     }
-//    public GetCourseDetailResponse getCourseDetail(Long courseId) {
-//        Course course = courseService.getCourseById(courseId);
-//        return new GetCourseDetailResponse(
-//                course.getName(),
-//                course.getCourseCode(),
-//                course.getSemester(),
-//                course.getCourseTimeDtoList(),
-//                course.getVenue(),
-//                course.getProfessor(),
-//                course.getSubclass(),
-//                course.getMemo(),
-//                course.getPrerequisite()
-//        );
-//    }
+    public GetCourseDetailResponse getCourseDetail(Long courseId) {
+        Course course = courseService.getCourseById(courseId);
+
+        List<CourseTimeDto> courseTimeDtoList = course.getCourseTimeList().stream()
+                .map(this::toDto)
+                .toList();
+
+        return new GetCourseDetailResponse(
+                course.getName(),
+                course.getCourseCode(),
+                course.getSemester(),
+                courseTimeDtoList,
+                course.getVenue(),
+                course.getProfessor(),
+                course.getSubclass(),
+                course.getMemo(),
+                course.getPrerequisite()
+        );
+    }
 
     private boolean checkCourseTimeConflict(List<CourseTimeDto> courseTimeDtoList) {
         return courseTimeDtoList.stream()
@@ -78,6 +85,14 @@ public class CourseFacade {
 
     private boolean isTimeOverlap(LocalTime startTime1, LocalTime endTime1, LocalTime startTime2, LocalTime endTime2) {
         return (startTime1.isBefore(endTime2)) && (endTime1.isAfter(startTime2));
+    }
+
+    private CourseTimeDto toDto(CourseTime courseTime) {
+        return new CourseTimeDto(
+                courseTime.getDayOfWeek(),
+                courseTime.getStartTime(),
+                courseTime.getEndTime()
+        );
     }
 
 }

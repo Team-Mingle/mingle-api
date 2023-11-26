@@ -27,13 +27,13 @@ public class CourseController {
         return ResponseEntity.ok(courseFacade.createPersonalCourse(request));
     }
 
-//    @Operation(summary = "강의 상세 API")
-//    @PostMapping("/{courseId}")
-//    public ResponseEntity<GetCourseDetailResponse> getCourseDetail(
-//            @PathVariable Long courseId
-//    ) {
-//        return ResponseEntity.ok(courseFacade.getCourseDetail(courseId));
-//    }
+    @Operation(summary = "강의 상세 API")
+    @PostMapping("/{courseId}")
+    public ResponseEntity<GetCourseDetailResponse> getCourseDetail(
+            @PathVariable Long courseId
+    ) {
+        return ResponseEntity.ok(courseFacade.getCourseDetail(courseId));
+    }
 
     
 }
