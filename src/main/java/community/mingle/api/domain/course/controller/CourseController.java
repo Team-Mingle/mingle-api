@@ -40,9 +40,9 @@ public class CourseController {
 
     @Operation(summary = "강의 검색 API")
     @GetMapping("/search")
-    public ResponseEntity<List<CoursePreviewResponse>> getCoursePreview(
+    public ResponseEntity<List<CoursePreviewResponse>> searchCourse(
             @RequestParam String keyword
     ) {
-        return ResponseEntity.ok(courseFacade.getCoursePreview(keyword));
+        return ResponseEntity.ok(courseFacade.searchCourse(keyword));
     }
 }

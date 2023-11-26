@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalTime;
 import java.util.List;
 
+import static community.mingle.api.global.exception.ErrorCode.COURSE_NOT_FOUND;
 import static community.mingle.api.global.exception.ErrorCode.COURSE_TIME_CONFLICT;
 
 @Service
@@ -57,6 +58,12 @@ public class CourseFacade {
     }
     public CourseDetailResponse getCourseDetail(Long courseId) {
         Course course = courseService.getCourseById(courseId);
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+
+        if(!course.getUniversity().equals(member.getUniversity())){
+            throw new CustomException(COURSE_NOT_FOUND);
+        }
 
         List<CourseTimeDto> courseTimeDtoList = course.getCourseTimeList().stream()
                 .map(this::toDto)
@@ -75,8 +82,10 @@ public class CourseFacade {
         );
     }
 
-    public List<CoursePreviewResponse> getCoursePreview(String keyword) {
-        List<CrawledCourse> crawledCourseList = courseService.getCrawledCourseByKeyword(keyword);
+    public List<CoursePreviewResponse> searchCourse(String keyword) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+        List<CrawledCourse> crawledCourseList = courseService.getCrawledCourseByKeyword(keyword, member.getUniversity());
 
         return crawledCourseList.stream()
                 .map(course -> new CoursePreviewResponse(

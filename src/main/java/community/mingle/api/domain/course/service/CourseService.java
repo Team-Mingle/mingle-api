@@ -66,7 +66,7 @@ public class CourseService {
         return courseRepository.findById(courseId).orElseThrow(() -> new CustomException(COURSE_NOT_FOUND));
     }
 
-    public List<CrawledCourse> getCrawledCourseByKeyword(String keyword) {
-        return crawledCourseRepository.findByKeyword(keyword);
+    public List<CrawledCourse> getCrawledCourseByKeyword(String keyword, University university) {
+        return crawledCourseRepository.findByKeyword(keyword, university);
     }
 }
