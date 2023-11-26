@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static community.mingle.api.global.exception.ErrorCode.COURSE_TIME_CONFLICT;
 

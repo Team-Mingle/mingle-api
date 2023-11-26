@@ -1,19 +1,19 @@
 package community.mingle.api.domain.course.entity;
 
-import community.mingle.api.domain.member.entity.BlockMember;
 import community.mingle.api.domain.member.entity.University;
 import community.mingle.api.entitybase.AuditLoggingBase;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
