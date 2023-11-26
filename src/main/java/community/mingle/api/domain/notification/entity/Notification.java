@@ -2,8 +2,7 @@ package community.mingle.api.domain.notification.entity;
 
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.entitybase.AuditLoggingBase;
-import community.mingle.api.enums.BoardType;
-import community.mingle.api.enums.CategoryType;
+import community.mingle.api.enums.ContentType;
 import community.mingle.api.enums.NotificationType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -34,14 +33,13 @@ public class Notification extends AuditLoggingBase {
     private LocalDateTime deletedAt;
 
     @NotNull
-    @Column(name = "board", nullable = false)
+    @Column(name = "content_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    private BoardType boardType;
+    private ContentType contentType;
 
     @NotNull
-    @Column(name = "category", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private CategoryType categoryType;
+    @Column(name = "content_id", nullable = false)
+    private Long contentId;
 
     @NotNull
     @Column(name = "notification_type", nullable = false)
@@ -51,5 +49,4 @@ public class Notification extends AuditLoggingBase {
     @NotNull
     @Column(name = "`read`", nullable = false)
     private Boolean read = false;
-
 }
