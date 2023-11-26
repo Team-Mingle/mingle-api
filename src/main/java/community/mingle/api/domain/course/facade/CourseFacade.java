@@ -3,9 +3,11 @@ package community.mingle.api.domain.course.facade;
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.course.controller.request.CreatePersonalCourseRequest;
 import community.mingle.api.domain.course.controller.response.CreatePersonalCourseResponse;
-import community.mingle.api.domain.course.controller.response.GetCourseDetailResponse;
+import community.mingle.api.domain.course.controller.response.CourseDetailResponse;
+import community.mingle.api.domain.course.controller.response.CoursePreviewResponse;
 import community.mingle.api.domain.course.entity.Course;
 import community.mingle.api.domain.course.entity.CourseTime;
+import community.mingle.api.domain.course.entity.CrawledCourse;
 import community.mingle.api.domain.course.service.CourseService;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
@@ -53,14 +55,14 @@ public class CourseFacade {
                 request.venue()
         );
     }
-    public GetCourseDetailResponse getCourseDetail(Long courseId) {
+    public CourseDetailResponse getCourseDetail(Long courseId) {
         Course course = courseService.getCourseById(courseId);
 
         List<CourseTimeDto> courseTimeDtoList = course.getCourseTimeList().stream()
                 .map(this::toDto)
                 .toList();
 
-        return new GetCourseDetailResponse(
+        return new CourseDetailResponse(
                 course.getName(),
                 course.getCourseCode(),
                 course.getSemester(),
@@ -71,6 +73,21 @@ public class CourseFacade {
                 course.getMemo(),
                 course.getPrerequisite()
         );
+    }
+
+    public List<CoursePreviewResponse> getCoursePreview(String keyword) {
+        List<CrawledCourse> crawledCourseList = courseService.getCrawledCourseByKeyword(keyword);
+
+        return crawledCourseList.stream()
+                .map(course -> new CoursePreviewResponse(
+                        course.getId(),
+                        course.getName(),
+                        course.getCourseCode(),
+                        course.getSemester(),
+                        course.getProfessor(),
+                        course.getSubclass()
+                ))
+                .toList();
     }
 
     private boolean checkCourseTimeConflict(List<CourseTimeDto> courseTimeDtoList) {
@@ -93,5 +110,4 @@ public class CourseFacade {
                 courseTime.getEndTime()
         );
     }
-
 }

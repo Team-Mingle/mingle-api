@@ -2,9 +2,11 @@ package community.mingle.api.domain.course.service;
 
 import community.mingle.api.domain.course.entity.Course;
 import community.mingle.api.domain.course.entity.CourseTime;
+import community.mingle.api.domain.course.entity.CrawledCourse;
 import community.mingle.api.domain.course.entity.PersonalCourse;
 import community.mingle.api.domain.course.repository.CourseRepository;
 import community.mingle.api.domain.course.repository.CourseTimeRepository;
+import community.mingle.api.domain.course.repository.CrawledCourseRepository;
 import community.mingle.api.domain.course.repository.PersonalCourseRepository;
 import community.mingle.api.domain.member.entity.University;
 import community.mingle.api.dto.course.CourseTimeDto;
@@ -22,6 +24,7 @@ import static community.mingle.api.global.exception.ErrorCode.COURSE_NOT_FOUND;
 public class CourseService {
 
     private final PersonalCourseRepository personalCourseRepository;
+    private final CrawledCourseRepository crawledCourseRepository;
     private final CourseRepository courseRepository;
     private final CourseTimeRepository courseTimeRepository;
 
@@ -61,5 +64,9 @@ public class CourseService {
 
     public Course getCourseById(Long courseId) {
         return courseRepository.findById(courseId).orElseThrow(() -> new CustomException(COURSE_NOT_FOUND));
+    }
+
+    public List<CrawledCourse> getCrawledCourseByKeyword(String keyword) {
+        return crawledCourseRepository.findByKeyword(keyword);
     }
 }
