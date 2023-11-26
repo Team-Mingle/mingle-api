@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: change course day_of_week type
+      author: Hyeonwoo Jung
+      changes:
+        - modifyDataType:
+            tableName: course
+            columnName: day_of_week
+            newDataType: enum ('SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY')

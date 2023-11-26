@@ -37,6 +37,11 @@ public class MemberService {
         return getByHashedEmail(hashedEmail);
     }
 
+    public Member getById(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+    }
+
     public Boolean existsByEmail(String email) {
         String hashedEmail = EmailHasher.hashEmail(email);
         return memberRepository.existsByEmail(hashedEmail);

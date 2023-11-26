@@ -38,7 +38,7 @@ public class TokenVerifier {
             String token = extractBearerToken(bearerToken);
 
             if (token.equals(devToken.getMingleUser())) {
-                return new TokenDto(5L, MemberRole.USER);
+                return new TokenDto(1L, MemberRole.USER);
             } else if (token.equals(devToken.getMingleAdmin())) {
                 return new TokenDto(2L, MemberRole.ADMIN);
             } else if (token.equals(devToken.getMingleKsa())) {

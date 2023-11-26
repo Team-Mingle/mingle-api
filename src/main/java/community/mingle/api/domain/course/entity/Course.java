@@ -10,6 +10,7 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -43,7 +44,8 @@ public class Course extends AuditLoggingBase {
 
     @Lob
     @Column(name = "day_of_week")
-    private String dayOfWeek;
+    @Enumerated(EnumType.STRING)
+    private DayOfWeek dayOfWeek;
 
     @Column(name = "start_time")
     private LocalTime startTime;
