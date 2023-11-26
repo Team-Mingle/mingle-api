@@ -2,12 +2,14 @@ package community.mingle.api.domain.course.facade;
 
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.course.controller.request.CreatePersonalCourseRequest;
+import community.mingle.api.domain.course.controller.request.UpdatePersonalCourseRequest;
 import community.mingle.api.domain.course.controller.response.CreatePersonalCourseResponse;
 import community.mingle.api.domain.course.controller.response.CourseDetailResponse;
 import community.mingle.api.domain.course.controller.response.CoursePreviewResponse;
 import community.mingle.api.domain.course.entity.Course;
 import community.mingle.api.domain.course.entity.CourseTime;
 import community.mingle.api.domain.course.entity.CrawledCourse;
+import community.mingle.api.domain.course.entity.PersonalCourse;
 import community.mingle.api.domain.course.service.CourseService;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
@@ -46,7 +48,8 @@ public class CourseFacade {
                 request.venue(),
                 request.professor(),
                 request.memo(),
-                member.getUniversity()
+                member.getUniversity(),
+                member
         );
 
         return new CreatePersonalCourseResponse(
@@ -56,6 +59,48 @@ public class CourseFacade {
                 request.venue()
         );
     }
+
+    @Transactional
+    public CourseDetailResponse updateCourse(UpdatePersonalCourseRequest request, Long courseId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        PersonalCourse personalCourse = courseService.getPersonalCourseById(courseId);
+
+        PersonalCourse updatedPersonalCourse = personalCourse.updatePersonalCourse(
+                memberId,
+                request.courseCode(),
+                request.name(),
+                request.venue(),
+                request.professor(),
+                request.memo()
+        );
+
+        boolean courseTimeChanged = isCourseTimeChanged(request.courseTimeDtoList(), personalCourse.getCourseTimeList());
+
+        if (courseTimeChanged) {
+            if (checkCourseTimeConflict(request.courseTimeDtoList())) {
+                throw new CustomException(COURSE_TIME_CONFLICT);
+            }
+            courseService.updateCourseTime(personalCourse.getId(), request.courseTimeDtoList());
+        }
+
+        List<CourseTimeDto> courseTimeDtoList = personalCourse.getCourseTimeList().stream()
+                .map(this::toDto)
+                .toList();
+
+        return new CourseDetailResponse(
+                updatedPersonalCourse.getId(),
+                updatedPersonalCourse.getName(),
+                updatedPersonalCourse.getCourseCode(),
+                updatedPersonalCourse.getSemester(),
+                courseTimeDtoList,
+                updatedPersonalCourse.getVenue(),
+                updatedPersonalCourse.getProfessor(),
+                updatedPersonalCourse.getSubclass(),
+                updatedPersonalCourse.getMemo(),
+                updatedPersonalCourse.getPrerequisite()
+        );
+    }
+
     public CourseDetailResponse getCourseDetail(Long courseId) {
         Course course = courseService.getCourseById(courseId);
         Long memberId = tokenService.getTokenInfo().getMemberId();
@@ -70,6 +115,7 @@ public class CourseFacade {
                 .toList();
 
         return new CourseDetailResponse(
+                course.getId(),
                 course.getName(),
                 course.getCourseCode(),
                 course.getSemester(),
@@ -81,6 +127,8 @@ public class CourseFacade {
                 course.getPrerequisite()
         );
     }
+
+
 
     public List<CoursePreviewResponse> searchCourse(String keyword) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
@@ -119,4 +167,21 @@ public class CourseFacade {
                 courseTime.getEndTime()
         );
     }
+
+    private boolean isCourseTimeChanged(List<CourseTimeDto> courseTimeDtoList, List<CourseTime> courseTimeList) {
+        return courseTimeDtoList.stream().anyMatch(dto ->
+                courseTimeList.stream().anyMatch(courseTime ->
+                        !dto.dayOfWeek().equals(courseTime.getDayOfWeek()) ||
+                        !dto.startTime().equals(courseTime.getStartTime()) ||
+                        !dto.endTime().equals(courseTime.getEndTime()))
+        );
+    }
+
+    private boolean areCourseTimesEqual(CourseTimeDto dto, CourseTime courseTime) {
+        return dto.dayOfWeek().equals(courseTime.getDayOfWeek()) &&
+                dto.startTime().equals(courseTime.getStartTime()) &&
+                dto.endTime().equals(courseTime.getEndTime());
+    }
+
+
 }
