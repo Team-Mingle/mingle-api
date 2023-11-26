@@ -180,6 +180,8 @@ public class PostFacade {
                 .nickname(nickName)
                 .createdAt(convertToDateAndTime(post.getCreatedAt()))
                 .memberRole(post.getMember().getRole())
+                .boardType(post.getBoardType())
+                .categoryType(post.getCategoryType())
                 .status(post.getStatusType())
                 .likeCount(post.getPostLikeList().size())
                 .commentCount(postService.calculateActiveCommentCount(post))
