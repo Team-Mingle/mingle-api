@@ -1,6 +1,5 @@
 package community.mingle.api.domain.course.service;
 
-import community.mingle.api.domain.course.entity.Course;
 import community.mingle.api.domain.course.entity.PersonalCourse;
 import community.mingle.api.domain.course.repository.PersonalCourseRepository;
 import community.mingle.api.domain.member.entity.University;
