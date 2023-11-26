@@ -11,6 +11,8 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Entity
 @Where(clause = "deleted_at IS NULL")
@@ -34,5 +36,8 @@ public class CourseTimetable extends AuditLoggingBase {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "timetable_id", nullable = false)
     private Timetable timetable;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
 }

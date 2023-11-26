@@ -10,6 +10,8 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Entity
 @Where(clause = "deleted_at IS NULL")
@@ -41,4 +43,6 @@ public class Timetable extends AuditLoggingBase {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 }

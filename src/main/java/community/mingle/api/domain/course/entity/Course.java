@@ -10,6 +10,7 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
@@ -74,5 +75,8 @@ public class Course extends AuditLoggingBase {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "university_id", nullable = false)
     private University university;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
 }
