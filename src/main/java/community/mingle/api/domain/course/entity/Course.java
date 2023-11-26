@@ -1,5 +1,6 @@
 package community.mingle.api.domain.course.entity;
 
+import community.mingle.api.domain.member.entity.BlockMember;
 import community.mingle.api.domain.member.entity.University;
 import community.mingle.api.entitybase.AuditLoggingBase;
 import jakarta.persistence.*;
@@ -13,6 +14,8 @@ import org.hibernate.annotations.Where;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -42,17 +45,6 @@ public class Course extends AuditLoggingBase {
     @Column(name = "semester", length = 1023)
     private String semester;
 
-    @Lob
-    @Column(name = "day_of_week")
-    @Enumerated(EnumType.STRING)
-    private DayOfWeek dayOfWeek;
-
-    @Column(name = "start_time")
-    private LocalTime startTime;
-
-    @Column(name = "end_time")
-    private LocalTime endTime;
-
     @Size(max = 1023)
     @Column(name = "venue", length = 1023)
     private String venue;
@@ -80,5 +72,8 @@ public class Course extends AuditLoggingBase {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    @OneToMany(mappedBy = "course")
+    private List<CourseTime> courseTimeList= new ArrayList<>();
 
 }

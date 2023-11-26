@@ -3,6 +3,8 @@ package community.mingle.api.domain.course.facade;
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.course.controller.request.CreatePersonalCourseRequest;
 import community.mingle.api.domain.course.controller.response.CreatePersonalCourseResponse;
+import community.mingle.api.domain.course.controller.response.GetCourseDetailResponse;
+import community.mingle.api.domain.course.entity.Course;
 import community.mingle.api.domain.course.service.CourseService;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
@@ -33,20 +35,16 @@ public class CourseFacade {
 
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
-        request.courseTimeDtoList().forEach(courseTimeDto ->
-                 courseService.createPersonalCourse(
-                    request.courseCode(),
-                    request.name(),
-                    courseTimeDto.dayOfWeek(),
-                    courseTimeDto.startTime(),
-                    courseTimeDto.endTime(),
-                    request.venue(),
-                    request.professor(),
-                    request.memo(),
-                    member.getUniversity()
-            )
-
+        courseService.createPersonalCourse(
+                request.courseCode(),
+                request.name(),
+                request.courseTimeDtoList(),
+                request.venue(),
+                request.professor(),
+                request.memo(),
+                member.getUniversity()
         );
+
         return new CreatePersonalCourseResponse(
                 request.name(),
                 request.courseTimeDtoList(),
@@ -54,11 +52,25 @@ public class CourseFacade {
                 request.venue()
         );
     }
+//    public GetCourseDetailResponse getCourseDetail(Long courseId) {
+//        Course course = courseService.getCourseById(courseId);
+//        return new GetCourseDetailResponse(
+//                course.getName(),
+//                course.getCourseCode(),
+//                course.getSemester(),
+//                course.getCourseTimeDtoList(),
+//                course.getVenue(),
+//                course.getProfessor(),
+//                course.getSubclass(),
+//                course.getMemo(),
+//                course.getPrerequisite()
+//        );
+//    }
 
     private boolean checkCourseTimeConflict(List<CourseTimeDto> courseTimeDtoList) {
         return courseTimeDtoList.stream()
                 .flatMap(first -> courseTimeDtoList.stream()
-                        .filter(second -> !first.equals(second) && first.dayOfWeek().equals(second.dayOfWeek()))
+                        .filter(second -> first != second && first.dayOfWeek().equals(second.dayOfWeek()))
                         .filter(second -> isTimeOverlap(first.startTime(), first.endTime(), second.startTime(), second.endTime())))
                 .findAny()
                 .isPresent();
@@ -67,4 +79,5 @@ public class CourseFacade {
     private boolean isTimeOverlap(LocalTime startTime1, LocalTime endTime1, LocalTime startTime2, LocalTime endTime2) {
         return (startTime1.isBefore(endTime2)) && (endTime1.isAfter(startTime2));
     }
+
 }

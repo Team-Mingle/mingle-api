@@ -1,28 +1,35 @@
 package community.mingle.api.domain.course.service;
 
+import community.mingle.api.domain.course.entity.Course;
+import community.mingle.api.domain.course.entity.CourseTime;
 import community.mingle.api.domain.course.entity.PersonalCourse;
+import community.mingle.api.domain.course.repository.CourseRepository;
+import community.mingle.api.domain.course.repository.CourseTimeRepository;
 import community.mingle.api.domain.course.repository.PersonalCourseRepository;
 import community.mingle.api.domain.member.entity.University;
+import community.mingle.api.dto.course.CourseTimeDto;
+import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.DayOfWeek;
-import java.time.LocalTime;
+import java.util.List;
+
+import static community.mingle.api.global.exception.ErrorCode.COURSE_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
 public class CourseService {
 
     private final PersonalCourseRepository personalCourseRepository;
+    private final CourseRepository courseRepository;
+    private final CourseTimeRepository courseTimeRepository;
 
     @Transactional
     public PersonalCourse createPersonalCourse(
             String courseCode,
             String name,
-            DayOfWeek dayOfWeek,
-            LocalTime startTime,
-            LocalTime endTime,
+            List<CourseTimeDto> courseTimeDtoList,
             String venue,
             String professor,
             String memo,
@@ -31,15 +38,28 @@ public class CourseService {
         PersonalCourse course = PersonalCourse.builder()
                 .courseCode(courseCode)
                 .name(name)
-                .dayOfWeek(dayOfWeek)
-                .startTime(startTime)
-                .endTime(endTime)
                 .venue(venue)
                 .professor(professor)
                 .memo(memo)
                 .university(university)
                 .build();
 
-        return personalCourseRepository.save(course);
+        PersonalCourse personalCourse = personalCourseRepository.save(course);
+
+        courseTimeDtoList.forEach(courseTimeDto -> {
+            CourseTime courseTime = CourseTime.builder()
+                    .dayOfWeek(courseTimeDto.dayOfWeek())
+                    .startTime(courseTimeDto.startTime())
+                    .endTime(courseTimeDto.endTime())
+                    .course(personalCourse)
+                    .build();
+            courseTimeRepository.save(courseTime);
+        });
+
+        return personalCourse;
+    }
+
+    public Course getCourseById(Long courseId) {
+        return courseRepository.findById(courseId).orElseThrow(() -> new CustomException(COURSE_NOT_FOUND));
     }
 }

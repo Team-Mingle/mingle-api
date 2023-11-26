@@ -2,6 +2,7 @@ package community.mingle.api.domain.course.controller;
 
 import community.mingle.api.domain.course.controller.request.CreatePersonalCourseRequest;
 import community.mingle.api.domain.course.controller.response.CreatePersonalCourseResponse;
+import community.mingle.api.domain.course.controller.response.GetCourseDetailResponse;
 import community.mingle.api.domain.course.facade.CourseFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,5 +26,14 @@ public class CourseController {
     ) {
         return ResponseEntity.ok(courseFacade.createPersonalCourse(request));
     }
+
+//    @Operation(summary = "강의 상세 API")
+//    @PostMapping("/{courseId}")
+//    public ResponseEntity<GetCourseDetailResponse> getCourseDetail(
+//            @PathVariable Long courseId
+//    ) {
+//        return ResponseEntity.ok(courseFacade.getCourseDetail(courseId));
+//    }
+
     
 }
