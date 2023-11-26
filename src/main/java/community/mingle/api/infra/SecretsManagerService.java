@@ -52,6 +52,10 @@ public class SecretsManagerService {
         return getSecretValue(projectName + "/" + profile + "/db", DataSourceConfig.class);
     }
 
+    public String getFcmToken(String profile)  {
+        return getSecretValueString(projectName + "/" + profile + "/fcm-token");
+    }
+
     private String getSecretValueString(String name) {
         String arn = getArns().get(name);
         if (arn == null) {
