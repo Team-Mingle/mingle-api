@@ -9,6 +9,8 @@ import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Where(clause = "deleted_at IS NULL")
@@ -40,4 +42,8 @@ public class Banner extends AuditLoggingBase {
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private ContentStatusType statusType;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
 }

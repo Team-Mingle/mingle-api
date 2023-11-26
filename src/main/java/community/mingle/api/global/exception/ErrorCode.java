@@ -21,8 +21,8 @@ public enum ErrorCode {
     TOKEN_EXPIRED(401, "2000", "토큰이 만료되었습니다."),
     AUTHENTICATION_FAILED(401, "2001", "잘못된 인증 정보입니다."),
 
-    POST_NOT_EXIST(400,"2200", "게시물이 존재하지 않습니다." ),
-    POST_DELETED_REPORTED(400,"2201", "삭제되거나 신고된 게시물입니다." ),
+    POST_NOT_EXIST(400, "2200", "게시물이 존재하지 않습니다."),
+    POST_DELETED_REPORTED(400, "2201", "삭제되거나 신고된 게시물입니다."),
 
     MODIFY_NOT_AUTHORIZED(403, "2205", "수정 권한이 없습니다"),
 
@@ -31,17 +31,20 @@ public enum ErrorCode {
     TOKEN_NOT_FOUND(401, "2003", "일치하는 토큰을 찾지 못하였습니다."),
 
     FAILED_TO_LOGIN(404, "2002", "일치하는 이메일이나 비밀번호를 찾지 못했습니다.\n" +
-                             "띄어쓰기나 잘못된 글자가 있는지 확인해 주세요."),
+            "띄어쓰기나 잘못된 글자가 있는지 확인해 주세요."),
 
-    MEMBER_DELETED_ERROR(404, "2003","탈퇴한 사용자입니다."),
+    MEMBER_DELETED_ERROR(404, "2003", "탈퇴한 사용자입니다."),
     MEMBER_REPORTED_ERROR(404, "2004", "신고된 사용자입니다."),
 
     MEMBER_NOT_FOUND(404, "2005", "존재하지 않는 회원 정보입니다."),
 
-    FAILED_TO_CREATEJWT(500, "2006", "토큰 발급에 실패하였습니다." ),
+    FAILED_TO_CREATEJWT(500, "2006", "토큰 발급에 실패하였습니다."),
     MEMBER_ALREADY_EXIST(409, "2007", "이미 가입된 회원입니다."),
     NICKNAME_DUPLICATED(409, "2008", "이미 존재하는 닉네임입니다."),
     UNIVERSITY_NOT_FOUND(404, "2009", "존재하지 않는 대학입니다."),
+    UPLOAD_FAIL_IMAGE(500, "UPLOAD_FAIL_IMAGE", "이미지 업로드에 실패하였습니다."),
+    INVALID_IMAGE_FORMAT(400, "INVALID_IMAGE_FORMAT", "지원하지 않는 파일 형식입니다."),
+    DELETE_FAIL_IMAGE(500,"DELETE_FAIL_IMAGE" , "이미지 삭제에 실패하였습니다,"),
     INTERNAL_SERVER_ERROR(500, "500", "INTERNAL SERVER ERROR");
 
     private final int status;
@@ -53,6 +56,7 @@ public enum ErrorCode {
         this.code = code;
         this.message = message;
     }
+
     public int getStatus() {
         return status;
     }

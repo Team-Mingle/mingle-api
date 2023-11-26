@@ -4,8 +4,10 @@ import community.mingle.api.domain.banner.request.CreateBannerRequest;
 import community.mingle.api.domain.banner.response.BannerResponse;
 import community.mingle.api.domain.banner.response.CreateBannerResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,8 +27,8 @@ public class BannerController {
     }
 
     @Operation(summary = "5.2 배너 사진 업로드 API")
-    @PostMapping()
-    public ResponseEntity<CreateBannerResponse> uploadBanner(@ModelAttribute CreateBannerRequest request) {
+    @PostMapping(path = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CreateBannerResponse> uploadBanner(@ModelAttribute @Valid CreateBannerRequest request) {
         return new ResponseEntity<>(bannerFacade.createBanner(request.getMultipartFile(), request.getLinkUrl()), HttpStatus.OK);
     }
 
