@@ -58,6 +58,17 @@ public class CourseService {
         return personalCourse;
     }
 
+    @Transactional
+    public void deletePersonalCourse(Long personalCourseId, Long memberId) {
+        PersonalCourse personalCourse = getPersonalCourseById(personalCourseId);
+
+        if (!personalCourse.getMember().getId().equals(memberId)) {
+            throw new CustomException(COURSE_NOT_FOUND);
+        }
+
+        personalCourseRepository.delete(personalCourse);
+    }
+
     public List<CourseTime> createCourseTime(Long personalCourseId, List<CourseTimeDto> courseTimeDtoList) {
         PersonalCourse personalCourse = getPersonalCourseById(personalCourseId);
 
