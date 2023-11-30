@@ -1,6 +1,7 @@
 package community.mingle.api.domain.course.controller;
 
 import community.mingle.api.domain.course.controller.request.CreatePersonalCourseRequest;
+import community.mingle.api.domain.course.controller.request.UpdatePersonalCourseRequest;
 import community.mingle.api.domain.course.controller.response.CreatePersonalCourseResponse;
 import community.mingle.api.domain.course.controller.response.CourseDetailResponse;
 import community.mingle.api.domain.course.controller.response.CoursePreviewResponse;
@@ -44,5 +45,23 @@ public class CourseController {
             @RequestParam String keyword
     ) {
         return ResponseEntity.ok(courseFacade.searchCourse(keyword));
+    }
+
+    @Operation(summary = "강의 수정 API")
+    @PatchMapping("/{courseId}")
+    public ResponseEntity<CourseDetailResponse> updatePersonalCourse(
+            @PathVariable Long courseId,
+            @RequestBody UpdatePersonalCourseRequest request
+    ) {
+        return ResponseEntity.ok(courseFacade.updateCourse(request, courseId));
+    }
+
+    @Operation(summary = "강의 삭제 API")
+    @DeleteMapping("/{courseId}")
+    public ResponseEntity<Void> deletePersonalCourse(
+            @PathVariable Long courseId
+    ) {
+        courseFacade.deleteCourse(courseId);
+        return ResponseEntity.ok().build();
     }
 }

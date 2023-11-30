@@ -8,6 +8,7 @@ import community.mingle.api.domain.course.repository.CourseRepository;
 import community.mingle.api.domain.course.repository.CourseTimeRepository;
 import community.mingle.api.domain.course.repository.CrawledCourseRepository;
 import community.mingle.api.domain.course.repository.PersonalCourseRepository;
+import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.entity.University;
 import community.mingle.api.dto.course.CourseTimeDto;
 import community.mingle.api.global.exception.CustomException;
@@ -16,8 +17,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static community.mingle.api.global.exception.ErrorCode.COURSE_NOT_FOUND;
+import static community.mingle.api.global.exception.ErrorCode.MODIFY_NOT_AUTHORIZED;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +39,8 @@ public class CourseService {
             String venue,
             String professor,
             String memo,
-            University university
+            University university,
+            Member member
     ) {
         PersonalCourse course = PersonalCourse.builder()
                 .courseCode(courseCode)
@@ -45,25 +49,58 @@ public class CourseService {
                 .professor(professor)
                 .memo(memo)
                 .university(university)
+                .member(member)
                 .build();
 
         PersonalCourse personalCourse = personalCourseRepository.save(course);
 
-        courseTimeDtoList.forEach(courseTimeDto -> {
-            CourseTime courseTime = CourseTime.builder()
-                    .dayOfWeek(courseTimeDto.dayOfWeek())
-                    .startTime(courseTimeDto.startTime())
-                    .endTime(courseTimeDto.endTime())
-                    .course(personalCourse)
-                    .build();
-            courseTimeRepository.save(courseTime);
-        });
+        createCourseTime(personalCourse.getId(), courseTimeDtoList);
 
         return personalCourse;
     }
 
+    @Transactional
+    public void deletePersonalCourse(Long personalCourseId, Long memberId) {
+        PersonalCourse personalCourse = getPersonalCourseById(personalCourseId);
+
+        if (!personalCourse.getMember().getId().equals(memberId)) {
+            throw new CustomException(MODIFY_NOT_AUTHORIZED);
+        }
+
+        personalCourseRepository.delete(personalCourse);
+    }
+
+    public List<CourseTime> createCourseTime(Long personalCourseId, List<CourseTimeDto> courseTimeDtoList) {
+        PersonalCourse personalCourse = getPersonalCourseById(personalCourseId);
+
+        List<CourseTime> savedCourseTimes = courseTimeDtoList.stream()
+                .map(courseTimeDto -> CourseTime.builder()
+                        .dayOfWeek(courseTimeDto.dayOfWeek())
+                        .startTime(courseTimeDto.startTime())
+                        .endTime(courseTimeDto.endTime())
+                        .course(personalCourse)
+                        .build())
+                .collect(Collectors.toList());
+
+        return courseTimeRepository.saveAll(savedCourseTimes);
+
+    }
+
+    @Transactional
+    public List<CourseTime> updateCourseTime(Long personalCourseId, List<CourseTimeDto> courseTimeDtoList) {
+        PersonalCourse personalCourse = getPersonalCourseById(personalCourseId);
+        courseTimeRepository.deleteAll(personalCourse.getCourseTimeList());
+
+        return createCourseTime(personalCourseId, courseTimeDtoList);
+
+    }
+
     public Course getCourseById(Long courseId) {
         return courseRepository.findById(courseId).orElseThrow(() -> new CustomException(COURSE_NOT_FOUND));
+    }
+
+    public PersonalCourse getPersonalCourseById(Long courseId) {
+        return personalCourseRepository.findById(courseId).orElseThrow(() -> new CustomException(COURSE_NOT_FOUND));
     }
 
     public List<CrawledCourse> getCrawledCourseByKeyword(String keyword, University university) {

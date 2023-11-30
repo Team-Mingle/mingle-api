@@ -63,3 +63,24 @@ databaseChangeLog:
           - dropColumn:
               tableName: course
               columnName: end_time
+
+  - changeSet:
+        id: add member_id column to course table
+        author: Hyeonwoo Jung
+        changes:
+            - addColumn:
+                  tableName: course
+                  columns:
+                      - column:
+                            name: member_id
+                            type: bigint
+                            constraints:
+                                nullable: true
+
+            - addForeignKeyConstraint:
+                  baseTableName: course
+                  baseColumnNames: member_id
+                  referencedTableName: member
+                  referencedColumnNames: id
+                  constraintName: course_member_id_fk
+
