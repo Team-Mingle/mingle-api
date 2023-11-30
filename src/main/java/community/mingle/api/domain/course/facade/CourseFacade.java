@@ -34,6 +34,8 @@ public class CourseFacade {
     @Transactional
     public CreatePersonalCourseResponse createPersonalCourse(CreatePersonalCourseRequest request) {
 
+
+        //TODO: 기존에 있던 시간표와 겹치는지 확인하는 validation 추가
         if (checkCourseTimeConflict(request.courseTimeDtoList())) {
             throw new CustomException(COURSE_TIME_CONFLICT);
         }

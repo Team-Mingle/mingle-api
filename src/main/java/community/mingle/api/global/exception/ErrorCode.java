@@ -29,7 +29,7 @@ public enum ErrorCode {
     AUTHENTICATION_FAILED(401, "2001", "잘못된 인증 정보입니다."), //1.12
     FAIL_TO_REISSUE_TOKEN(401, "2002", "토큰 재발급에 실패하였습니다"), //1.12
     MEMBER_NOT_FOUND(404, "2005", "존재하지 않는 회원 정보입니다."),
-    COURSE_TIME_CONFLICT(409, "COURSE_TIME_CONFLICT", "강의 시간이 겹칩니다."),
+    COURSE_TIME_CONFLICT(409, "COURSE_TIME_CONFLICT", "강의 시간이 겹치지 않게 설정해 주세요."),
     COURSE_NOT_FOUND(404, "COURSE_NOT_FOUND", "존재하지 않는 강의입니다."),
 
 
