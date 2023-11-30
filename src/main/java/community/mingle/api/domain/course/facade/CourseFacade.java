@@ -22,8 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalTime;
 import java.util.List;
 
-import static community.mingle.api.global.exception.ErrorCode.COURSE_NOT_FOUND;
-import static community.mingle.api.global.exception.ErrorCode.COURSE_TIME_CONFLICT;
+import static community.mingle.api.global.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -107,7 +106,7 @@ public class CourseFacade {
         Member member = memberService.getById(memberId);
 
         if(!course.getUniversity().equals(member.getUniversity())){
-            throw new CustomException(COURSE_NOT_FOUND);
+            throw new CustomException(MODIFY_NOT_AUTHORIZED);
         }
 
         List<CourseTimeDto> courseTimeDtoList = course.getCourseTimeList().stream()
