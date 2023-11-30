@@ -34,7 +34,7 @@ public enum ErrorCode {
 
 
     // 2. TODO post, comment 정리
-    MODIFY_NOT_AUTHORIZED(403, "2205", "수정 권한이 없습니다"),
+    MODIFY_NOT_AUTHORIZED(403, "MODIFY_NOT_AUTHORIZED", "수정 권한이 없습니다"),
     COMMENT_NOT_FOUND(404, "3000", "존재하지 않는 멘션 댓글입니다."),
     LIKE_ALREADY_EXIST(409, "2010", "이미 좋아요를 눌렀습니다."),
     FAIL_TO_CREATE_COMMENT(400, "2011", "댓글 생성에 실패했습니다."),

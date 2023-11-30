@@ -35,7 +35,7 @@ public class PersonalCourse extends Course {
         String memo
     ) {
         if(!memberId.equals(this.member.getId())){
-            throw new CustomException(ErrorCode.COURSE_NOT_FOUND);
+            throw new CustomException(ErrorCode.MODIFY_NOT_AUTHORIZED);
         }
 
         this.courseCode = courseCode;
