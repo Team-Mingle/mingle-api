@@ -49,10 +49,19 @@ public class CourseController {
 
     @Operation(summary = "강의 수정 API")
     @PatchMapping("/{courseId}")
-    public ResponseEntity<CourseDetailResponse> updateCourse(
+    public ResponseEntity<CourseDetailResponse> updatePersonalCourse(
             @PathVariable Long courseId,
             @RequestBody UpdatePersonalCourseRequest request
     ) {
         return ResponseEntity.ok(courseFacade.updateCourse(request, courseId));
+    }
+
+    @Operation(summary = "강의 삭제 API")
+    @DeleteMapping("/{courseId}")
+    public ResponseEntity<Void> deletePersonalCourse(
+            @PathVariable Long courseId
+    ) {
+        courseFacade.deleteCourse(courseId);
+        return ResponseEntity.ok().build();
     }
 }

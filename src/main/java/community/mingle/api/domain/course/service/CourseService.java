@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static community.mingle.api.global.exception.ErrorCode.COURSE_NOT_FOUND;
+import static community.mingle.api.global.exception.ErrorCode.MODIFY_NOT_AUTHORIZED;
 
 @Service
 @RequiredArgsConstructor
@@ -56,6 +57,17 @@ public class CourseService {
         createCourseTime(personalCourse.getId(), courseTimeDtoList);
 
         return personalCourse;
+    }
+
+    @Transactional
+    public void deletePersonalCourse(Long personalCourseId, Long memberId) {
+        PersonalCourse personalCourse = getPersonalCourseById(personalCourseId);
+
+        if (!personalCourse.getMember().getId().equals(memberId)) {
+            throw new CustomException(MODIFY_NOT_AUTHORIZED);
+        }
+
+        personalCourseRepository.delete(personalCourse);
     }
 
     public List<CourseTime> createCourseTime(Long personalCourseId, List<CourseTimeDto> courseTimeDtoList) {
