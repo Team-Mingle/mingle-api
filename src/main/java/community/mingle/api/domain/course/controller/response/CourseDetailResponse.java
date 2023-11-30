@@ -4,7 +4,8 @@ import community.mingle.api.dto.course.CourseTimeDto;
 
 import java.util.List;
 
-public record GetCourseDetailResponse(
+public record CourseDetailResponse(
+        Long id,
         String name,
         String courseCode,
         String semester,
