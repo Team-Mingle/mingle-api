@@ -1,7 +1,9 @@
 package community.mingle.api.global.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
 
+@Getter
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ErrorCode {
 
@@ -27,10 +29,12 @@ public enum ErrorCode {
     AUTHENTICATION_FAILED(401, "2001", "잘못된 인증 정보입니다."), //1.12
     FAIL_TO_REISSUE_TOKEN(401, "2002", "토큰 재발급에 실패하였습니다"), //1.12
     MEMBER_NOT_FOUND(404, "2005", "존재하지 않는 회원 정보입니다."),
+    COURSE_TIME_CONFLICT(409, "COURSE_TIME_CONFLICT", "강의 시간이 겹치지 않게 설정해 주세요."),
+    COURSE_NOT_FOUND(404, "COURSE_NOT_FOUND", "존재하지 않는 강의입니다."),
 
 
     // 2. TODO post, comment 정리
-    MODIFY_NOT_AUTHORIZED(403, "2205", "수정 권한이 없습니다"),
+    MODIFY_NOT_AUTHORIZED(403, "MODIFY_NOT_AUTHORIZED", "수정 권한이 없습니다"),
     COMMENT_NOT_FOUND(404, "3000", "존재하지 않는 멘션 댓글입니다."),
     LIKE_ALREADY_EXIST(409, "2010", "이미 좋아요를 눌렀습니다."),
     FAIL_TO_CREATE_COMMENT(400, "2011", "댓글 생성에 실패했습니다."),
@@ -59,16 +63,8 @@ public enum ErrorCode {
         this.code = code;
         this.message = message;
     }
-
     public int getStatus() {
         return status;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
 }

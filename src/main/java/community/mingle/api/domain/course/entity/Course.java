@@ -5,13 +5,17 @@ import community.mingle.api.entitybase.AuditLoggingBase;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -27,56 +31,49 @@ public class Course extends AuditLoggingBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Long id;
+    Long id;
 
     @Size(max = 1023)
     @Column(name = "course_code", length = 1023)
-    private String courseCode;
+    String courseCode;
 
     @Lob
     @Column(name = "name")
-    private String name;
+    String name;
 
     @Size(max = 1023)
     @Column(name = "semester", length = 1023)
-    private String semester;
-
-    @Lob
-    @Column(name = "day_of_week")
-    private String dayOfWeek;
-
-    @Column(name = "start_time")
-    private LocalTime startTime;
-
-    @Column(name = "end_time")
-    private LocalTime endTime;
+    String semester;
 
     @Size(max = 1023)
     @Column(name = "venue", length = 1023)
-    private String venue;
+    String venue;
 
     @Size(max = 1023)
     @Column(name = "professor", length = 1023)
-    private String professor;
+    String professor;
 
     @Size(max = 1023)
     @Column(name = "subclass", length = 1023)
-    private String subclass;
+    String subclass;
 
     @Lob
     @Column(name = "memo")
-    private String memo;
+    String memo;
 
     @Lob
     @Column(name = "prerequisite")
-    private String prerequisite;
+    String prerequisite;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "university_id", nullable = false)
-    private University university;
+    University university;
 
     @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
+    LocalDateTime deletedAt;
+
+    @OneToMany(mappedBy = "course")
+    List<CourseTime> courseTimeList= new ArrayList<>();
 
 }
