@@ -43,6 +43,15 @@ public enum ErrorCode {
     POST_LIKE_NOT_FOUND(404, "2011", "좋아요를 찾을 수 없습니다."),
     POST_NOT_EXIST(400,"2200", "게시물이 존재하지 않습니다."),
     POST_DELETED_REPORTED(400,"2201", "삭제되거나 신고된 게시물입니다." ),
+
+
+    //image
+    UPLOAD_FAIL_IMAGE(500, "UPLOAD_FAIL_IMAGE", "이미지 업로드에 실패하였습니다."),
+    INVALID_IMAGE_FORMAT(400, "INVALID_IMAGE_FORMAT", "지원하지 않는 파일 형식입니다."),
+    DELETE_FAIL_IMAGE(500,"DELETE_FAIL_IMAGE" , "이미지 삭제에 실패하였습니다,"),
+
+    //Internal server error
+
     INTERNAL_SERVER_ERROR(500, "500", "INTERNAL SERVER ERROR");
 
     private final int status;
@@ -53,6 +62,9 @@ public enum ErrorCode {
         this.status = status;
         this.code = code;
         this.message = message;
+    }
+    public int getStatus() {
+        return status;
     }
 
 }

@@ -26,6 +26,10 @@ public class MemberService {
     private final UniversityRepository universityRepository;
     private final PasswordEncoder passwordEncoder;
 
+    public Member getMember(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+    }
 
     public Member getByHashedEmail(String hashedEmail) {
         return memberRepository.findByEmail(hashedEmail)
