@@ -64,4 +64,6 @@ public class CourseController {
         courseFacade.deleteCourse(courseId);
         return ResponseEntity.ok().build();
     }
+
+
 }

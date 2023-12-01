@@ -31,6 +31,8 @@ public enum ErrorCode {
     MEMBER_NOT_FOUND(404, "2005", "존재하지 않는 회원 정보입니다."),
     COURSE_TIME_CONFLICT(409, "COURSE_TIME_CONFLICT", "강의 시간이 겹치지 않게 설정해 주세요."),
     COURSE_NOT_FOUND(404, "COURSE_NOT_FOUND", "존재하지 않는 강의입니다."),
+    SEMESTER_NOT_FOUND(404, "SEMESTER_NOT_FOUND", "존재하지 않는 학기입니다."),
+
 
 
     // 2. TODO post, comment 정리
