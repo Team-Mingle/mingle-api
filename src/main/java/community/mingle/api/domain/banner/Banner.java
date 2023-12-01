@@ -1,6 +1,7 @@
 package community.mingle.api.domain.banner;
 
 import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.domain.member.entity.University;
 import community.mingle.api.entitybase.AuditLoggingBase;
 import community.mingle.api.enums.ContentStatusType;
 import jakarta.persistence.*;
@@ -42,6 +43,12 @@ public class Banner extends AuditLoggingBase {
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private ContentStatusType statusType;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "university_id", nullable = false)
+    private University university;
+
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;

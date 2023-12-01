@@ -36,14 +36,14 @@ public class S3Service {
     private static final List<String> VALID_EXTENSIONS = Arrays.asList(".jpg", ".jpeg", ".png", ".JPG", ".JPEG", ".PNG", ".heic", ".HEIC", ".webp");
 
     public List<String> uploadFile(List<MultipartFile> multipartFile, String dirName) {
-        String BUCKET_NAME = secretsManagerService.getS3BucketName();
+        String bucketName = secretsManagerService.getS3BucketName();
         List<String> fileNameList = new ArrayList<>();
 
         for (MultipartFile file : multipartFile) {
             String fileName = buildFilePath(dirName, file.getOriginalFilename());
             ObjectMetadata objectMetadata = createObjectMetadata(file);
             try (InputStream inputStream = file.getInputStream()) {
-                amazonS3.putObject(new PutObjectRequest(BUCKET_NAME, fileName, inputStream, objectMetadata)
+                amazonS3.putObject(new PutObjectRequest(bucketName, fileName, inputStream, objectMetadata)
                         .withCannedAcl(CannedAccessControlList.PublicRead));
                 fileNameList.add(CLOUDFRONT_DOMAIN + fileName);
             } catch (Exception e) {

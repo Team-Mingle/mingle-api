@@ -23,13 +23,13 @@ public class BannerController {
     @GetMapping()
     @Operation(summary = "5.1 홈 화면 배너 리스트 조회 API")
     public ResponseEntity<List<BannerResponse>> getBanner() {
-        return new ResponseEntity<>(bannerFacade.findBanner(), HttpStatus.OK);
+        return new ResponseEntity<>(bannerFacade.getBanner(), HttpStatus.OK);
     }
 
     @Operation(summary = "5.2 배너 사진 업로드 API")
     @PostMapping(path = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CreateBannerResponse> uploadBanner(@ModelAttribute @Valid CreateBannerRequest request) {
-        return new ResponseEntity<>(bannerFacade.createBanner(request.getMultipartFile(), request.getLinkUrl()), HttpStatus.OK);
+        return new ResponseEntity<>(bannerFacade.createBanner(request.getMultipartFile(), request.getLinkUrl(), request.getUniversityId()), HttpStatus.OK);
     }
 
 }
