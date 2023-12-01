@@ -2,9 +2,9 @@ package community.mingle.api.domain.course.entity;
 
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.entitybase.AuditLoggingBase;
+import community.mingle.api.enums.Semester;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLDelete;
@@ -26,10 +26,15 @@ public class Timetable extends AuditLoggingBase {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Size(max = 1023)
     @NotNull
+    @Builder.Default
+    @Column(name = "name", nullable = false)
+    private String name = "시간표 이름";
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "semester", nullable = false, length = 1023)
-    private String semester;
+    private Semester semester;
 
     @NotNull
     @Column(name = "order_number", nullable = false)

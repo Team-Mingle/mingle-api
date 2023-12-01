@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: add name column to timetable table
+      author: Hyeonwoo Jung
+      changes:
+        - addColumn:
+            tableName: timetable
+            columns:
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
