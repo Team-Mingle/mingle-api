@@ -1,5 +1,6 @@
 package community.mingle.api.domain.member.entity;
 
+import community.mingle.api.domain.notification.entity.Notification;
 import community.mingle.api.entitybase.AuditLoggingBase;
 import community.mingle.api.enums.MemberRole;
 import community.mingle.api.enums.MemberStatus;
@@ -73,6 +74,9 @@ public class Member extends AuditLoggingBase {
 
     @OneToMany(mappedBy = "blockerMember")
     private List<BlockMember> blockerMember= new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Notification> notifications = new ArrayList<>();
 
     public void setFcmToken(String fcmToken) {
         this.fcmToken = fcmToken;

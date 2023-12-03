@@ -34,7 +34,7 @@ public class FcmService {
         return MulticastMessage.builder()
                 .addAllTokens(fcmTokens)
                 .setNotification(notification)
-                .putData("postId", String.valueOf(contentId))
+                .putData("contentId", String.valueOf(contentId))
                 .putData("contentType", contentType.name())
                 .build();
     }

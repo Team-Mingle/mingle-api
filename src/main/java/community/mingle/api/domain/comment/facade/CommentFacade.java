@@ -7,15 +7,19 @@ import community.mingle.api.domain.comment.controller.response.CreateCommentResp
 import community.mingle.api.domain.comment.controller.response.DeleteCommentLikeResponse;
 import community.mingle.api.domain.comment.controller.response.DeleteCommentResponse;
 import community.mingle.api.domain.comment.entity.Comment;
+import community.mingle.api.domain.comment.event.CommentNotificationEvent;
 import community.mingle.api.domain.comment.service.CommentLikeService;
 import community.mingle.api.domain.comment.service.CommentService;
-import community.mingle.api.dto.comment.CoCommentDto;
-import community.mingle.api.dto.comment.CommentDto;
+import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.domain.post.controller.response.PostDetailCommentResponse;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.service.PostService;
+import community.mingle.api.dto.comment.CoCommentDto;
+import community.mingle.api.dto.comment.CommentDto;
 import community.mingle.api.enums.MemberRole;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +41,10 @@ public class CommentFacade {
     private final TokenService tokenService;
     private final CommentService commentService;
     private final CommentLikeService commentLikeService;
+    private final MemberService memberService;
+
+    private final ApplicationEventPublisher applicationEventPublisher;
+
 
     public List<PostDetailCommentResponse> getPostDetailComments(Long postId) {
         Post post = postService.getPost(postId);
@@ -61,15 +69,22 @@ public class CommentFacade {
     }
 
     @Transactional
-    public CreateCommentResponse create(CreateCommentRequest createCommentRequest) {
+    public CreateCommentResponse create(CreateCommentRequest request) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Comment comment = commentService.create(
                 memberId,
-                createCommentRequest.postId(),
-                createCommentRequest.parentCommentId(),
-                createCommentRequest.mentionId(),
-                createCommentRequest.content(),
-                createCommentRequest.isAnonymous());
+                request.postId(),
+                request.parentCommentId(),
+                request.mentionId(),
+                request.content(),
+                request.isAnonymous()
+        );
+        Post post = postService.getPost(request.postId());
+        Member member = memberService.getById(memberId);
+        // 푸시알림 이벤트 발행
+        applicationEventPublisher.publishEvent(
+                new CommentNotificationEvent(this, post, member, request.parentCommentId(), request.mentionId(), request.content())
+        );
         return new CreateCommentResponse(comment.getId());
     }
 
