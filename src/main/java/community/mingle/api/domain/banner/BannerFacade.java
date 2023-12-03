@@ -31,7 +31,7 @@ public class BannerFacade {
 
     public List<BannerResponse> getBanner() {
         Long memberId = tokenService.getTokenInfo().getMemberId();
-        Member member = memberService.getMember(memberId);
+        Member member = memberService.getById(memberId);
         return bannerService.findBanner(member.getUniversity()).stream()
                 .map(b -> BannerResponse.builder()
                         .id(b.getId())
@@ -44,7 +44,7 @@ public class BannerFacade {
     @Transactional
     public CreateBannerResponse createBanner(List<MultipartFile> multipartFile, String linkUrl, int universityId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
-        Member member = memberService.getMember(memberId);
+        Member member = memberService.getById(memberId);
         University university = universityService.getUniversity(universityId);
         List<String> imgUrls = s3Service.uploadFile(multipartFile, "banner");
         imgUrls.stream()
