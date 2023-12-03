@@ -1,4 +1,4 @@
-package community.mingle.api.domain.comment.event;
+package community.mingle.api.domain.notification.event;
 
 import community.mingle.api.enums.BoardType;
 import community.mingle.api.enums.ContentType;

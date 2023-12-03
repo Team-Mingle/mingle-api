@@ -1,4 +1,4 @@
-package community.mingle.api.domain.comment.event;
+package community.mingle.api.domain.notification.event;
 
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.post.entity.Post;

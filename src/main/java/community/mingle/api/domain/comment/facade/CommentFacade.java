@@ -7,7 +7,7 @@ import community.mingle.api.domain.comment.controller.response.CreateCommentResp
 import community.mingle.api.domain.comment.controller.response.DeleteCommentLikeResponse;
 import community.mingle.api.domain.comment.controller.response.DeleteCommentResponse;
 import community.mingle.api.domain.comment.entity.Comment;
-import community.mingle.api.domain.comment.event.CommentNotificationEvent;
+import community.mingle.api.domain.notification.event.CommentNotificationEvent;
 import community.mingle.api.domain.comment.service.CommentLikeService;
 import community.mingle.api.domain.comment.service.CommentService;
 import community.mingle.api.domain.member.entity.Member;

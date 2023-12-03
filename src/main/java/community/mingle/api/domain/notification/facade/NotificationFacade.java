@@ -1,6 +1,6 @@
 package community.mingle.api.domain.notification.facade;
 
-import community.mingle.api.domain.comment.event.ManualNotificationEvent;
+import community.mingle.api.domain.notification.event.ManualNotificationEvent;
 import community.mingle.api.domain.notification.controller.request.SendPushNotificationRequest;
 import community.mingle.api.enums.BoardType;
 import lombok.RequiredArgsConstructor;

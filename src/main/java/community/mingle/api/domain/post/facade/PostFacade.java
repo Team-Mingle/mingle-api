@@ -1,7 +1,7 @@
 package community.mingle.api.domain.post.facade;
 
 import community.mingle.api.domain.auth.service.TokenService;
-import community.mingle.api.domain.comment.event.PopularPostNotificationEvent;
+import community.mingle.api.domain.notification.event.PopularPostNotificationEvent;
 import community.mingle.api.domain.comment.service.CommentService;
 import community.mingle.api.domain.like.entity.PostLike;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
