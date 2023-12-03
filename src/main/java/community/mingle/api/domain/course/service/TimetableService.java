@@ -61,6 +61,13 @@ public class TimetableService {
         return courseTimetableRepository.save(courseTimetable);
     }
 
+    @Transactional
+    public void deleteCourse(Timetable timetable, Course course) {
+        CourseTimetable courseTimetable = courseTimetableRepository.findByTimetableIdAndCourseId(timetable.getId(), course.getId())
+                .orElseThrow(() -> new CustomException(TIMETABLE_NOT_FOUND));
+        courseTimetableRepository.delete(courseTimetable);
+    }
+
     public boolean isCourseTimeValid(Timetable timetable, Course newCourse) {
         List<CourseTimetable> existingCourses = timetable.getCourseTimetableList();
 

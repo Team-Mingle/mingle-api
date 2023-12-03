@@ -29,12 +29,22 @@ public class TimetableController {
     }
 
     @Operation(summary = "시간표 강의 추가 API")
-    @PostMapping("/{timetableId}/course/{courseId}")
+    @PostMapping("/{timetableId}/course")
     public ResponseEntity<UpdateTimetableCourseResponse> updateTimetableCourse(
             @PathVariable Long timetableId,
             @RequestBody UpdateTimetableCourseRequest request
     ) {
         return ResponseEntity.ok(timetableFacade.updateTimetableCourse(timetableId, request.courseId()));
+    }
+
+    @Operation(summary = "시간표 강의 삭제 API")
+    @DeleteMapping("/{timetableId}/course/{courseId}")
+    public ResponseEntity<Void> deleteTimetableCourse(
+            @PathVariable Long timetableId,
+            @PathVariable Long courseId
+    ) {
+        timetableFacade.deleteTimetableCourse(timetableId, courseId);
+        return ResponseEntity.ok().build();
     }
 
 }

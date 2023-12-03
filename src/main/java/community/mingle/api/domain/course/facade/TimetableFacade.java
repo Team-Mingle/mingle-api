@@ -8,6 +8,7 @@ import community.mingle.api.domain.course.entity.Course;
 import community.mingle.api.domain.course.entity.Timetable;
 import community.mingle.api.domain.course.service.CourseService;
 import community.mingle.api.domain.course.service.TimetableService;
+import community.mingle.api.enums.CourseType;
 import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -46,5 +47,18 @@ public class TimetableFacade {
 
         timetableService.addCourse(timetable, course);
         return new UpdateTimetableCourseResponse(true);
+    }
+
+    @Transactional
+    public void deleteTimetableCourse(Long timetableId, Long courseId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+
+        Timetable timetable = timetableService.getById(timetableId);
+        Course course = courseService.getCourseById(courseId);
+        timetableService.deleteCourse(timetable, course);
+
+        if(course.getType() == CourseType.PERSONAL) {
+            courseService.deletePersonalCourse(courseId, memberId);
+        }
     }
 }

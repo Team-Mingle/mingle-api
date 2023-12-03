@@ -56,15 +56,6 @@ public class CourseController {
         return ResponseEntity.ok(courseFacade.updateCourse(request, courseId));
     }
 
-    @Operation(summary = "강의 삭제 API")
-    @DeleteMapping("/{courseId}")
-    public ResponseEntity<Void> deletePersonalCourse(
-            @PathVariable Long courseId
-    ) {
-        courseFacade.deleteCourse(courseId);
-        return ResponseEntity.ok().build();
-    }
-
 
 
 

@@ -102,12 +102,6 @@ public class CourseFacade {
         );
     }
 
-    @Transactional
-    public void deleteCourse(Long courseId) {
-        Long memberId = tokenService.getTokenInfo().getMemberId();
-        courseService.deletePersonalCourse(courseId, memberId);
-    }
-
     public CourseDetailResponse getCourseDetail(Long courseId) {
         Course course = courseService.getCourseById(courseId);
         Long memberId = tokenService.getTokenInfo().getMemberId();
