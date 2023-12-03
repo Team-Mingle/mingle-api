@@ -6,7 +6,11 @@ import community.mingle.api.enums.ContentType;
 import community.mingle.api.enums.NotificationType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -18,6 +22,10 @@ import java.time.LocalDateTime;
 @SQLDelete(sql = "UPDATE notification SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "notification")
+@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DiscriminatorValue(value = "content_type")
 public class Notification extends AuditLoggingBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +41,7 @@ public class Notification extends AuditLoggingBase {
     private LocalDateTime deletedAt;
 
     @NotNull
-    @Column(name = "content_type", nullable = false)
+    @Column(name = "content_type", updatable = false, insertable = false)
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
