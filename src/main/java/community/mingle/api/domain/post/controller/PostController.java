@@ -1,6 +1,5 @@
 package community.mingle.api.domain.post.controller;
 
-import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.comment.facade.CommentFacade;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;

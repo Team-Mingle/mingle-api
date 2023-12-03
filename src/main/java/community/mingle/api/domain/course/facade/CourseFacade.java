@@ -157,10 +157,15 @@ public class CourseFacade {
     private boolean checkCourseTimeConflict(List<CourseTimeDto> courseTimeDtoList) {
         return courseTimeDtoList.stream()
                 .flatMap(first -> courseTimeDtoList.stream()
-                        .filter(second -> first != second && first.dayOfWeek().equals(second.dayOfWeek()))
-                        .filter(second -> isTimeOverlap(first.startTime(), first.endTime(), second.startTime(), second.endTime())))
+                        .filter(second -> isConflict(first, second)))
                 .findAny()
                 .isPresent();
+    }
+
+    private boolean isConflict(CourseTimeDto first, CourseTimeDto second) {
+        return first != second &&
+                first.dayOfWeek().equals(second.dayOfWeek()) &&
+                isTimeOverlap(first.startTime(), first.endTime(), second.startTime(), second.endTime());
     }
 
     private boolean isTimeOverlap(LocalTime startTime1, LocalTime endTime1, LocalTime startTime2, LocalTime endTime2) {
