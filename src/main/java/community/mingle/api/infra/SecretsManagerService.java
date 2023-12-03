@@ -2,6 +2,7 @@ package community.mingle.api.infra;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import community.mingle.api.database.DataSourceConfig;
+import community.mingle.api.dto.s3.S3BucketDto;
 import community.mingle.api.dto.security.DevTokenDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -45,9 +46,14 @@ public class SecretsManagerService {
         return secretValue;
     }
 
+    public String getS3BucketName() {
+        return getSecretValueString("mingle-api/s3-bucket");
+    }
+
     public String getJwtSecretKey() {
         return getSecretValueString("mingle-api/jwt-secret-key");
     }
+
     public DataSourceConfig getDataSourceConfig(String profile) throws IOException {
         return getSecretValue(projectName + "/" + profile + "/db", DataSourceConfig.class);
     }
