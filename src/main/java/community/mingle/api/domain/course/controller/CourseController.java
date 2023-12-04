@@ -24,11 +24,13 @@ public class CourseController {
     private final CourseFacade courseFacade;
 
     @Operation(summary = "강의 직접 추가 API")
-    @PostMapping("/personal")
+    @PostMapping("/{timetableId}/personal")
     public ResponseEntity<CreatePersonalCourseResponse> createPersonalCourse(
+            @RequestParam
+            Long timetableId,
             @RequestBody CreatePersonalCourseRequest request
     ) {
-        return ResponseEntity.ok(courseFacade.createPersonalCourse(request));
+        return ResponseEntity.ok(courseFacade.createPersonalCourse(timetableId, request));
     }
 
     @Operation(summary = "강의 상세 API")
