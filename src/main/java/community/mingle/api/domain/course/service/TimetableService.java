@@ -8,6 +8,7 @@ import community.mingle.api.domain.course.repository.CourseTimetableRepository;
 import community.mingle.api.domain.course.repository.TimetableRepository;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.repository.MemberRepository;
+import community.mingle.api.dto.course.CourseTimeDto;
 import community.mingle.api.enums.Semester;
 import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
@@ -61,21 +62,28 @@ public class TimetableService {
         return courseTimetableRepository.save(courseTimetable);
     }
 
-    public boolean isCourseTimeValid(Timetable timetable, Course newCourse) {
+    @Transactional
+    public void deleteCourse(Timetable timetable, Course course) {
+        CourseTimetable courseTimetable = courseTimetableRepository.findByTimetableIdAndCourseId(timetable.getId(), course.getId())
+                .orElseThrow(() -> new CustomException(TIMETABLE_NOT_FOUND));
+        courseTimetableRepository.delete(courseTimetable);
+    }
+
+    public boolean isCourseTimeConflictWithTimetable(Timetable timetable, List<CourseTimeDto> courseTimeList) {
         List<CourseTimetable> existingCourses = timetable.getCourseTimetableList();
 
 
         return existingCourses.stream()
                 .flatMap(existingCourse -> existingCourse.getCourse().getCourseTimeList().stream())
-                .noneMatch(existingCourseTime -> isTimeOverlap(existingCourseTime, newCourse.getCourseTimeList()));
+                .anyMatch(existingCourseTime -> isTimeOverlap(existingCourseTime, courseTimeList));
     }
 
-    private boolean isTimeOverlap(CourseTime existingTime, List<CourseTime> newTimes) {
+    private boolean isTimeOverlap(CourseTime existingTime, List<CourseTimeDto> newTimes) {
         return newTimes.stream()
                 .anyMatch(newTime ->
-                        existingTime.getDayOfWeek() == newTime.getDayOfWeek() &&
-                                !(newTime.getEndTime().isBefore(existingTime.getStartTime()) ||
-                                        newTime.getStartTime().isAfter(existingTime.getEndTime()))
+                        existingTime.getDayOfWeek() == newTime.dayOfWeek() &&
+                                !(newTime.endTime().isBefore(existingTime.getStartTime()) ||
+                                        newTime.startTime().isAfter(existingTime.getEndTime()))
                 );
     }
 }

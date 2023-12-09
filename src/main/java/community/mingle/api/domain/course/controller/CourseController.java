@@ -7,6 +7,10 @@ import community.mingle.api.domain.course.controller.response.CourseDetailRespon
 import community.mingle.api.domain.course.controller.response.CoursePreviewResponse;
 import community.mingle.api.domain.course.facade.CourseFacade;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +28,17 @@ public class CourseController {
     private final CourseFacade courseFacade;
 
     @Operation(summary = "강의 직접 추가 API")
-    @PostMapping("/personal")
+    @ApiResponses({
+            @ApiResponse(responseCode = "409", description = "TIMETABLE_CONFLICT - 시간표가 겹칩니다.", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "409", description = "COURSE_TIME_CONFLICT - 강의 시간이 겹치지 않게 설정해 주세요.", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @PostMapping("/{timetableId}/personal")
     public ResponseEntity<CreatePersonalCourseResponse> createPersonalCourse(
+            @RequestParam
+            Long timetableId,
             @RequestBody CreatePersonalCourseRequest request
     ) {
-        return ResponseEntity.ok(courseFacade.createPersonalCourse(request));
+        return ResponseEntity.ok(courseFacade.createPersonalCourse(timetableId, request));
     }
 
     @Operation(summary = "강의 상세 API")
@@ -54,15 +64,6 @@ public class CourseController {
             @RequestBody UpdatePersonalCourseRequest request
     ) {
         return ResponseEntity.ok(courseFacade.updateCourse(request, courseId));
-    }
-
-    @Operation(summary = "강의 삭제 API")
-    @DeleteMapping("/{courseId}")
-    public ResponseEntity<Void> deletePersonalCourse(
-            @PathVariable Long courseId
-    ) {
-        courseFacade.deleteCourse(courseId);
-        return ResponseEntity.ok().build();
     }
 
 

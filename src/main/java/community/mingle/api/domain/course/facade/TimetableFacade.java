@@ -5,13 +5,18 @@ import community.mingle.api.domain.course.controller.request.CreateTimetableRequ
 import community.mingle.api.domain.course.controller.response.CreateTimetableResponse;
 import community.mingle.api.domain.course.controller.response.UpdateTimetableCourseResponse;
 import community.mingle.api.domain.course.entity.Course;
+import community.mingle.api.domain.course.entity.CourseTime;
 import community.mingle.api.domain.course.entity.Timetable;
 import community.mingle.api.domain.course.service.CourseService;
 import community.mingle.api.domain.course.service.TimetableService;
+import community.mingle.api.dto.course.CourseTimeDto;
+import community.mingle.api.enums.CourseType;
 import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static community.mingle.api.global.exception.ErrorCode.COURSE_TIME_CONFLICT;
 
@@ -39,12 +44,26 @@ public class TimetableFacade {
         Timetable timetable = timetableService.getById(timetableId);
 
         Course course = courseService.getCourseById(courseId);
+        List<CourseTimeDto> courseTimeDtoList = course.getCourseTimeList().stream().map(CourseTime::toDto).toList();
 
-        if (!timetableService.isCourseTimeValid(timetable, course)) {
+        if (timetableService.isCourseTimeConflictWithTimetable(timetable, courseTimeDtoList)) {
             throw new CustomException(COURSE_TIME_CONFLICT);
         }
 
         timetableService.addCourse(timetable, course);
         return new UpdateTimetableCourseResponse(true);
+    }
+
+    @Transactional
+    public void deleteTimetableCourse(Long timetableId, Long courseId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+
+        Timetable timetable = timetableService.getById(timetableId);
+        Course course = courseService.getCourseById(courseId);
+        timetableService.deleteCourse(timetable, course);
+
+        if(course.getType() == CourseType.PERSONAL) {
+            courseService.deletePersonalCourse(courseId, memberId);
+        }
     }
 }

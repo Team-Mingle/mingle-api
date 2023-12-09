@@ -70,6 +70,7 @@ public class CourseService {
         personalCourseRepository.delete(personalCourse);
     }
 
+    @Transactional
     public List<CourseTime> createCourseTime(Long personalCourseId, List<CourseTimeDto> courseTimeDtoList) {
         PersonalCourse personalCourse = getPersonalCourseById(personalCourseId);
 
