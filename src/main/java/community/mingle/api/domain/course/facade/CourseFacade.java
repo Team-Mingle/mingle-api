@@ -41,7 +41,7 @@ public class CourseFacade {
         Timetable timetable = timetableService.getById(timetableId);
 
         if(timetableService.isCourseTimeConflictWithTimetable(timetable, request.courseTimeDtoList())){
-            throw new CustomException(COURSE_TIME_CONFLICT);
+            throw new CustomException(TIMETABLE_CONFLICT);
         }
 
         Long memberId = tokenService.getTokenInfo().getMemberId();
