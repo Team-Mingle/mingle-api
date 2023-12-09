@@ -31,7 +31,7 @@ public class CommentController {
     }
 
     @Operation(summary = "댓글 삭제 API")
-    @PatchMapping("/delete/{commentId}")
+    @DeleteMapping("/delete/{commentId}")
     public ResponseEntity<DeleteCommentResponse> delete(@PathVariable Long commentId) {
         DeleteCommentResponse deleteCommentResponse = commentFacade.delete(commentId);
         return new ResponseEntity<>(deleteCommentResponse, HttpStatus.OK);
@@ -45,7 +45,7 @@ public class CommentController {
     }
 
     @Operation(summary = "댓글 좋아요 삭제 API")
-    @PatchMapping("/like/delete/{commentId}")
+    @DeleteMapping("/like/delete/{commentId}")
     public ResponseEntity<DeleteCommentLikeResponse> deleteCommentLike(@PathVariable Long commentId) {
         DeleteCommentLikeResponse deleteCommentLikeResponse = commentFacade.deleteCommentLike(commentId);
         return new ResponseEntity<>(deleteCommentLikeResponse, HttpStatus.OK);

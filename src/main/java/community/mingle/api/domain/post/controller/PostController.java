@@ -1,6 +1,5 @@
 package community.mingle.api.domain.post.controller;
 
-import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.comment.facade.CommentFacade;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
@@ -82,7 +81,7 @@ public class PostController {
 
 
     @Operation(summary = "게시물 삭제 API")
-    @PatchMapping("/delete/{postId}")
+    @DeleteMapping("/delete/{postId}")
     public ResponseEntity<DeletePostResponse> deletePost(@PathVariable Long postId) {
 
         DeletePostResponse deletePostResponse = postFacade.deletePost(postId);
@@ -119,7 +118,7 @@ public class PostController {
     }
 
     @Operation(summary = "게시물 좋아요 삭제 API")
-    @PatchMapping("/like/delete/{postLikeId}")
+    @DeleteMapping("/like/delete/{postLikeId}")
     public ResponseEntity<DeletePostLikeResponse> deletePostLike(@PathVariable Long postLikeId) {
         DeletePostLikeResponse deletePostLikeResponse = postFacade.deletePostLike(postLikeId);
 
