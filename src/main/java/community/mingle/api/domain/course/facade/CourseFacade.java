@@ -6,11 +6,9 @@ import community.mingle.api.domain.course.controller.request.UpdatePersonalCours
 import community.mingle.api.domain.course.controller.response.CreatePersonalCourseResponse;
 import community.mingle.api.domain.course.controller.response.CourseDetailResponse;
 import community.mingle.api.domain.course.controller.response.CoursePreviewResponse;
-import community.mingle.api.domain.course.entity.Course;
-import community.mingle.api.domain.course.entity.CourseTime;
-import community.mingle.api.domain.course.entity.CrawledCourse;
-import community.mingle.api.domain.course.entity.PersonalCourse;
+import community.mingle.api.domain.course.entity.*;
 import community.mingle.api.domain.course.service.CourseService;
+import community.mingle.api.domain.course.service.TimetableService;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.dto.course.CourseTimeDto;
@@ -29,15 +27,21 @@ import static community.mingle.api.global.exception.ErrorCode.*;
 public class CourseFacade {
     private final CourseService courseService;
     private final MemberService memberService;
+    private final TimetableService timetableService;
     private final TokenService tokenService;
 
     @Transactional
-    public CreatePersonalCourseResponse createPersonalCourse(CreatePersonalCourseRequest request) {
+    public CreatePersonalCourseResponse createPersonalCourse(Long timetableId, CreatePersonalCourseRequest request) {
 
 
-        //TODO: 기존에 있던 시간표와 겹치는지 확인하는 validation 추가
-        if (checkCourseTimeConflict(request.courseTimeDtoList())) {
+        if (isCourseTimeConflict(request.courseTimeDtoList())) {
             throw new CustomException(COURSE_TIME_CONFLICT);
+        }
+
+        Timetable timetable = timetableService.getById(timetableId);
+
+        if(timetableService.isCourseTimeConflictWithTimetable(timetable, request.courseTimeDtoList())){
+            throw new CustomException(TIMETABLE_CONFLICT);
         }
 
         Long memberId = tokenService.getTokenInfo().getMemberId();
@@ -78,14 +82,14 @@ public class CourseFacade {
         boolean courseTimeChanged = isCourseTimeChanged(request.courseTimeDtoList(), personalCourse.getCourseTimeList());
 
         if (courseTimeChanged) {
-            if (checkCourseTimeConflict(request.courseTimeDtoList())) {
+            if (isCourseTimeConflict(request.courseTimeDtoList())) {
                 throw new CustomException(COURSE_TIME_CONFLICT);
             }
             courseService.updateCourseTime(personalCourse.getId(), request.courseTimeDtoList());
         }
 
         List<CourseTimeDto> courseTimeDtoList = personalCourse.getCourseTimeList().stream()
-                .map(this::toDto)
+                .map(CourseTime::toDto)
                 .toList();
 
         return new CourseDetailResponse(
@@ -112,7 +116,7 @@ public class CourseFacade {
         }
 
         List<CourseTimeDto> courseTimeDtoList = course.getCourseTimeList().stream()
-                .map(this::toDto)
+                .map(CourseTime::toDto)
                 .toList();
 
         return new CourseDetailResponse(
@@ -128,8 +132,6 @@ public class CourseFacade {
                 course.getPrerequisite()
         );
     }
-
-
 
     public List<CoursePreviewResponse> searchCourse(String keyword) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
@@ -148,30 +150,18 @@ public class CourseFacade {
                 .toList();
     }
 
-    private boolean checkCourseTimeConflict(List<CourseTimeDto> courseTimeDtoList) {
+    private boolean isCourseTimeConflict(List<CourseTimeDto> courseTimeDtoList) {
         return courseTimeDtoList.stream()
                 .flatMap(first -> courseTimeDtoList.stream()
-                        .filter(second -> isConflict(first, second)))
+                        .filter(second -> first != second &&
+                                first.dayOfWeek().equals(second.dayOfWeek()) &&
+                                isTimeOverlap(first.startTime(), first.endTime(), second.startTime(), second.endTime())))
                 .findAny()
                 .isPresent();
     }
 
-    private boolean isConflict(CourseTimeDto first, CourseTimeDto second) {
-        return first != second &&
-                first.dayOfWeek().equals(second.dayOfWeek()) &&
-                isTimeOverlap(first.startTime(), first.endTime(), second.startTime(), second.endTime());
-    }
-
     private boolean isTimeOverlap(LocalTime startTime1, LocalTime endTime1, LocalTime startTime2, LocalTime endTime2) {
         return (startTime1.isBefore(endTime2)) && (endTime1.isAfter(startTime2));
-    }
-
-    private CourseTimeDto toDto(CourseTime courseTime) {
-        return new CourseTimeDto(
-                courseTime.getDayOfWeek(),
-                courseTime.getStartTime(),
-                courseTime.getEndTime()
-        );
     }
 
     private boolean isCourseTimeChanged(List<CourseTimeDto> courseTimeDtoList, List<CourseTime> courseTimeList) {

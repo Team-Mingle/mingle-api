@@ -1,5 +1,6 @@
 package community.mingle.api.domain.course.entity;
 
+import community.mingle.api.dto.course.CourseTimeDto;
 import community.mingle.api.entitybase.AuditLoggingBase;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -46,5 +47,13 @@ public class CourseTime extends AuditLoggingBase {
 
     @Column(name = "deleted_at")
     private Instant deletedAt;
+
+    public CourseTimeDto toDto() {
+        return new CourseTimeDto(
+                this.getDayOfWeek(),
+                this.getStartTime(),
+                this.getEndTime()
+        );
+    }
 
 }

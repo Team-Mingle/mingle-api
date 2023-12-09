@@ -31,6 +31,7 @@ public enum ErrorCode {
     FAIL_TO_REISSUE_TOKEN(401, "2002", "토큰 재발급에 실패하였습니다"), //1.12
     MEMBER_NOT_FOUND(404, "2005", "존재하지 않는 회원 정보입니다."),
     COURSE_TIME_CONFLICT(409, "COURSE_TIME_CONFLICT", "강의 시간이 겹치지 않게 설정해 주세요."),
+    TIMETABLE_CONFLICT(409, "TIMETABLE_CONFLICT", "시간표가 겹칩니다."),
     COURSE_NOT_FOUND(404, "COURSE_NOT_FOUND", "존재하지 않는 강의입니다."),
     SEMESTER_NOT_FOUND(404, "SEMESTER_NOT_FOUND", "존재하지 않는 학기입니다."),
     TIMETABLE_NOT_FOUND(404, "TIMETABLE_NOT_FOUND", "존재하지 않는 시간표입니다."),
