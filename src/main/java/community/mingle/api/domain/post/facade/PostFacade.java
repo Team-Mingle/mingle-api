@@ -1,7 +1,9 @@
 package community.mingle.api.domain.post.facade;
 
 import community.mingle.api.domain.auth.service.TokenService;
+import community.mingle.api.domain.notification.event.PopularPostNotificationEvent;
 import community.mingle.api.domain.comment.service.CommentService;
+import community.mingle.api.domain.like.entity.PostLike;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
 import community.mingle.api.domain.post.controller.response.*;
@@ -10,8 +12,11 @@ import community.mingle.api.domain.post.service.PostImageService;
 import community.mingle.api.domain.post.service.PostLikeService;
 import community.mingle.api.domain.post.service.PostService;
 import community.mingle.api.dto.post.PostStatusDto;
-import community.mingle.api.enums.*;
+import community.mingle.api.enums.BoardType;
+import community.mingle.api.enums.CategoryType;
+import community.mingle.api.enums.MemberRole;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -31,6 +36,7 @@ public class PostFacade {
     private final PostLikeService postLikeService;
     private final TokenService tokenService;
     private final CommentService commentService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
 
     public List<PostCategoryResponse> getPostCategory(){
@@ -123,7 +129,10 @@ public class PostFacade {
     @Transactional
     public CreatePostLikeResponse createPostLike(Long postId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
-        postLikeService.create(postId, memberId);
+        PostLike postLike = postLikeService.create(postId, memberId);
+        if (postLike.getPost().getPostLikeList().size() == 5) {
+            applicationEventPublisher.publishEvent(new PopularPostNotificationEvent(this, postId, memberId));
+        }
         return new CreatePostLikeResponse(true);
     }
 
@@ -180,6 +189,8 @@ public class PostFacade {
                 .nickname(nickName)
                 .createdAt(convertToDateAndTime(post.getCreatedAt()))
                 .memberRole(post.getMember().getRole())
+                .boardType(post.getBoardType())
+                .categoryType(post.getCategoryType())
                 .status(post.getStatusType())
                 .likeCount(post.getPostLikeList().size())
                 .commentCount(postService.calculateActiveCommentCount(post))

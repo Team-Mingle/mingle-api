@@ -1,5 +1,7 @@
 package community.mingle.api.domain.post.controller.response;
 
+import community.mingle.api.enums.BoardType;
+import community.mingle.api.enums.CategoryType;
 import community.mingle.api.enums.ContentStatusType;
 import community.mingle.api.enums.MemberRole;
 import lombok.Builder;
@@ -18,6 +20,8 @@ public class PostDetailResponse {
     private final String createdAt;
     private final MemberRole memberRole;
     private final ContentStatusType status;
+    private BoardType boardType;
+    private CategoryType categoryType;
     private final int likeCount;
     private final int commentCount;
     private final int viewCount;

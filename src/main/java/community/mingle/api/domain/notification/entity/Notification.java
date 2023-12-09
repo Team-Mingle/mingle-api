@@ -2,12 +2,15 @@ package community.mingle.api.domain.notification.entity;
 
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.entitybase.AuditLoggingBase;
-import community.mingle.api.enums.BoardType;
-import community.mingle.api.enums.CategoryType;
+import community.mingle.api.enums.ContentType;
 import community.mingle.api.enums.NotificationType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -19,6 +22,10 @@ import java.time.LocalDateTime;
 @SQLDelete(sql = "UPDATE notification SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "notification")
+@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DiscriminatorValue(value = "content_type")
 public class Notification extends AuditLoggingBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,14 +41,13 @@ public class Notification extends AuditLoggingBase {
     private LocalDateTime deletedAt;
 
     @NotNull
-    @Column(name = "board", nullable = false)
+    @Column(name = "content_type", updatable = false, insertable = false)
     @Enumerated(EnumType.STRING)
-    private BoardType boardType;
+    private ContentType contentType;
 
     @NotNull
-    @Column(name = "category", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private CategoryType categoryType;
+    @Column(name = "content_id", nullable = false)
+    private Long contentId;
 
     @NotNull
     @Column(name = "notification_type", nullable = false)
@@ -51,5 +57,4 @@ public class Notification extends AuditLoggingBase {
     @NotNull
     @Column(name = "`read`", nullable = false)
     private Boolean read = false;
-
 }
