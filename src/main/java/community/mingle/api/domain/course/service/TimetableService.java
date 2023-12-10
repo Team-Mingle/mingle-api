@@ -7,7 +7,6 @@ import community.mingle.api.domain.course.entity.Timetable;
 import community.mingle.api.domain.course.repository.CourseTimetableRepository;
 import community.mingle.api.domain.course.repository.TimetableRepository;
 import community.mingle.api.domain.member.entity.Member;
-import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.dto.course.CourseTimeDto;
 import community.mingle.api.enums.Semester;
 import community.mingle.api.global.exception.CustomException;
@@ -18,25 +17,28 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static community.mingle.api.global.exception.ErrorCode.*;
+import static community.mingle.api.global.exception.ErrorCode.MODIFY_NOT_AUTHORIZED;
+import static community.mingle.api.global.exception.ErrorCode.TIMETABLE_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
 public class TimetableService {
 
     private final TimetableRepository timetableRepository;
-    private final MemberRepository memberRepository;
     private final CourseTimetableRepository courseTimetableRepository;
 
     public Timetable createTimetable(Member member, int year, int semester) {
 
         Semester semesterEnum = Semester.findSemester(year, semester);
-        List<Timetable> timetableList = timetableRepository.findAllByMemberOrderByOrderNumberDesc(member);
+        List<Timetable> timetableList = timetableRepository.findAllByMemberAndSemesterOrderByOrderNumberDesc(member, semesterEnum);
         int orderNumber;
         if(timetableList.isEmpty()) orderNumber = 1;
         else orderNumber = timetableList.get(0).getOrderNumber() + 1;
 
+        String defaultName = "시간표 " + orderNumber;
+
         Timetable timetable = Timetable.builder()
+                .name(defaultName)
                 .semester(semesterEnum)
                 .orderNumber(orderNumber)
                 .isPinned(false)
@@ -70,11 +72,11 @@ public class TimetableService {
     @Transactional
     public void deleteTimetable(Timetable timetable, Member member) {
         hasPermission(member, timetable);
-
+        Semester semester = timetable.getSemester();
         timetableRepository.delete(timetable);
 
 
-        List<Timetable> timetableList = timetableRepository.findAllByMemberOrderByOrderNumberAsc(member);
+        List<Timetable> timetableList = timetableRepository.findAllByMemberAndSemesterOrderByOrderNumberAsc(member, semester);
         IntStream.range(0, timetableList.size())
                 .forEach(indexNumber -> timetableList.get(indexNumber).updateOrderNumber(indexNumber + 1));
 

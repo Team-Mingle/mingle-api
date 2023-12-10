@@ -29,9 +29,8 @@ public class Timetable extends AuditLoggingBase {
     private Long id;
 
     @NotNull
-    @Builder.Default
     @Column(name = "name", nullable = false)
-    private String name = "시간표 이름";
+    private String name;
 
     @NotNull
     @Enumerated(EnumType.STRING)
