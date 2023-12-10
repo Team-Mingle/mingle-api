@@ -2,6 +2,7 @@ package community.mingle.api.domain.course.facade;
 
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.course.controller.request.CreateTimetableRequest;
+import community.mingle.api.domain.course.controller.request.UpdateTimetableNameRequest;
 import community.mingle.api.domain.course.controller.response.CreateTimetableResponse;
 import community.mingle.api.domain.course.controller.response.UpdateTimetableCourseResponse;
 import community.mingle.api.domain.course.entity.Course;
@@ -32,6 +33,7 @@ public class TimetableFacade {
     private final TokenService tokenService;
     private final MemberService memberService;
 
+    @Transactional
     public CreateTimetableResponse createTimetable(CreateTimetableRequest request) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
@@ -71,10 +73,19 @@ public class TimetableFacade {
         }
     }
 
+    @Transactional
     public void deleteTimetable(Long timetableId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
         Timetable timetable = timetableService.getById(timetableId);
         timetableService.deleteTimetable(timetable, member);
+    }
+
+    @Transactional
+    public void updateTimetableName(Long timetableId, UpdateTimetableNameRequest request) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+        Timetable timetable = timetableService.getById(timetableId);
+        timetableService.updateTimetableName(timetable, member, request.name());
     }
 }

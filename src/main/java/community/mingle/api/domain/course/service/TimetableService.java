@@ -82,6 +82,12 @@ public class TimetableService {
 
     }
 
+    @Transactional
+    public void updateTimetableName(Timetable timetable, Member member, String name) {
+        hasPermission(member, timetable);
+        timetable.updateName(name);
+    }
+
     public boolean isCourseTimeConflictWithTimetable(Timetable timetable, List<CourseTimeDto> courseTimeList) {
         List<CourseTimetable> existingCourses = timetable.getCourseTimetableList();
 
@@ -105,6 +111,4 @@ public class TimetableService {
             throw new CustomException(MODIFY_NOT_AUTHORIZED);
         }
     }
-
-
 }

@@ -2,6 +2,7 @@ package community.mingle.api.domain.course.controller;
 
 import community.mingle.api.domain.course.controller.request.CreateTimetableRequest;
 import community.mingle.api.domain.course.controller.request.UpdateTimetableCourseRequest;
+import community.mingle.api.domain.course.controller.request.UpdateTimetableNameRequest;
 import community.mingle.api.domain.course.controller.response.CreateTimetableResponse;
 import community.mingle.api.domain.course.controller.response.UpdateTimetableCourseResponse;
 import community.mingle.api.domain.course.facade.TimetableFacade;
@@ -53,6 +54,16 @@ public class TimetableController {
             @PathVariable Long timetableId
     ) {
         timetableFacade.deleteTimetable(timetableId);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "시간표 이름 수정 API")
+    @PatchMapping("/{timetableId}/name")
+    public ResponseEntity<Void> updateTimetableName(
+            @PathVariable Long timetableId,
+            @RequestBody UpdateTimetableNameRequest request
+            ) {
+        timetableFacade.updateTimetableName(timetableId, request);
         return ResponseEntity.ok().build();
     }
 
