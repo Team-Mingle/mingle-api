@@ -11,6 +11,7 @@ import community.mingle.api.domain.course.service.CourseService;
 import community.mingle.api.domain.course.service.TimetableService;
 import community.mingle.api.dto.course.CourseTimeDto;
 import community.mingle.api.enums.CourseType;
+import community.mingle.api.enums.Semester;
 import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,9 @@ public class TimetableFacade {
 
     public CreateTimetableResponse createTimetable(CreateTimetableRequest request) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
-        Timetable timetable = timetableService.createTimetable(memberId, request.year(), request.semester());
+        Semester semesterEnum = Semester.findSemester(request.year(), request.semester());
+
+        Timetable timetable = timetableService.createTimetable(memberId, semesterEnum);
         return new CreateTimetableResponse(
             timetable.getId(),
             timetable.getName(),

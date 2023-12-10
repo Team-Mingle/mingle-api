@@ -7,6 +7,7 @@ import community.mingle.api.domain.course.service.CourseEvaluationService;
 import community.mingle.api.domain.course.service.CourseService;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
+import community.mingle.api.enums.Semester;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,10 +25,12 @@ public class CourseEvaluationFacade {
         Member member = memberService.getById(memberId);
         Course course = courseService.getCrawledCourseById(request.courseId());
 
+        Semester semesterEnum = Semester.findSemester(request.year(), request.semester());
+
         courseEvaluationService.create(
                 member,
                 course,
-                request.semester(),
+                semesterEnum,
                 request.comment(),
                 request.rating()
         );
