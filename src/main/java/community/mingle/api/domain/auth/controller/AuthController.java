@@ -58,9 +58,9 @@ public class AuthController {
 
     @Operation(summary = "1.2 학교 및 도메인 리스트 불러오기 api")
     @GetMapping("/email-domains/{countryName}")
-    public ResponseEntity<List<DomainResponse>> getEmailDomains(@PathVariable String countryName) {
-        List<DomainResponse> domainResponses = universityService.getDomains(countryName);
-        return ResponseEntity.ok().body(domainResponses);
+    public ResponseEntity<List<UniversityResponse>> getEmailDomains(@PathVariable String countryName) {
+        List<UniversityResponse> universityResponse = universityService.getUniversityList(countryName);
+        return ResponseEntity.ok().body(universityResponse);
     }
 
     @Operation(summary = "1.3 이메일 중복 검사 api")
