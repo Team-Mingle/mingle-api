@@ -4,6 +4,7 @@ import community.mingle.api.domain.course.controller.request.CreateTimetableRequ
 import community.mingle.api.domain.course.controller.request.UpdateTimetableCourseRequest;
 import community.mingle.api.domain.course.controller.request.UpdateTimetableNameRequest;
 import community.mingle.api.domain.course.controller.response.CreateTimetableResponse;
+import community.mingle.api.domain.course.controller.response.TimetableDetailResponse;
 import community.mingle.api.domain.course.controller.response.TimetableListResponse;
 import community.mingle.api.domain.course.controller.response.UpdateTimetableCourseResponse;
 import community.mingle.api.domain.course.facade.TimetableFacade;

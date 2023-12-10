@@ -3,10 +3,7 @@ package community.mingle.api.domain.course.facade;
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.course.controller.request.CreateTimetableRequest;
 import community.mingle.api.domain.course.controller.request.UpdateTimetableNameRequest;
-import community.mingle.api.domain.course.controller.response.CreateTimetableResponse;
-import community.mingle.api.domain.course.controller.response.TimetableListResponse;
-import community.mingle.api.domain.course.controller.response.TimetablePreviewResponse;
-import community.mingle.api.domain.course.controller.response.UpdateTimetableCourseResponse;
+import community.mingle.api.domain.course.controller.response.*;
 import community.mingle.api.domain.course.entity.Course;
 import community.mingle.api.domain.course.entity.CourseTime;
 import community.mingle.api.domain.course.entity.Timetable;
@@ -132,5 +129,31 @@ public class TimetableFacade {
                 );
 
         return new TimetableListResponse(semesterListMap);
+    }
+
+    public TimetableDetailResponse getTimetableDetail(Long timetableId) {
+        Timetable timetable = timetableService.getById(timetableId);
+        List<CoursePreviewResponse> coursePreviewResponseList = timetable.getCourseTimetableList().stream()
+                .map(courseTimetable -> {
+                    Course course = courseTimetable.getCourse();
+                    return new CoursePreviewResponse(
+                            course.getId(),
+                            course.getName(),
+                            course.getCourseCode(),
+                            course.getSemester(),
+                            course.getProfessor(),
+                            course.getSubclass(),
+                            course.getCourseTimeList().stream()
+                                    .map(CourseTime::toDto)
+                                    .toList()
+                    );
+                })
+                .toList();
+
+        return new TimetableDetailResponse(
+                timetable.getName(),
+                timetable.getSemester(),
+                coursePreviewResponseList
+        );
     }
 }
