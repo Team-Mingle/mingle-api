@@ -28,10 +28,8 @@ public class TimetableService {
     private final MemberRepository memberRepository;
     private final CourseTimetableRepository courseTimetableRepository;
 
-    public Timetable createTimetable(Long memberId, int year, int semester) {
+    public Timetable createTimetable(Member member, int year, int semester) {
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
         Semester semesterEnum = Semester.findSemester(year, semester);
         List<Timetable> timetableList = timetableRepository.findAllByMemberOrderByOrderNumberDesc(member);
         int orderNumber;

@@ -34,7 +34,8 @@ public class TimetableFacade {
 
     public CreateTimetableResponse createTimetable(CreateTimetableRequest request) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
-        Timetable timetable = timetableService.createTimetable(memberId, request.year(), request.semester());
+        Member member = memberService.getById(memberId);
+        Timetable timetable = timetableService.createTimetable(member, request.year(), request.semester());
         return new CreateTimetableResponse(
             timetable.getId(),
             timetable.getName(),
