@@ -88,6 +88,12 @@ public class TimetableService {
         timetable.updateName(name);
     }
 
+    @Transactional
+    public void convertPinStatus(Timetable timetable, Member member) {
+        hasPermission(member, timetable);
+        timetable.convertPinStatus();
+    }
+
     public boolean isCourseTimeConflictWithTimetable(Timetable timetable, List<CourseTimeDto> courseTimeList) {
         List<CourseTimetable> existingCourses = timetable.getCourseTimetableList();
 

@@ -88,4 +88,12 @@ public class TimetableFacade {
         Timetable timetable = timetableService.getById(timetableId);
         timetableService.updateTimetableName(timetable, member, request.name());
     }
+
+    @Transactional
+    public void convertPinStatus(Long timetableId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+        Timetable timetable = timetableService.getById(timetableId);
+        timetableService.convertPinStatus(timetable, member);
+    }
 }

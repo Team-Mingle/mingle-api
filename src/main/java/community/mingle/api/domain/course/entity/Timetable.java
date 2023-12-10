@@ -62,4 +62,8 @@ public class Timetable extends AuditLoggingBase {
     public void updateName(String name) {
         this.name = name;
     }
+
+    public void convertPinStatus() {
+        this.isPinned = !this.isPinned;
+    }
 }
