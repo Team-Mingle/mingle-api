@@ -17,8 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static community.mingle.api.domain.auth.service.AuthService.FRESHMAN_EMAIL_DOMAIN;
-import static community.mingle.api.global.exception.ErrorCode.MEMBER_ALREADY_EXIST;
-import static community.mingle.api.global.exception.ErrorCode.NICKNAME_DUPLICATED;
+import static community.mingle.api.global.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -69,7 +68,13 @@ public class AuthFacade {
     @Transactional
     public LoginMemberResponse login(LoginMemberRequest loginMemberRequest) {
 
-        Member member = memberService.getByEmail(loginMemberRequest.getEmail());
+        Member member;
+        try {
+            member = memberService.getByEmail(loginMemberRequest.getEmail());
+        } catch (CustomException e) {
+            //프론트에 로그인 실패 에러를 하나로 통일해서 return 하기 위한 try-catch
+            throw new CustomException(FAILED_TO_LOGIN);
+        }
 
         authService.checkPassword(loginMemberRequest.getPassword(), member.getPassword());
         authService.checkMemberStatusActive(member);
