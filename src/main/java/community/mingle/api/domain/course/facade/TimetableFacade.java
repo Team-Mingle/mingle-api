@@ -22,8 +22,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import static community.mingle.api.global.exception.ErrorCode.COURSE_TIME_CONFLICT;
@@ -109,6 +111,10 @@ public class TimetableFacade {
         Map<Semester, List<TimetablePreviewResponse>> semesterListMap = timetableList.stream()
                 .collect(Collectors.groupingBy(
                         Timetable::getSemester,
+                        () -> new TreeMap<>(
+                                Comparator.comparing(Semester::getYear)
+                                        .thenComparing(Semester::getSemester).reversed()
+                        ),
                         Collectors.collectingAndThen(
                                 Collectors.toList(),
                                 timetables -> timetableService.orderTimetableList(timetables)
