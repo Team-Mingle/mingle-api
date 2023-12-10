@@ -55,4 +55,8 @@ public class Timetable extends AuditLoggingBase {
 
     @OneToMany(mappedBy = "timetable")
     private List<CourseTimetable> courseTimetableList = new ArrayList<>();
+
+    public void updateOrderNumber(int orderNumber) {
+        this.orderNumber = orderNumber;
+    }
 }

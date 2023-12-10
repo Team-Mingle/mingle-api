@@ -47,4 +47,13 @@ public class TimetableController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "시간표 삭제 API")
+    @DeleteMapping("/{timetableId}")
+    public ResponseEntity<Void> deleteTimetable(
+            @PathVariable Long timetableId
+    ) {
+        timetableFacade.deleteTimetable(timetableId);
+        return ResponseEntity.ok().build();
+    }
+
 }

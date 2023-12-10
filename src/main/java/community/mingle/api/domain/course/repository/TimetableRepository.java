@@ -11,4 +11,5 @@ import java.util.List;
 public interface TimetableRepository extends JpaRepository<Timetable, Long> {
 
     public List<Timetable> findAllByMemberOrderByOrderNumberDesc(Member member);
+    public List<Timetable> findAllByMemberOrderByOrderNumberAsc(Member member);
 }

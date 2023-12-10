@@ -16,9 +16,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
-import static community.mingle.api.global.exception.ErrorCode.MEMBER_NOT_FOUND;
-import static community.mingle.api.global.exception.ErrorCode.TIMETABLE_NOT_FOUND;
+import static community.mingle.api.global.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -68,6 +68,19 @@ public class TimetableService {
         courseTimetableRepository.delete(courseTimetable);
     }
 
+    @Transactional
+    public void deleteTimetable(Timetable timetable, Member member) {
+        hasPermission(member, timetable);
+
+        timetableRepository.delete(timetable);
+
+
+        List<Timetable> timetableList = timetableRepository.findAllByMemberOrderByOrderNumberAsc(member);
+        IntStream.range(0, timetableList.size())
+                .forEach(indexNumber -> timetableList.get(indexNumber).updateOrderNumber(indexNumber + 1));
+
+    }
+
     public boolean isCourseTimeConflictWithTimetable(Timetable timetable, List<CourseTimeDto> courseTimeList) {
         List<CourseTimetable> existingCourses = timetable.getCourseTimetableList();
 
@@ -85,4 +98,12 @@ public class TimetableService {
                                         newTime.startTime().isAfter(existingTime.getEndTime()))
                 );
     }
+
+    private void hasPermission(Member member, Timetable timetable) {
+        if (!timetable.getMember().getId().equals(member.getId())) {
+            throw new CustomException(MODIFY_NOT_AUTHORIZED);
+        }
+    }
+
+
 }
