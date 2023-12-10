@@ -83,4 +83,12 @@ public class TimetableController {
         return ResponseEntity.ok(timetableFacade.getTimetableList());
     }
 
+    @Operation(summary = "시간표 상세 API")
+    @GetMapping("/{timetableId}")
+    public ResponseEntity<TimetableDetailResponse> getTimetableDetail(
+            @PathVariable Long timetableId
+    ) {
+        return ResponseEntity.ok(timetableFacade.getTimetableDetail(timetableId));
+    }
+
 }
