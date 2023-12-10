@@ -4,6 +4,7 @@ import community.mingle.api.domain.course.controller.request.CreateTimetableRequ
 import community.mingle.api.domain.course.controller.request.UpdateTimetableCourseRequest;
 import community.mingle.api.domain.course.controller.request.UpdateTimetableNameRequest;
 import community.mingle.api.domain.course.controller.response.CreateTimetableResponse;
+import community.mingle.api.domain.course.controller.response.TimetableListResponse;
 import community.mingle.api.domain.course.controller.response.UpdateTimetableCourseResponse;
 import community.mingle.api.domain.course.facade.TimetableFacade;
 import io.swagger.v3.oas.annotations.Operation;
@@ -74,6 +75,12 @@ public class TimetableController {
     ) {
         timetableFacade.convertPinStatus(timetableId);
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "시간표 리스트 조회 API")
+    @GetMapping()
+    public ResponseEntity<TimetableListResponse> getTimetableList() {
+        return ResponseEntity.ok(timetableFacade.getTimetableList());
     }
 
 }

@@ -4,6 +4,8 @@ import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.course.controller.request.CreateTimetableRequest;
 import community.mingle.api.domain.course.controller.request.UpdateTimetableNameRequest;
 import community.mingle.api.domain.course.controller.response.CreateTimetableResponse;
+import community.mingle.api.domain.course.controller.response.TimetableListResponse;
+import community.mingle.api.domain.course.controller.response.TimetablePreviewResponse;
 import community.mingle.api.domain.course.controller.response.UpdateTimetableCourseResponse;
 import community.mingle.api.domain.course.entity.Course;
 import community.mingle.api.domain.course.entity.CourseTime;
@@ -14,12 +16,15 @@ import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.dto.course.CourseTimeDto;
 import community.mingle.api.enums.CourseType;
+import community.mingle.api.enums.Semester;
 import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static community.mingle.api.global.exception.ErrorCode.COURSE_TIME_CONFLICT;
 
@@ -95,5 +100,31 @@ public class TimetableFacade {
         Member member = memberService.getById(memberId);
         Timetable timetable = timetableService.getById(timetableId);
         timetableService.convertPinStatus(timetable, member);
+    }
+
+    public TimetableListResponse getTimetableList() {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+        List<Timetable> timetableList = timetableService.getTimetableList(member);
+        Map<Semester, List<TimetablePreviewResponse>> semesterListMap = timetableList.stream()
+                .collect(Collectors.groupingBy(
+                        Timetable::getSemester,
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                timetables -> timetableService.orderTimetableList(timetables)
+                                        .stream()
+                                        .map(timetable -> new TimetablePreviewResponse(
+                                                timetable.getId(),
+                                                timetable.getSemester(),
+                                                timetable.getName(),
+                                                timetable.getOrderNumber(),
+                                                timetable.getIsPinned()
+                                        ))
+                                        .collect(Collectors.toList())
+                        )
+                        )
+                );
+
+        return new TimetableListResponse(semesterListMap);
     }
 }
