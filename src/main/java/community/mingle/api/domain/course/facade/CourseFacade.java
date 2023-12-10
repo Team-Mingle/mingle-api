@@ -38,14 +38,15 @@ public class CourseFacade {
             throw new CustomException(COURSE_TIME_CONFLICT);
         }
 
-        Timetable timetable = timetableService.getById(timetableId);
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+
+        Timetable timetable = timetableService.getById(timetableId, member);
 
         if(timetableService.isCourseTimeConflictWithTimetable(timetable, request.courseTimeDtoList())){
             throw new CustomException(TIMETABLE_CONFLICT);
         }
 
-        Long memberId = tokenService.getTokenInfo().getMemberId();
-        Member member = memberService.getById(memberId);
         courseService.createPersonalCourse(
                 request.courseCode(),
                 request.name(),

@@ -51,7 +51,11 @@ public class TimetableFacade {
 
     @Transactional
     public UpdateTimetableCourseResponse updateTimetableCourse(Long timetableId, Long courseId) {
-        Timetable timetable = timetableService.getById(timetableId);
+
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+
+        Timetable timetable = timetableService.getById(timetableId, member);
 
         Course course = courseService.getCourseById(courseId);
         List<CourseTimeDto> courseTimeDtoList = course.getCourseTimeList().stream().map(CourseTime::toDto).toList();
@@ -67,8 +71,9 @@ public class TimetableFacade {
     @Transactional
     public void deleteTimetableCourse(Long timetableId, Long courseId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
 
-        Timetable timetable = timetableService.getById(timetableId);
+        Timetable timetable = timetableService.getById(timetableId, member);
         Course course = courseService.getCourseById(courseId);
         timetableService.deleteCourse(timetable, course);
 
@@ -81,7 +86,7 @@ public class TimetableFacade {
     public void deleteTimetable(Long timetableId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
-        Timetable timetable = timetableService.getById(timetableId);
+        Timetable timetable = timetableService.getById(timetableId, member);
         timetableService.deleteTimetable(timetable, member);
     }
 
@@ -89,7 +94,7 @@ public class TimetableFacade {
     public void updateTimetableName(Long timetableId, UpdateTimetableNameRequest request) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
-        Timetable timetable = timetableService.getById(timetableId);
+        Timetable timetable = timetableService.getById(timetableId, member);
         timetableService.updateTimetableName(timetable, member, request.name());
     }
 
@@ -97,7 +102,7 @@ public class TimetableFacade {
     public void convertPinStatus(Long timetableId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
-        Timetable timetable = timetableService.getById(timetableId);
+        Timetable timetable = timetableService.getById(timetableId, member);
         timetableService.convertPinStatus(timetable, member);
     }
 
@@ -132,7 +137,10 @@ public class TimetableFacade {
     }
 
     public TimetableDetailResponse getTimetableDetail(Long timetableId) {
-        Timetable timetable = timetableService.getById(timetableId);
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+
+        Timetable timetable = timetableService.getById(timetableId, member);
         List<CoursePreviewResponse> coursePreviewResponseList = timetable.getCourseTimetableList().stream()
                 .map(courseTimetable -> {
                     Course course = courseTimetable.getCourse();
