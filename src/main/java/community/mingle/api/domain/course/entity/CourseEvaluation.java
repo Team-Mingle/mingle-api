@@ -1,6 +1,8 @@
 package community.mingle.api.domain.course.entity;
 
+import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.entitybase.AuditLoggingBase;
+import community.mingle.api.enums.CourseEvaluationRating;
 import community.mingle.api.enums.Semester;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -22,6 +24,7 @@ import java.time.LocalDateTime;
 @Table(name = "course_evaluation")
 public class CourseEvaluation extends AuditLoggingBase {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -30,15 +33,20 @@ public class CourseEvaluation extends AuditLoggingBase {
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
-    @Size(max = 1023)
     @NotNull
-    @Column(name = "semester", nullable = false, length = 1023)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
+    @NotNull
+    @Column(name = "semester", nullable = false)
     @Enumerated(EnumType.STRING)
     private Semester semester;
 
     @NotNull
     @Column(name = "rating", nullable = false)
-    private String rating;
+    @Enumerated(EnumType.STRING)
+    private CourseEvaluationRating rating;
 
     @Size(max = 1023)
     @NotNull

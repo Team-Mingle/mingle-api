@@ -37,6 +37,7 @@ public enum ErrorCode {
     TIMETABLE_NOT_FOUND(404, "TIMETABLE_NOT_FOUND", "존재하지 않는 시간표입니다."),
     COUPON_TYPE_NOT_FOUND(404, "COUPON_TYPE_NOT_FOUND", "존재하지 않는 쿠폰 타입입니다."),
     POINT_NOT_ENOUGH(406, "POINT_NOT_ENOUGH", "포인트가 부족합니다."),
+    COURSE_ALREADY_EVALUATED(409, "COURSE_ALREADY_EVALUATED", "이미 해당 강의에 평가를 작성했습니다."),
 
 
     // 2. TODO post, comment 정리

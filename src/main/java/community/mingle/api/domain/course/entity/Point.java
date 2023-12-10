@@ -40,4 +40,8 @@ public class Point extends AuditLoggingBase {
         this.amount -= amount;
     }
 
+    public void addAmount(Long amount) {
+        this.amount += amount;
+    }
+
 }
