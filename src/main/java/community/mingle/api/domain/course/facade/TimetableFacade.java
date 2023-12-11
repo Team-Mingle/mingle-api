@@ -2,6 +2,7 @@ package community.mingle.api.domain.course.facade;
 
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.course.controller.request.CreateTimetableRequest;
+import community.mingle.api.domain.course.controller.request.UpdateTimetableCourseRequest;
 import community.mingle.api.domain.course.controller.response.CreateTimetableResponse;
 import community.mingle.api.domain.course.controller.response.UpdateTimetableCourseResponse;
 import community.mingle.api.domain.course.entity.Course;
@@ -11,14 +12,11 @@ import community.mingle.api.domain.course.service.CourseService;
 import community.mingle.api.domain.course.service.TimetableService;
 import community.mingle.api.dto.course.CourseTimeDto;
 import community.mingle.api.enums.CourseType;
-import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
-import static community.mingle.api.global.exception.ErrorCode.COURSE_TIME_CONFLICT;
 
 @Service
 @RequiredArgsConstructor
@@ -40,15 +38,13 @@ public class TimetableFacade {
     }
 
     @Transactional
-    public UpdateTimetableCourseResponse updateTimetableCourse(Long timetableId, Long courseId) {
+    public UpdateTimetableCourseResponse updateTimetableCourse(Long timetableId, UpdateTimetableCourseRequest request) {
         Timetable timetable = timetableService.getById(timetableId);
 
-        Course course = courseService.getCourseById(courseId);
+        Course course = courseService.getCourseById(request.courseId());
         List<CourseTimeDto> courseTimeDtoList = course.getCourseTimeList().stream().map(CourseTime::toDto).toList();
 
-        if (timetableService.isCourseTimeConflictWithTimetable(timetable, courseTimeDtoList)) {
-            throw new CustomException(COURSE_TIME_CONFLICT);
-        }
+        timetableService.deleteConflictCoursesByOverrideValidation(timetable, courseTimeDtoList, request.overrideValidation());
 
         timetableService.addCourse(timetable, course);
         return new UpdateTimetableCourseResponse(true);
