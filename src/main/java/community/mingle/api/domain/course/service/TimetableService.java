@@ -10,6 +10,7 @@ import community.mingle.api.domain.course.repository.TimetableRepository;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.dto.course.CourseTimeDto;
+import community.mingle.api.enums.CourseType;
 import community.mingle.api.enums.Semester;
 import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
@@ -75,7 +76,13 @@ public class TimetableService {
         if (!overrideValidation && !conflictCourseList.isEmpty()) {
             throw new CustomException(TIMETABLE_CONFLICT);
         } else if (overrideValidation && !conflictCourseList.isEmpty()) {
-            courseRepository.deleteAll(conflictCourseList);
+            conflictCourseList.stream()
+                    .filter(course -> course.getType().equals(CourseType.CRAWL))
+                    .forEach(course -> courseTimetableRepository.deleteAll(course.getCourseTimetableList()));
+
+            conflictCourseList.stream()
+                    .filter(course -> course.getType().equals(CourseType.PERSONAL))
+                    .forEach(courseRepository::delete);
         }
     }
 
