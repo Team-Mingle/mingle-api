@@ -5,10 +5,10 @@ import jakarta.validation.constraints.NotNull;
 
 public record CreateTimetableRequest(
         @Schema(format = "yyyy")
-        @NotNull
+        @NotNull(message = "학기를 선택해 주세요.")
         int year,
         @Schema(allowableValues = {"1", "2"})
-        @NotNull
+        @NotNull(message = "학기를 선택해 주세요.")
         int semester
 ) {
 }
