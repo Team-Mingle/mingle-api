@@ -34,6 +34,10 @@ public class Friend extends AuditLoggingBase {
     private Member member;
 
     @NotNull
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "friend_id", nullable = false)
     private Member friend;

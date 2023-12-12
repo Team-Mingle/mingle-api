@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: add name column to friend table
+      author: Hyeonwoo Jung
+      changes:
+        - addColumn:
+            tableName: friend
+            columns:
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
