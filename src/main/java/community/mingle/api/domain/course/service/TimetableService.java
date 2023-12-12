@@ -31,6 +31,7 @@ public class TimetableService {
 
         Semester semesterEnum = Semester.findSemester(year, semester);
         List<Timetable> timetableList = timetableRepository.findAllByMemberAndSemesterOrderByOrderNumberDesc(member, semesterEnum);
+
         int orderNumber;
         if(timetableList.isEmpty()) orderNumber = 1;
         else orderNumber = timetableList.get(0).getOrderNumber() + 1;
@@ -40,6 +41,7 @@ public class TimetableService {
         Timetable timetable = Timetable.builder()
                 .name(defaultName)
                 .semester(semesterEnum)
+
                 .orderNumber(orderNumber)
                 .isPinned(false)
                 .member(member)
