@@ -100,6 +100,10 @@ public class CourseService {
         return courseRepository.findById(courseId).orElseThrow(() -> new CustomException(COURSE_NOT_FOUND));
     }
 
+    public CrawledCourse getCrawledCourseById(Long crawledCourseId) {
+        return crawledCourseRepository.findById(crawledCourseId).orElseThrow(() -> new CustomException(COURSE_NOT_FOUND));
+    }
+
     public PersonalCourse getPersonalCourseById(Long courseId) {
         return personalCourseRepository.findById(courseId).orElseThrow(() -> new CustomException(COURSE_NOT_FOUND));
     }

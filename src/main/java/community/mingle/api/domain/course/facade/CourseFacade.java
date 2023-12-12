@@ -43,7 +43,7 @@ public class CourseFacade {
 
         Timetable timetable = timetableService.getById(timetableId, member);
 
-        if(timetableService.isCourseTimeConflictWithTimetable(timetable, request.courseTimeDtoList())){
+        if(request.overrideValidation() && timetableService.isCourseTimeConflictWithTimetable(timetable, request.courseTimeDtoList())){
             throw new CustomException(TIMETABLE_CONFLICT);
         }
 
