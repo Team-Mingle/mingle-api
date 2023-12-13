@@ -1,5 +1,6 @@
 package community.mingle.api.domain.member.entity;
 
+import community.mingle.api.domain.friend.entity.Friend;
 import community.mingle.api.domain.notification.entity.Notification;
 import community.mingle.api.entitybase.AuditLoggingBase;
 import community.mingle.api.enums.MemberRole;
@@ -8,6 +9,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -77,6 +79,14 @@ public class Member extends AuditLoggingBase {
 
     @OneToMany(mappedBy = "member")
     private List<Notification> notifications = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private List<Friend> friendsOfMine = new ArrayList<>();
+
+    @OneToMany(mappedBy = "friend")
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private List<Friend> reverseFriends = new ArrayList<>();
 
     public void setFcmToken(String fcmToken) {
         this.fcmToken = fcmToken;

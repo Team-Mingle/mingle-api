@@ -37,7 +37,7 @@ public class FriendService {
     }
 
     @Transactional
-    public Friend createFriend(Member member, String friendCode, String friendName) {
+    public void createFriend(Member member, String friendCode, String friendName) {
         FriendCode checkedFriendCode = checkFriendCode(friendCode, member);
 
         checkAlreadyExistingFriend(member, checkedFriendCode.getMember());
@@ -47,8 +47,15 @@ public class FriendService {
                 .name(friendName)
                 .build();
 
+        Friend reverseFriend = Friend.builder()
+                .member(checkedFriendCode.getMember())
+                .friend(member)
+                .name(checkedFriendCode.getMember().getNickname())
+                .build();
+
         friendCodeRepository.delete(checkedFriendCode);
-        return friendRepository.save(friend);
+        friendRepository.save(friend);
+        friendRepository.save(reverseFriend);
     }
 
     public List<Friend> listFriends(Member member) {
