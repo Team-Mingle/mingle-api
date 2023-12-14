@@ -19,7 +19,7 @@ public class FriendService {
     @Transactional
     public FriendCode createFriendCode(Member member) {
 
-        String code = generateRandomCode();
+        String code = generateUniqueCode();
         FriendCode friendCode = FriendCode.builder()
                 .member(member)
                 .code(code)
@@ -27,6 +27,15 @@ public class FriendService {
                 .build();
 
         return friendCodeRepository.save(friendCode);
+    }
+
+    private String generateUniqueCode() {
+        String code;
+        do {
+            code = generateRandomCode();
+        } while (friendCodeRepository.findByCode(code).isPresent());
+
+        return code;
     }
 
     private static String generateRandomCode() {
