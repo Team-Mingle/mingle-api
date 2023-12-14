@@ -45,13 +45,13 @@ public class FriendService {
         Friend friend = Friend.builder()
                 .member(member)
                 .friend(checkedFriendCode.getMember())
-                .name(friendName)
+                .name(checkedFriendCode.getDefaultMemberName())
                 .build();
 
         Friend reverseFriend = Friend.builder()
                 .member(checkedFriendCode.getMember())
                 .friend(member)
-                .name(checkedFriendCode.getMember().getNickname())
+                .name(friendName)
                 .build();
 
         friendCodeRepository.delete(checkedFriendCode);
@@ -70,7 +70,10 @@ public class FriendService {
         boolean isFriendCodeExpires = checkedFriendCode.getExpiresAt().isBefore(LocalDateTime.now());
         boolean isSelfGeneratedCode = checkedFriendCode.getMember().getId().equals(member.getId());
 
-        if (isFriendCodeExpires) throw new CustomException(FRIEND_CODE_EXPIRED);
+        if (isFriendCodeExpires) {
+            friendCodeRepository.delete(checkedFriendCode);
+            throw new CustomException(FRIEND_CODE_EXPIRED);
+        }
         if (isSelfGeneratedCode) throw new CustomException(FRIEND_CODE_NOT_FOUND);
 
         return checkedFriendCode;
