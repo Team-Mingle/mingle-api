@@ -24,12 +24,13 @@ public class FriendService {
     private final FriendRepository friendRepository;
 
     @Transactional
-    public FriendCode createFriendCode(Member member) {
+    public FriendCode createFriendCode(Member member, String defaultMemberName) {
 
-        String code = generateRandomCode();
+        String code = generateUniqueCode();
         FriendCode friendCode = FriendCode.builder()
                 .member(member)
                 .code(code)
+                .defaultMemberName(defaultMemberName)
                 .expiresAt(LocalDateTime.now().plusDays(3L))
                 .build();
 
@@ -80,6 +81,15 @@ public class FriendService {
         if (isAlreadyExistingFriend) {
             throw new CustomException(FRIEND_ALREADY_ADDED);
         }
+    }
+
+    private String generateUniqueCode() {
+        String code;
+        do {
+            code = generateRandomCode();
+        } while (friendCodeRepository.findByCode(code).isPresent());
+
+        return code;
     }
 
     private static String generateRandomCode() {

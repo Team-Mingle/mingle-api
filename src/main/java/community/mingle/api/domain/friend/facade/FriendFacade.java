@@ -2,6 +2,7 @@ package community.mingle.api.domain.friend.facade;
 
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.friend.controller.request.CreateFriendRequest;
+import community.mingle.api.domain.friend.controller.request.CreateFriendCodeRequest;
 import community.mingle.api.domain.friend.controller.response.CreateFriendCodeResponse;
 import community.mingle.api.domain.friend.controller.response.CreateFriendResponse;
 import community.mingle.api.domain.friend.entity.Friend;
@@ -25,10 +26,10 @@ public class FriendFacade {
     private final MemberService memberService;
 
     @Transactional
-    public CreateFriendCodeResponse createFriendCode() {
+    public CreateFriendCodeResponse createFriendCode(CreateFriendCodeRequest request) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
-        FriendCode friendCode = friendService.createFriendCode(member);
+        FriendCode friendCode = friendService.createFriendCode(member, request.defaultMemberName());
         return new CreateFriendCodeResponse(friendCode.getCode());
     }
 
