@@ -5,6 +5,7 @@ import community.mingle.api.domain.friend.entity.FriendCode;
 import community.mingle.api.domain.friend.repository.FriendRepository;
 import community.mingle.api.domain.friend.repository.FriendCodeRepository;
 import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class FriendService {
 
     private final FriendCodeRepository friendCodeRepository;
     private final FriendRepository friendRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public FriendCode createFriendCode(Member member, String defaultMemberName) {
@@ -61,6 +63,14 @@ public class FriendService {
 
     public List<Friend> listFriends(Member member) {
         return friendRepository.findAllByMember(member);
+    }
+
+    public String getDefaultMemberName(Member member) {
+        return friendCodeRepository.findLastDefaultMemberName(member.getId()).orElse(
+                memberRepository.findById(member.getId())
+                        .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND))
+                        .getNickname()
+        );
     }
 
     private FriendCode checkFriendCode(String friendCode, Member member) {

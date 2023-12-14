@@ -45,4 +45,10 @@ public class FriendFacade {
                 .toList();
         return new CreateFriendResponse(friendDtoList);
     }
+
+    public String getDefaultName() {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+        return friendService.getDefaultMemberName(member);
+    }
 }
