@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: add default_member_name to friend_code table
+      author: Hyeonwoo Jung
+      changes:
+        - addColumn:
+            tableName: friend_code
+            columns:
+              - column:
+                  name: default_member_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false

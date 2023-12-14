@@ -39,6 +39,9 @@ public class FriendCode extends AuditLoggingBase {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    @Column(name = "default_member_name")
+    private String defaultMemberName;
+
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 

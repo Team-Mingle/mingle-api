@@ -17,12 +17,13 @@ public class FriendService {
     private final FriendCodeRepository friendCodeRepository;
 
     @Transactional
-    public FriendCode createFriendCode(Member member) {
+    public FriendCode createFriendCode(Member member, String defaultMemberName) {
 
         String code = generateUniqueCode();
         FriendCode friendCode = FriendCode.builder()
                 .member(member)
                 .code(code)
+                .defaultMemberName(defaultMemberName)
                 .expiresAt(LocalDateTime.now().plusDays(3L))
                 .build();
 
