@@ -12,6 +12,6 @@ public class UpdatePostRequest {
     private String title;
     private String content;
     private boolean isAnonymous;
-    private List<Long> imageIdsToDelete;
+    private List<String> imageUrlsToDelete;
     private List<MultipartFile> imagesToAdd;
 }

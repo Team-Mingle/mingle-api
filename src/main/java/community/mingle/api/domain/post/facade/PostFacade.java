@@ -8,7 +8,6 @@ import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
 import community.mingle.api.domain.post.controller.response.*;
 import community.mingle.api.domain.post.entity.Post;
-import community.mingle.api.domain.post.entity.PostImage;
 import community.mingle.api.domain.post.service.PostImageService;
 import community.mingle.api.domain.post.service.PostLikeService;
 import community.mingle.api.domain.post.service.PostService;
@@ -73,18 +72,16 @@ public class PostFacade {
     }
 
     @Transactional
-    public UpdatePostResponse updatePost(UpdatePostRequest updatePostRequest, Long postId) {
+    public UpdatePostResponse updatePost(UpdatePostRequest request, Long postId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
-
-
         Post post = postService.updatePost(
                 memberId,
                 postId,
-                updatePostRequest.getTitle(),
-                updatePostRequest.getContent(),
-                updatePostRequest.isAnonymous());
-
-        postImageService.updatePostImage(post, updatePostRequest.getImageIdsToDelete(), updatePostRequest.getImagesToAdd());
+                request.getTitle(),
+                request.getContent(),
+                request.isAnonymous()
+        );
+        postImageService.updatePostImage(post, request.getImageUrlsToDelete(), request.getImagesToAdd());
 
         return UpdatePostResponse.builder()
                 .postId(postId)

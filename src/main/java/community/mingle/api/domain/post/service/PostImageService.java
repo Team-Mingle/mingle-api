@@ -33,14 +33,18 @@ public class PostImageService {
     }
 
     @Transactional
-    public void updatePostImage(Post post, List<Long> imageIdsToDelete, List<MultipartFile> imagesToAdd) {
-        if (imageIdsToDelete != null) {
-            postImageRepository.deleteAllById(imageIdsToDelete);
-        }
-
-        if (imagesToAdd != null) {
+    public void updatePostImage(Post post, List<String> imageUrlsToDelete, List<MultipartFile> imagesToAdd) {
+        if (imageUrlsToDelete != null)
+            deleteImages(post, imageUrlsToDelete);
+        if (imagesToAdd != null)
             createPostImage(post, imagesToAdd);
-        }
+    }
+
+    private void deleteImages(Post post, List<String> imageUrlsToDelete) {
+        List<PostImage> postImageList = post.getPostImageList();
+        postImageList.stream()
+                .filter(postImage -> imageUrlsToDelete.contains(postImage.getUrl()))
+                .forEach(postImageRepository::delete);
     }
 
     @Transactional
