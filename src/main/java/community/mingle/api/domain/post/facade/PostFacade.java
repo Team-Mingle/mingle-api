@@ -106,13 +106,14 @@ public class PostFacade {
                 .build();
     }
 
-    public List<PostPreviewDto> getPostList(BoardType boardType, CategoryType categoryType, PageRequest pageRequest) {
+    public PostListResponse getPostList(BoardType boardType, CategoryType categoryType, PageRequest pageRequest) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         List<Post> postList = postService.pagePostsByBoardTypeAndCategory(boardType, categoryType, pageRequest);
 
-        return postList.stream()
+        List<PostPreviewDto> postPreviewDtoList = postList.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))
                 .collect(Collectors.toList());
+        return new PostListResponse(postPreviewDtoList);
     }
 
 
@@ -144,15 +145,16 @@ public class PostFacade {
     }
 
 
-    public List<PostPreviewDto> getBestPost(PageRequest pageRequest) {
+    public PostListResponse getBestPost(PageRequest pageRequest) {
 
         Long memberId = tokenService.getTokenInfo().getMemberId();
 
         Page<Post> postPage = postService.getBestPostList(memberId ,pageRequest);
 
-        return postPage.stream()
+        List<PostPreviewDto> postPreviewDtoList = postPage.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))
                 .collect(Collectors.toList());
+        return new PostListResponse(postPreviewDtoList);
 
     }
 
@@ -166,13 +168,14 @@ public class PostFacade {
         return mapToPostDetailResponse(post, memberId);
     }
 
-    public List<PostPreviewDto> getSearchPostList(String keyword, PageRequest pageRequest) {
+    public PostListResponse getSearchPostList(String keyword, PageRequest pageRequest) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         List<Post> postList = postService.getPostByKeyword(keyword, memberId, pageRequest);
 
-        return postList.stream()
+        List<PostPreviewDto> searchPostPreviewDtoList = postList.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))
                 .collect(Collectors.toList());
+        return new PostListResponse(searchPostPreviewDtoList);
     }
 
     private PostDetailResponse mapToPostDetailResponse(Post post, Long memberId) {

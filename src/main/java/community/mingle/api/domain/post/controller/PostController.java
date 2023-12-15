@@ -53,8 +53,8 @@ public class PostController {
     //TODO status에 따른 title, content 변경
     public ResponseEntity<PostListResponse> pagePosts(@PathVariable BoardType boardType, @PathVariable CategoryType categoryType, @Parameter Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
-        List<PostPreviewDto> postPreviewDtoList = postFacade.getPostList(boardType, categoryType, pageRequest);
-        return new ResponseEntity<>(new PostListResponse(postPreviewDtoList), HttpStatus.OK);
+        PostListResponse postPreviewList = postFacade.getPostList(boardType, categoryType, pageRequest);
+        return ResponseEntity.ok().body(postPreviewList);
     }
 
     @Operation(summary = "게시물 상세 - 본문 API")
@@ -91,10 +91,9 @@ public class PostController {
     @Operation(summary = "베스트 게시판 조회 API")
     @GetMapping("/best")
     public ResponseEntity<PostListResponse> getBestPost(Pageable pageable) {
-
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
-        List<PostPreviewDto> postPreviewDtoList = postFacade.getBestPost(pageRequest);
-        return ResponseEntity.ok().body(new PostListResponse(postPreviewDtoList));
+        PostListResponse bestPostList = postFacade.getBestPost(pageRequest);
+        return ResponseEntity.ok().body(bestPostList);
     }
 
 
@@ -128,8 +127,8 @@ public class PostController {
     @GetMapping("search")
     public ResponseEntity<PostListResponse> searchPost(@RequestParam(value = "keyword") String keyword, @Parameter Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
-        List<PostPreviewDto> searchPostPreviewDtoList = postFacade.getSearchPostList(keyword, pageRequest);
-        return ResponseEntity.ok().body(new PostListResponse(searchPostPreviewDtoList));
+        PostListResponse searchPostList = postFacade.getSearchPostList(keyword, pageRequest);
+        return ResponseEntity.ok().body(searchPostList);
 
     }
 }
