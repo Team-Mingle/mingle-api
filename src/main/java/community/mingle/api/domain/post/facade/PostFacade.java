@@ -106,17 +106,18 @@ public class PostFacade {
                 .build();
     }
 
-    public List<PostPreviewResponse> getPostList(BoardType boardType, CategoryType categoryType, PageRequest pageRequest) {
+    public PostListResponse getPostList(BoardType boardType, CategoryType categoryType, PageRequest pageRequest) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         List<Post> postList = postService.pagePostsByBoardTypeAndCategory(boardType, categoryType, pageRequest);
 
-        return postList.stream()
+        List<PostPreviewDto> postPreviewDtoList = postList.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))
                 .collect(Collectors.toList());
+        return new PostListResponse(postPreviewDtoList);
     }
 
 
-    public List<PostPreviewResponse> getRecentPost(BoardType boardType) {
+    public List<PostPreviewDto> getRecentPost(BoardType boardType) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         List<Post> postList = postService.getRecentPostList(boardType, memberId);
 
@@ -144,15 +145,16 @@ public class PostFacade {
     }
 
 
-    public List<PostPreviewResponse> getBestPost(PageRequest pageRequest) {
+    public PostListResponse getBestPost(PageRequest pageRequest) {
 
         Long memberId = tokenService.getTokenInfo().getMemberId();
 
         Page<Post> postPage = postService.getBestPostList(memberId ,pageRequest);
 
-        return postPage.stream()
+        List<PostPreviewDto> postPreviewDtoList = postPage.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))
                 .collect(Collectors.toList());
+        return new PostListResponse(postPreviewDtoList);
 
     }
 
@@ -166,13 +168,14 @@ public class PostFacade {
         return mapToPostDetailResponse(post, memberId);
     }
 
-    public List<PostPreviewResponse> getSearchPostList(String keyword, PageRequest pageRequest) {
+    public PostListResponse getSearchPostList(String keyword, PageRequest pageRequest) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         List<Post> postList = postService.getPostByKeyword(keyword, memberId, pageRequest);
 
-        return postList.stream()
+        List<PostPreviewDto> searchPostPreviewDtoList = postList.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))
                 .collect(Collectors.toList());
+        return new PostListResponse(searchPostPreviewDtoList);
     }
 
     private PostDetailResponse mapToPostDetailResponse(Post post, Long memberId) {
@@ -205,13 +208,13 @@ public class PostFacade {
                 .build();
     }
 
-    private PostPreviewResponse mapToPostPreviewResponse(Post post, Long memberId) {
+    private PostPreviewDto mapToPostPreviewResponse(Post post, Long memberId) {
         PostStatusDto postStatusDto = postService.getPostStatus(post, memberId);
         String nickName = postService.calculateNickname(post);
         String title = postService.titleByStatus(post);
         String content = postService.contentByStatus(post);
 
-        return PostPreviewResponse.builder()
+        return PostPreviewDto.builder()
                 .postId(post.getId())
                 .title(title)
                 .content(content)
