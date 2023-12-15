@@ -16,6 +16,11 @@ import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 
+
+/**
+ *  Base Notification entity
+ *  all subclasses must implement NotificationContentProvider to provide appropriate Notification content by each content type
+ */
 @Getter
 @Entity
 @Where(clause = "deleted_at IS NULL")
@@ -41,7 +46,7 @@ public class Notification extends AuditLoggingBase {
     private LocalDateTime deletedAt;
 
     @NotNull
-    @Column(name = "content_type", updatable = false, insertable = false)
+    @Column(name = "content_type", updatable = false)
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
