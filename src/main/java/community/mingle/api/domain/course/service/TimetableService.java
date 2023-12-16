@@ -7,7 +7,6 @@ import community.mingle.api.domain.course.entity.Timetable;
 import community.mingle.api.domain.course.repository.CourseTimetableRepository;
 import community.mingle.api.domain.course.repository.TimetableRepository;
 import community.mingle.api.domain.member.entity.Member;
-import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.dto.course.CourseTimeDto;
 import community.mingle.api.enums.Semester;
 import community.mingle.api.global.exception.CustomException;
@@ -15,9 +14,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.IntStream;
 
-import static community.mingle.api.global.exception.ErrorCode.MEMBER_NOT_FOUND;
+import static community.mingle.api.global.exception.ErrorCode.MODIFY_NOT_AUTHORIZED;
 import static community.mingle.api.global.exception.ErrorCode.TIMETABLE_NOT_FOUND;
 
 @Service
@@ -25,21 +26,23 @@ import static community.mingle.api.global.exception.ErrorCode.TIMETABLE_NOT_FOUN
 public class TimetableService {
 
     private final TimetableRepository timetableRepository;
-    private final MemberRepository memberRepository;
     private final CourseTimetableRepository courseTimetableRepository;
 
-    public Timetable createTimetable(Long memberId, int year, int semester) {
+    public Timetable createTimetable(Member member, int year, int semester) {
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
         Semester semesterEnum = Semester.findSemester(year, semester);
-        List<Timetable> timetableList = timetableRepository.findAllByMemberOrderByOrderNumberDesc(member);
+        List<Timetable> timetableList = timetableRepository.findAllByMemberAndSemesterOrderByOrderNumberDesc(member, semesterEnum);
+
         int orderNumber;
         if(timetableList.isEmpty()) orderNumber = 1;
         else orderNumber = timetableList.get(0).getOrderNumber() + 1;
 
+        String defaultName = "시간표 " + orderNumber;
+
         Timetable timetable = Timetable.builder()
+                .name(defaultName)
                 .semester(semesterEnum)
+
                 .orderNumber(orderNumber)
                 .isPinned(false)
                 .member(member)
@@ -48,9 +51,11 @@ public class TimetableService {
         return timetableRepository.save(timetable);
     }
 
-    public Timetable getById(Long timetableId) {
-        return timetableRepository.findById(timetableId)
+    public Timetable getById(Long timetableId, Member member) {
+        Timetable timetable = timetableRepository.findById(timetableId)
                 .orElseThrow(() -> new CustomException(TIMETABLE_NOT_FOUND));
+        hasPermission(member, timetable);
+        return timetable;
     }
 
     @Transactional
@@ -69,6 +74,35 @@ public class TimetableService {
         courseTimetableRepository.delete(courseTimetable);
     }
 
+    @Transactional
+    public void deleteTimetable(Timetable timetable, Member member) {
+        hasPermission(member, timetable);
+        Semester semester = timetable.getSemester();
+        timetableRepository.delete(timetable);
+
+
+        List<Timetable> timetableList = timetableRepository.findAllByMemberAndSemesterOrderByOrderNumberAsc(member, semester);
+        IntStream.range(0, timetableList.size())
+                .forEach(indexNumber -> timetableList.get(indexNumber).updateOrderNumber(indexNumber + 1));
+
+    }
+
+    @Transactional
+    public void updateTimetableName(Timetable timetable, Member member, String name) {
+        hasPermission(member, timetable);
+        timetable.updateName(name);
+    }
+
+    @Transactional
+    public void convertPinStatus(Timetable timetable, Member member) {
+        hasPermission(member, timetable);
+        if (!timetable.getIsPinned()) {
+            timetableRepository.findByMemberAndSemesterAndIsPinnedIsTrue(member, timetable.getSemester())
+                    .ifPresent(Timetable::convertPinStatus);
+        }
+        timetable.convertPinStatus();
+    }
+
     public boolean isCourseTimeConflictWithTimetable(Timetable timetable, List<CourseTimeDto> courseTimeList) {
         List<CourseTimetable> existingCourses = timetable.getCourseTimetableList();
 
@@ -85,5 +119,22 @@ public class TimetableService {
                                 !(newTime.endTime().isBefore(existingTime.getStartTime()) ||
                                         newTime.startTime().isAfter(existingTime.getEndTime()))
                 );
+    }
+
+    private void hasPermission(Member member, Timetable timetable) {
+        if (!timetable.getMember().getId().equals(member.getId())) {
+            throw new CustomException(MODIFY_NOT_AUTHORIZED);
+        }
+    }
+
+    public List<Timetable> getTimetableList(Member member) {
+        return timetableRepository.findAllByMember(member);
+    }
+
+    public List<Timetable> orderTimetableList(List<Timetable> timetableList) {
+        return timetableList.stream()
+                .sorted(Comparator.comparing(Timetable::getIsPinned, Comparator.reverseOrder())
+                        .thenComparing(Timetable::getOrderNumber))
+                .toList();
     }
 }

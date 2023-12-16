@@ -1,0 +1,105 @@
+databaseChangeLog:
+  - changeSet:
+      id: add friend-code table
+      author: Hyeonwoo Jung
+      changes:
+        - createTable:
+            tableName: friend_code
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: code
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: member_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: timestamp
+                  constraints:
+                    nullable: true
+              - column:
+                  name: expires_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: friend_code
+            baseColumnNames: member_id
+            referencedTableName: member
+            referencedColumnNames: id
+            constraintName: fk_friend_code_member_id
+
+  - changeSet:
+      id: add friend table
+      author: Hyeonwoo Jung
+      changes:
+        - createTable:
+            tableName: friend
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: member_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: friend_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: timestamp
+                  constraints:
+                      nullable: true
+
+        - addForeignKeyConstraint:
+            baseTableName: friend
+            baseColumnNames: member_id
+            referencedTableName: member
+            referencedColumnNames: id
+            constraintName: fk_friend_member_id
+        - addForeignKeyConstraint:
+            baseTableName: friend
+            baseColumnNames: friend_id
+            referencedTableName: member
+            referencedColumnNames: id
+            constraintName: fk_friend_friend_id
