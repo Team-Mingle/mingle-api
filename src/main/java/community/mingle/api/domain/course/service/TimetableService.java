@@ -71,6 +71,7 @@ public class TimetableService {
         courseTimetableRepository.delete(courseTimetable);
     }
 
+    @Transactional
     public void deleteConflictCoursesByOverrideValidation(Timetable timetable, List<CourseTimeDto> courseTimeDtoList, boolean overrideValidation) {
         List<Course> conflictCourseList = coursesConflictWithNewCourseTime(timetable, courseTimeDtoList);
         if (!overrideValidation && !conflictCourseList.isEmpty()) {
