@@ -3,6 +3,7 @@ package community.mingle.api.security.configuration;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import community.mingle.api.infra.SecretsManagerService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,10 +12,11 @@ import org.springframework.context.annotation.Configuration;
 @AllArgsConstructor
 public class JwtVerifierConfiguration {
 
-    private final Algorithm tokenAlgorithm;
+    private final SecretsManagerService secretsManagerService;
     @Bean
     public JWTVerifier jwtVerifier() {
-        return JWT.require(tokenAlgorithm)
+        String jwtSecretKey = secretsManagerService.getJwtSecretKey();
+        return JWT.require(Algorithm.HMAC256(jwtSecretKey))
                 .withClaimPresence("memberId")
                 .withClaimPresence("memberRole")
                 .build();
