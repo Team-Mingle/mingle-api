@@ -28,6 +28,8 @@ public class PostQueryRepository {
     private final QPostLike postLike = QPostLike.postLike;
     private final QBlockMember blockMember = QBlockMember.blockMember;
     private final QMember member = QMember.member;
+    private final QUniversity university = QUniversity.university;
+    private final QCountry country = QCountry.country;
 
 
     private static final int BEST_TOTAL_POST_LIKE_COUNT = 10;
@@ -103,24 +105,26 @@ public class PostQueryRepository {
         List<Post> postList = jpaQueryFactory
                 .selectFrom(post)
                 .leftJoin(post.member, member)
+                .leftJoin(member.university, university)
                 .where(
                         post.title.contains(keyword)
                             .or(post.content.contains(keyword)),
-                        post.member.university.country.name.eq(viewerMember.getUniversity().getCountry().getName()),
+                        university.country.name.eq(viewerMember.getUniversity().getCountry().getName()),
                         viewablePostCondition(post, viewerMember)
                 )
                 .orderBy(post.createdAt.desc())
                 .offset(pageRequest.getOffset())
                 .limit(pageRequest.getPageSize())
-                .fetchJoin().fetch();
+                .fetch();
 
         long postTotalCount = jpaQueryFactory
                 .selectFrom(post)
                 .leftJoin(post.member, member)
+                .leftJoin(member.university, university)
                 .where(
                         post.title.contains(keyword)
                                 .or(post.content.contains(keyword)),
-                        post.member.university.country.name.eq(viewerMember.getUniversity().getCountry().getName()),
+                        university.country.name.eq(viewerMember.getUniversity().getCountry().getName()),
                         viewablePostCondition(post, viewerMember)
                 )
                 .orderBy(post.createdAt.desc())
