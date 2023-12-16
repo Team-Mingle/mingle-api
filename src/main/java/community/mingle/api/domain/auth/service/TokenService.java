@@ -60,7 +60,7 @@ public class TokenService {
                     if (LocalDateTime.now().isAfter(refreshToken.getExpiry())) {
                         throw new CustomException(TOKEN_EXPIRED);
                     }
-                    refreshTokenRepository.delete(refreshToken);
+//                    refreshTokenRepository.delete(refreshToken);
                 },
                 () -> {throw new CustomException(TOKEN_NOT_FOUND);}
         );
