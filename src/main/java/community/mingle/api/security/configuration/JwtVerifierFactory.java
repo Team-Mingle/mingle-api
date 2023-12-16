@@ -5,17 +5,18 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import community.mingle.api.infra.SecretsManagerService;
 import lombok.AllArgsConstructor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@Configuration
+@Component
 @AllArgsConstructor
-public class JwtVerifierConfiguration {
+public class JwtVerifierFactory {
 
     private final SecretsManagerService secretsManagerService;
-    @Bean
-    public JWTVerifier jwtVerifier() {
-        String jwtSecretKey = secretsManagerService.getJwtSecretKey();
+    public JWTVerifier jwtVerifier(boolean isAccessToken) {
+        String jwtSecretKey;
+        if (isAccessToken) {
+           jwtSecretKey = secretsManagerService.getJwtSecretKey();
+        } else jwtSecretKey = secretsManagerService.getRefreshJwtSecretKey();
         return JWT.require(Algorithm.HMAC256(jwtSecretKey))
                 .withClaimPresence("memberId")
                 .withClaimPresence("memberRole")

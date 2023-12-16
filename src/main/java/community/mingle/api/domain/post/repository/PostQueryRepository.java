@@ -17,8 +17,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static community.mingle.api.domain.member.entity.QMember.member;
-
 @Repository
 @RequiredArgsConstructor
 public class PostQueryRepository {

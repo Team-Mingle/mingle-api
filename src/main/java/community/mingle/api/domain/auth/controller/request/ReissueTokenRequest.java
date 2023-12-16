@@ -4,5 +4,5 @@ import lombok.Getter;
 
 @Getter
 public class ReissueTokenRequest {
-    String email;
+    String encryptedEmail;
 }
