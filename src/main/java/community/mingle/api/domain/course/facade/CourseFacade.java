@@ -38,12 +38,13 @@ public class CourseFacade {
             throw new CustomException(COURSE_TIME_CONFLICT);
         }
 
-        Timetable timetable = timetableService.getById(timetableId);
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+
+        Timetable timetable = timetableService.getById(timetableId, member);
 
         timetableService.deleteConflictCoursesByOverrideValidation(timetable, request.courseTimeDtoList(), request.overrideValidation());
 
-        Long memberId = tokenService.getTokenInfo().getMemberId();
-        Member member = memberService.getById(memberId);
         PersonalCourse personalCourse = courseService.createPersonalCourse(
                 request.courseCode(),
                 request.name(),
@@ -139,15 +140,20 @@ public class CourseFacade {
         List<CrawledCourse> crawledCourseList = courseService.getCrawledCourseByKeyword(keyword, member.getUniversity());
 
         return crawledCourseList.stream()
-                .map(course -> new CoursePreviewResponse(
-                        course.getId(),
-                        course.getName(),
-                        course.getCourseCode(),
-                        course.getSemester(),
-                        course.getProfessor(),
-                        course.getSubclass()
-                ))
-                .toList();
+                .map(course -> {
+                    List<CourseTimeDto> courseTimeDtoList = course.getCourseTimeList().stream()
+                            .map(CourseTime::toDto)
+                            .toList();
+                    return new CoursePreviewResponse(
+                            course.getId(),
+                            course.getName(),
+                            course.getCourseCode(),
+                            course.getSemester(),
+                            course.getProfessor(),
+                            course.getSubclass(),
+                            courseTimeDtoList
+                    );
+                }).toList();
     }
 
     private boolean isCourseTimeConflict(List<CourseTimeDto> courseTimeDtoList) {
