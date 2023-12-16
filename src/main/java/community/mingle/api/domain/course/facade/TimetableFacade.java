@@ -2,6 +2,9 @@ package community.mingle.api.domain.course.facade;
 
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.course.controller.request.CreateTimetableRequest;
+import community.mingle.api.domain.course.controller.request.UpdateTimetableCourseRequest;
+import community.mingle.api.domain.course.controller.response.CreateTimetableResponse;
+import community.mingle.api.domain.course.controller.response.UpdateTimetableCourseResponse;
 import community.mingle.api.domain.course.controller.request.UpdateTimetableNameRequest;
 import community.mingle.api.domain.course.controller.response.*;
 import community.mingle.api.domain.course.entity.Course;
@@ -51,19 +54,16 @@ public class TimetableFacade {
     }
 
     @Transactional
-    public UpdateTimetableCourseResponse updateTimetableCourse(Long timetableId, Long courseId) {
-
+    public UpdateTimetableCourseResponse updateTimetableCourse(Long timetableId, UpdateTimetableCourseRequest request) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
 
         Timetable timetable = timetableService.getById(timetableId, member);
 
-        Course course = courseService.getCourseById(courseId);
+        Course course = courseService.getCourseById(request.courseId());
         List<CourseTimeDto> courseTimeDtoList = course.getCourseTimeList().stream().map(CourseTime::toDto).toList();
 
-        if (timetableService.isCourseTimeConflictWithTimetable(timetable, courseTimeDtoList)) {
-            throw new CustomException(COURSE_TIME_CONFLICT);
-        }
+        timetableService.deleteConflictCoursesByOverrideValidation(timetable, courseTimeDtoList, request.overrideValidation());
 
         timetableService.addCourse(timetable, course);
         return new UpdateTimetableCourseResponse(true);

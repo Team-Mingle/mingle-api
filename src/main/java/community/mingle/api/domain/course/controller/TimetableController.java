@@ -37,7 +37,7 @@ public class TimetableController {
             @PathVariable Long timetableId,
             @RequestBody UpdateTimetableCourseRequest request
     ) {
-        return ResponseEntity.ok(timetableFacade.updateTimetableCourse(timetableId, request.courseId()));
+        return ResponseEntity.ok(timetableFacade.updateTimetableCourse(timetableId, request));
     }
 
     @Operation(summary = "시간표 강의 삭제 API")

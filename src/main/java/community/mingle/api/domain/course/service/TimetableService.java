@@ -4,10 +4,13 @@ import community.mingle.api.domain.course.entity.Course;
 import community.mingle.api.domain.course.entity.CourseTime;
 import community.mingle.api.domain.course.entity.CourseTimetable;
 import community.mingle.api.domain.course.entity.Timetable;
+import community.mingle.api.domain.course.repository.CourseRepository;
 import community.mingle.api.domain.course.repository.CourseTimetableRepository;
 import community.mingle.api.domain.course.repository.TimetableRepository;
 import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.dto.course.CourseTimeDto;
+import community.mingle.api.enums.CourseType;
 import community.mingle.api.enums.Semester;
 import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
@@ -18,8 +21,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static community.mingle.api.global.exception.ErrorCode.MODIFY_NOT_AUTHORIZED;
-import static community.mingle.api.global.exception.ErrorCode.TIMETABLE_NOT_FOUND;
+import static community.mingle.api.global.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +29,7 @@ public class TimetableService {
 
     private final TimetableRepository timetableRepository;
     private final CourseTimetableRepository courseTimetableRepository;
+    private final CourseRepository courseRepository;
 
     public Timetable createTimetable(Member member, int year, int semester) {
 
@@ -103,21 +106,40 @@ public class TimetableService {
         timetable.convertPinStatus();
     }
 
-    public boolean isCourseTimeConflictWithTimetable(Timetable timetable, List<CourseTimeDto> courseTimeList) {
-        List<CourseTimetable> existingCourses = timetable.getCourseTimetableList();
+    @Transactional
+    public void deleteConflictCoursesByOverrideValidation(Timetable timetable, List<CourseTimeDto> courseTimeDtoList, boolean overrideValidation) {
+        List<Course> conflictCourseList = coursesConflictWithNewCourseTime(timetable, courseTimeDtoList);
+        if (!overrideValidation && !conflictCourseList.isEmpty()) {
+            throw new CustomException(TIMETABLE_CONFLICT);
+        } else if (overrideValidation && !conflictCourseList.isEmpty()) {
+            conflictCourseList.stream()
+                    .filter(course -> course.getType().equals(CourseType.CRAWL))
+                    .forEach(course -> courseTimetableRepository.deleteAll(course.getCourseTimetableList()));
 
+            conflictCourseList.stream()
+                    .filter(course -> course.getType().equals(CourseType.PERSONAL))
+                    .forEach(courseRepository::delete);
+        }
+    }
+
+    public List<Course> coursesConflictWithNewCourseTime(Timetable timetable, List<CourseTimeDto> courseTimeList) {
+        List<CourseTimetable> existingCourses = timetable.getCourseTimetableList();
 
         return existingCourses.stream()
                 .flatMap(existingCourse -> existingCourse.getCourse().getCourseTimeList().stream())
-                .anyMatch(existingCourseTime -> isTimeOverlap(existingCourseTime, courseTimeList));
+                .filter(existingCourseTime -> isTimeOverlap(existingCourseTime, courseTimeList))
+                .map(CourseTime::getCourse)
+                .toList();
+
     }
 
     private boolean isTimeOverlap(CourseTime existingTime, List<CourseTimeDto> newTimes) {
         return newTimes.stream()
                 .anyMatch(newTime ->
                         existingTime.getDayOfWeek() == newTime.dayOfWeek() &&
-                                !(newTime.endTime().isBefore(existingTime.getStartTime()) ||
-                                        newTime.startTime().isAfter(existingTime.getEndTime()))
+                                !((newTime.endTime().isBefore(existingTime.getStartTime()) || newTime.endTime().equals(existingTime.getStartTime()))
+                                        ||
+                                        (newTime.startTime().isAfter(existingTime.getEndTime()) || newTime.startTime().equals(existingTime.getEndTime())))
                 );
     }
 

@@ -43,11 +43,9 @@ public class CourseFacade {
 
         Timetable timetable = timetableService.getById(timetableId, member);
 
-        if(request.overrideValidation() && timetableService.isCourseTimeConflictWithTimetable(timetable, request.courseTimeDtoList())){
-            throw new CustomException(TIMETABLE_CONFLICT);
-        }
+        timetableService.deleteConflictCoursesByOverrideValidation(timetable, request.courseTimeDtoList(), request.overrideValidation());
 
-        courseService.createPersonalCourse(
+        PersonalCourse personalCourse = courseService.createPersonalCourse(
                 request.courseCode(),
                 request.name(),
                 request.courseTimeDtoList(),
@@ -57,6 +55,8 @@ public class CourseFacade {
                 member.getUniversity(),
                 member
         );
+
+        timetableService.addCourse(timetable, personalCourse);
 
         return new CreatePersonalCourseResponse(
                 request.name(),
