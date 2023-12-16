@@ -51,9 +51,11 @@ public class TimetableService {
         return timetableRepository.save(timetable);
     }
 
-    public Timetable getById(Long timetableId) {
-        return timetableRepository.findById(timetableId)
+    public Timetable getById(Long timetableId, Member member) {
+        Timetable timetable = timetableRepository.findById(timetableId)
                 .orElseThrow(() -> new CustomException(TIMETABLE_NOT_FOUND));
+        hasPermission(member, timetable);
+        return timetable;
     }
 
     @Transactional

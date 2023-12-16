@@ -4,6 +4,7 @@ import community.mingle.api.domain.course.controller.request.CreateTimetableRequ
 import community.mingle.api.domain.course.controller.request.UpdateTimetableCourseRequest;
 import community.mingle.api.domain.course.controller.request.UpdateTimetableNameRequest;
 import community.mingle.api.domain.course.controller.response.CreateTimetableResponse;
+import community.mingle.api.domain.course.controller.response.TimetableDetailResponse;
 import community.mingle.api.domain.course.controller.response.TimetableListResponse;
 import community.mingle.api.domain.course.controller.response.UpdateTimetableCourseResponse;
 import community.mingle.api.domain.course.facade.TimetableFacade;
@@ -81,6 +82,14 @@ public class TimetableController {
     @GetMapping()
     public ResponseEntity<TimetableListResponse> getTimetableList() {
         return ResponseEntity.ok(timetableFacade.getTimetableList());
+    }
+
+    @Operation(summary = "시간표 상세 API")
+    @GetMapping("/{timetableId}")
+    public ResponseEntity<TimetableDetailResponse> getTimetableDetail(
+            @PathVariable Long timetableId
+    ) {
+        return ResponseEntity.ok(timetableFacade.getTimetableDetail(timetableId));
     }
 
 }
