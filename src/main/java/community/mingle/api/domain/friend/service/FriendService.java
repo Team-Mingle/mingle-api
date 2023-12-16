@@ -30,7 +30,7 @@ public class FriendService {
         FriendCode friendCode = FriendCode.builder()
                 .member(member)
                 .code(code)
-                .defaultMemberName(defaultMemberName)
+                .displayName(defaultMemberName)
                 .expiresAt(LocalDateTime.now().plusDays(3L))
                 .build();
 
@@ -38,20 +38,20 @@ public class FriendService {
     }
 
     @Transactional
-    public void createFriend(Member member, String friendCode, String defaultMemberName) {
+    public void createFriend(Member member, String friendCode, String myDisplayName) {
         FriendCode checkedFriendCode = checkFriendCode(friendCode, member);
 
         checkAlreadyExistingFriend(member, checkedFriendCode.getMember());
         Friend friend = Friend.builder()
                 .member(member)
                 .friend(checkedFriendCode.getMember())
-                .name(checkedFriendCode.getDefaultMemberName())
+                .name(checkedFriendCode.getDisplayName())
                 .build();
 
         Friend reverseFriend = Friend.builder()
                 .member(checkedFriendCode.getMember())
                 .friend(member)
-                .name(defaultMemberName)
+                .name(myDisplayName)
                 .build();
 
         friendCodeRepository.delete(checkedFriendCode);

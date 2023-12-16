@@ -86,7 +86,7 @@ public class Member extends AuditLoggingBase {
 
     @OneToMany(mappedBy = "friend")
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private List<Friend> reverseFriends = new ArrayList<>();
+    private List<Friend> friendsWhoAddMe = new ArrayList<>();
 
     public void setFcmToken(String fcmToken) {
         this.fcmToken = fcmToken;

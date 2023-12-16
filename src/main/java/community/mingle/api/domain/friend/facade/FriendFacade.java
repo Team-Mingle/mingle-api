@@ -38,7 +38,7 @@ public class FriendFacade {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
 
-        friendService.createFriend(member, request.friendCode(), request.defaultMemberName());
+        friendService.createFriend(member, request.friendCode(), request.myDisplayName());
         List<Friend> friendList = friendService.listFriends(member);
         List<FriendDto> friendDtoList = friendList.stream()
                 .map(friend -> new FriendDto(friend.getId(), friend.getName()))
