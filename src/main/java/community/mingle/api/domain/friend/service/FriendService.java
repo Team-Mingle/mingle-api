@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -40,8 +41,7 @@ public class FriendService {
     }
 
     private static String generateRandomCode() {
-        return UUID.randomUUID()
-                .toString()
-                .replaceAll("-", "");
+        Random random = new Random();
+        return String.valueOf(random.nextInt(888888) + 111111);
     }
 }
