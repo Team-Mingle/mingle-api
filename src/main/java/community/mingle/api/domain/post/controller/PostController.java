@@ -1,6 +1,5 @@
 package community.mingle.api.domain.post.controller;
 
-import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.comment.facade.CommentFacade;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
@@ -51,12 +50,11 @@ public class PostController {
 
     @Operation(summary = "게시물 리스트 API")
     @GetMapping("/{boardType}/{categoryType}")
-
     //TODO status에 따른 title, content 변경
-    public ResponseEntity<List<PostPreviewResponse>> pagePosts(@PathVariable BoardType boardType, @PathVariable CategoryType categoryType, @Parameter Pageable pageable) {
+    public ResponseEntity<PostListResponse> pagePosts(@PathVariable BoardType boardType, @PathVariable CategoryType categoryType, @Parameter Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
-        List<PostPreviewResponse> postPreviewResponseList = postFacade.getPostList(boardType, categoryType, pageRequest);
-        return new ResponseEntity<>(postPreviewResponseList, HttpStatus.OK);
+        PostListResponse postPreviewList = postFacade.getPostList(boardType, categoryType, pageRequest);
+        return ResponseEntity.ok().body(postPreviewList);
     }
 
     @Operation(summary = "게시물 상세 - 본문 API")
@@ -82,7 +80,7 @@ public class PostController {
 
 
     @Operation(summary = "게시물 삭제 API")
-    @PatchMapping("/delete/{postId}")
+    @DeleteMapping("/delete/{postId}")
     public ResponseEntity<DeletePostResponse> deletePost(@PathVariable Long postId) {
 
         DeletePostResponse deletePostResponse = postFacade.deletePost(postId);
@@ -92,20 +90,18 @@ public class PostController {
 
     @Operation(summary = "베스트 게시판 조회 API")
     @GetMapping("/best")
-    public ResponseEntity<List<PostPreviewResponse>> getBestPost(Pageable pageable) {
-
+    public ResponseEntity<PostListResponse> getBestPost(Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
-        List<PostPreviewResponse> postPreviewResponseList = postFacade.getBestPost(pageRequest);
-
-        return ResponseEntity.ok().body(postPreviewResponseList);
+        PostListResponse bestPostList = postFacade.getBestPost(pageRequest);
+        return ResponseEntity.ok().body(bestPostList);
     }
 
 
     @Operation(summary = "최신 게시판 조회 API")
     @GetMapping("/{boardType}/recent")
-    public ResponseEntity<List<PostPreviewResponse>> getRecentPost(@PathVariable(value = "boardType") BoardType boardType) {
+    public ResponseEntity<List<PostPreviewDto>> getRecentPost(@PathVariable(value = "boardType") BoardType boardType) {
 
-        List<PostPreviewResponse> postPreviewResponseList = postFacade.getRecentPost(boardType);
+        List<PostPreviewDto> postPreviewResponseList = postFacade.getRecentPost(boardType);
 
         return ResponseEntity.ok().body(postPreviewResponseList);
     }
@@ -119,7 +115,7 @@ public class PostController {
     }
 
     @Operation(summary = "게시물 좋아요 삭제 API")
-    @PatchMapping("/like/delete/{postLikeId}")
+    @DeleteMapping("/like/delete/{postLikeId}")
     public ResponseEntity<DeletePostLikeResponse> deletePostLike(@PathVariable Long postLikeId) {
         DeletePostLikeResponse deletePostLikeResponse = postFacade.deletePostLike(postLikeId);
 
@@ -129,9 +125,10 @@ public class PostController {
 
     @Operation(summary = "게시물 검색 API")
     @GetMapping("search")
-    public ResponseEntity<List<PostPreviewResponse>> searchPost(@RequestParam(value = "keyword") String keyword, @Parameter Pageable pageable) {
+    public ResponseEntity<PostListResponse> searchPost(@RequestParam(value = "keyword") String keyword, @Parameter Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
-        List<PostPreviewResponse> searchPostPreviewResponseList = postFacade.getSearchPostList(keyword, pageRequest);
-        return new ResponseEntity<>(searchPostPreviewResponseList, HttpStatus.OK);
+        PostListResponse searchPostList = postFacade.getSearchPostList(keyword, pageRequest);
+        return ResponseEntity.ok().body(searchPostList);
+
     }
 }

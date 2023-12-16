@@ -2,6 +2,7 @@ package community.mingle.api.domain.course.entity;
 
 import community.mingle.api.domain.member.entity.University;
 import community.mingle.api.entitybase.AuditLoggingBase;
+import community.mingle.api.enums.CourseType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -10,8 +11,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.hibernate.annotations.CascadeType;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -73,7 +76,16 @@ public class Course extends AuditLoggingBase {
     @Column(name = "deleted_at")
     LocalDateTime deletedAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", insertable = false, updatable = false)
+    CourseType type;
+
     @OneToMany(mappedBy = "course")
+    @Cascade(CascadeType.ALL)
     List<CourseTime> courseTimeList= new ArrayList<>();
+
+    @OneToMany(mappedBy = "course")
+    @Cascade(CascadeType.ALL)
+    List<CourseTimetable> courseTimetableList = new ArrayList<>();
 
 }
