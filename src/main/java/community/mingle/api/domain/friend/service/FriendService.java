@@ -2,8 +2,8 @@ package community.mingle.api.domain.friend.service;
 
 import community.mingle.api.domain.friend.entity.Friend;
 import community.mingle.api.domain.friend.entity.FriendCode;
-import community.mingle.api.domain.friend.repository.FriendRepository;
 import community.mingle.api.domain.friend.repository.FriendCodeRepository;
+import community.mingle.api.domain.friend.repository.FriendRepository;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
+import java.util.Random;
 
 import static community.mingle.api.global.exception.ErrorCode.*;
 
@@ -96,8 +96,7 @@ public class FriendService {
     }
 
     private static String generateRandomCode() {
-        return UUID.randomUUID()
-                .toString()
-                .replaceAll("-", "");
+        Random random = new Random();
+        return String.valueOf(random.nextInt(888888) + 111111);
     }
 }
