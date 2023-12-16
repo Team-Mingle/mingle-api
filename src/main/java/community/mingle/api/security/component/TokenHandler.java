@@ -26,7 +26,7 @@ public class TokenHandler {
                     .withClaim("memberId", memberId)
                     .withClaim("memberRole", memberRole.toString())
                     .withExpiresAt(
-                            new Date(now.getTime() + 30 * 1000L)
+                            new Date(now.getTime() + 30 * 60 * 1000L)
                     )
                     .sign(Algorithm.HMAC256(jwtSecretKey));
         } catch (Exception e) {
@@ -42,7 +42,7 @@ public class TokenHandler {
                     .withClaim("memberId", memberId)
                     .withClaim("memberRole", memberRole.toString())
                     .withExpiresAt(
-                            new Date(now.getTime() + 1460 * 60 * 60 * 1000L)
+                            new Date(now.getTime() + 1460 * 24 * 60 * 60 * 1000L)
                     )
                     .sign(Algorithm.HMAC256(refreshJwtSecretKey)
                     );
