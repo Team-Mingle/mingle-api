@@ -3,8 +3,12 @@ package community.mingle.api.domain.notification.service;
 import community.mingle.api.domain.comment.repository.CommentRepository;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.repository.MemberRepository;
+import community.mingle.api.domain.notification.entity.CommentNotification;
 import community.mingle.api.domain.notification.entity.Notification;
+import community.mingle.api.domain.notification.entity.PostNotification;
+import community.mingle.api.domain.notification.repository.CommentNotificationRepository;
 import community.mingle.api.domain.notification.repository.NotificationRepository;
+import community.mingle.api.domain.notification.repository.PostNotificationRepository;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.enums.BoardType;
 import lombok.RequiredArgsConstructor;
@@ -23,12 +27,22 @@ public class NotificationService {
 
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
+    private final CommentNotificationRepository commentNotificationRepository;
+    private final PostNotificationRepository postNotificationRepository;
     private final NotificationRepository notificationRepository;
 
 
     @Transactional
-    public Notification save(Notification notification) {
-        return notificationRepository.save(notification);
+    public Notification saveCommentNotification(CommentNotification notification) {
+
+    @Transactional
+    public Notification savePostNotification(PostNotification notification) {
+        return postNotificationRepository.save(notification);
+    }
+
+    @Transactional
+    public void saveAllManualPostNotification(List<PostNotification> notifications) {
+        postNotificationRepository.saveAll(notifications);
     }
 
     public List<Member> getTargetTokenMembersByBoardType(BoardType boardType, Post post) {
