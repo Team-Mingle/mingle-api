@@ -1,0 +1,37 @@
+databaseChangeLog:
+  - changeSet:
+      id: add friend_display_name table
+      author: Hyeonwoo Jung
+      changes:
+        - createTable:
+            tableName: friend_display_name
+            columns:
+              - column:
+                  name: member_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: friend_display_name
+            baseColumnNames: member_id
+            constraintName: fk_friend_display_name_member_id
+            referencedTableName: member
+            referencedColumnNames: id

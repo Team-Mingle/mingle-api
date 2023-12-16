@@ -39,6 +39,12 @@ public class FriendController {
         return ResponseEntity.ok(createFriendResponse);
     }
 
+    @GetMapping("/display-name")
+    public ResponseEntity<String> getMyLastDisplayName() {
+        return ResponseEntity.ok(friendFacade.getMyLastDisplayName());
+    }
+
+
 
 
 }

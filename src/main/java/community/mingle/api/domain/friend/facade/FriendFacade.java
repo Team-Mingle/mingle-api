@@ -29,7 +29,7 @@ public class FriendFacade {
     public CreateFriendCodeResponse createFriendCode(CreateFriendCodeRequest request) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
-        FriendCode friendCode = friendService.createFriendCode(member, request.defaultMemberName());
+        FriendCode friendCode = friendService.createFriendCode(member, request.myDisplayName());
         return new CreateFriendCodeResponse(friendCode.getCode());
     }
 
@@ -44,5 +44,11 @@ public class FriendFacade {
                 .map(friend -> new FriendDto(friend.getId(), friend.getName()))
                 .toList();
         return new CreateFriendResponse(friendDtoList);
+    }
+
+    public String getMyLastDisplayName() {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+        return friendService.getMemberLastDisplayName(member);
     }
 }
