@@ -34,6 +34,8 @@ public class NotificationService {
 
     @Transactional
     public Notification saveCommentNotification(CommentNotification notification) {
+        return commentNotificationRepository.save(notification);
+    }
 
     @Transactional
     public Notification savePostNotification(PostNotification notification) {
@@ -76,6 +78,10 @@ public class NotificationService {
     public void cleanNotification(Member member) {
         if (member.getNotifications().size() > 20)
             notificationRepository.delete(member.getNotifications().get(0));
+    }
+
+    public List<Notification> getNotifications(Long memberId) {
+        return notificationRepository.findFirst20ByMemberIdOrderByCreatedAtDesc(memberId);
     }
 
 }

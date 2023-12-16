@@ -24,4 +24,14 @@ public class CommentNotification extends Notification implements NotificationCon
         return comment.getContent();
     }
 
+    @Override
+    public String getBoardType() {
+        return comment.getPost().getBoardType().getBoardName();
+    }
+
+    @Override
+    public String getCategoryType() {
+        return comment.getPost().getCategoryType().getCategoryName();
+    }
+
 }

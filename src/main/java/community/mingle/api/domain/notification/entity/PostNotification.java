@@ -24,4 +24,14 @@ public class PostNotification extends Notification implements NotificationConten
     public String getContent() {
         return post.getTitle();
     }
+
+    @Override
+    public String getBoardType() {
+        return post.getBoardType().getBoardName();
+    }
+
+    @Override
+    public String getCategoryType() {
+        return post.getCategoryType().getCategoryName();
+    }
 }

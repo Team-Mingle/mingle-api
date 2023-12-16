@@ -7,7 +7,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum BoardType {
     TOTAL("광장"),
-    UNIV("잔디밭");
+    UNIV("잔디밭"),
+    ITEM("장터"); //for NotificationResponse
 
     private final String boardName;
 }
