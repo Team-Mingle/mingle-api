@@ -94,6 +94,10 @@ public class TimetableService {
     @Transactional
     public void convertPinStatus(Timetable timetable, Member member) {
         hasPermission(member, timetable);
+        if (!timetable.getIsPinned()) {
+            timetableRepository.findByMemberAndSemesterAndIsPinnedIsTrue(member, timetable.getSemester())
+                    .ifPresent(Timetable::convertPinStatus);
+        }
         timetable.convertPinStatus();
     }
 
