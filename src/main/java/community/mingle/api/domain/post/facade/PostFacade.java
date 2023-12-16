@@ -15,6 +15,7 @@ import community.mingle.api.dto.post.PostStatusDto;
 import community.mingle.api.enums.BoardType;
 import community.mingle.api.enums.CategoryType;
 import community.mingle.api.enums.MemberRole;
+import community.mingle.api.global.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -37,9 +38,10 @@ public class PostFacade {
     private final TokenService tokenService;
     private final CommentService commentService;
     private final ApplicationEventPublisher applicationEventPublisher;
+    private final S3Service s3Service;
 
 
-    public List<PostCategoryResponse> getPostCategory(){
+    public List<PostCategoryResponse> getPostCategory() {
         MemberRole memberRole = tokenService.getTokenInfo().getMemberRole();
 
         return postService.getCategoryListByMemberRole(memberRole).stream()
@@ -49,21 +51,20 @@ public class PostFacade {
 
 
     @Transactional
-    public CreatePostResponse createPost(CreatePostRequest createPostRequest, BoardType boardType) {
-        boolean isFileAttached = (createPostRequest.getMultipartFile() != null) && (!createPostRequest.getMultipartFile().isEmpty());
+    public CreatePostResponse createPost(CreatePostRequest request, BoardType boardType) {
+        boolean isFileAttached = (request.getMultipartFile() != null) && (!request.getMultipartFile().isEmpty());
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Post post = postService.createPost(
-
-                                memberId,
-                                createPostRequest.getTitle(),
-                                createPostRequest.getContent(),
-                                boardType,
-                                createPostRequest.getCategoryType(),
-                                createPostRequest.getIsAnonymous(),
-                                isFileAttached
+                memberId,
+                request.getTitle(),
+                request.getContent(),
+                boardType,
+                request.getCategoryType(),
+                request.getIsAnonymous(),
+                isFileAttached
         );
         if (isFileAttached) {
-            postImageService.createPostImage(post, createPostRequest.getMultipartFile());
+            postImageService.createPostImage(post, request.getMultipartFile());
         }
         return CreatePostResponse.builder()
                 .postId(post.getId())
@@ -71,18 +72,16 @@ public class PostFacade {
     }
 
     @Transactional
-    public UpdatePostResponse updatePost(UpdatePostRequest updatePostRequest, Long postId) {
+    public UpdatePostResponse updatePost(UpdatePostRequest request, Long postId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
-
-
         Post post = postService.updatePost(
-                                    memberId,
-                                    postId,
-                                    updatePostRequest.getTitle(),
-                                    updatePostRequest.getContent(),
-                                    updatePostRequest.isAnonymous());
-
-        postImageService.updatePostImage(post, updatePostRequest.getImageIdsToDelete(), updatePostRequest.getImagesToAdd());
+                memberId,
+                postId,
+                request.getTitle(),
+                request.getContent(),
+                request.isAnonymous()
+        );
+        postImageService.updatePostImage(post, request.getImageUrlsToDelete(), request.getImagesToAdd());
 
         return UpdatePostResponse.builder()
                 .postId(postId)
@@ -149,7 +148,7 @@ public class PostFacade {
 
         Long memberId = tokenService.getTokenInfo().getMemberId();
 
-        Page<Post> postPage = postService.getBestPostList(memberId ,pageRequest);
+        Page<Post> postPage = postService.getBestPostList(memberId, pageRequest);
 
         List<PostPreviewDto> postPreviewDtoList = postPage.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))
