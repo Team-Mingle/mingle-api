@@ -2,6 +2,7 @@ package community.mingle.api.domain.friend.service;
 
 import community.mingle.api.domain.friend.entity.Friend;
 import community.mingle.api.domain.friend.entity.FriendCode;
+import community.mingle.api.domain.friend.repository.FriendDisplayNameRepository;
 import community.mingle.api.domain.friend.repository.FriendRepository;
 import community.mingle.api.domain.friend.repository.FriendCodeRepository;
 import community.mingle.api.domain.member.entity.Member;
@@ -23,6 +24,7 @@ public class FriendService {
 
     private final FriendCodeRepository friendCodeRepository;
     private final FriendRepository friendRepository;
+    private final FriendDisplayNameRepository friendDisplayNameRepository;
     private final MemberRepository memberRepository;
 
     @Transactional
@@ -40,7 +42,7 @@ public class FriendService {
     }
 
     @Transactional
-    public void createFriend(Member member, String friendCode, String friendName) {
+    public void createFriend(Member member, String friendCode, String defaultMemberName) {
         FriendCode checkedFriendCode = checkFriendCode(friendCode, member);
 
         checkAlreadyExistingFriend(member, checkedFriendCode.getMember());
@@ -53,7 +55,7 @@ public class FriendService {
         Friend reverseFriend = Friend.builder()
                 .member(checkedFriendCode.getMember())
                 .friend(member)
-                .name(friendName)
+                .name(defaultMemberName)
                 .build();
 
         friendCodeRepository.delete(checkedFriendCode);
@@ -65,13 +67,13 @@ public class FriendService {
         return friendRepository.findAllByMember(member);
     }
 
-    public String getDefaultMemberName(Member member) {
-        return friendCodeRepository.findLastDefaultMemberName(member.getId()).orElse(
-                memberRepository.findById(member.getId())
-                        .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND))
-                        .getNickname()
+    public String getMemberLastDisplayName(Member member) {
+        return friendCodeRepository.findMemberLastDisplayName(member.getId()).orElse(
+                member.getNickname()
         );
     }
+
+
 
     private FriendCode checkFriendCode(String friendCode, Member member) {
         FriendCode checkedFriendCode = friendCodeRepository.findByCode(friendCode)

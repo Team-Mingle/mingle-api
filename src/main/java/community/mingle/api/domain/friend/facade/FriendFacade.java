@@ -46,9 +46,9 @@ public class FriendFacade {
         return new CreateFriendResponse(friendDtoList);
     }
 
-    public String getDefaultName() {
+    public String getMyLastDisplayName() {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
-        return friendService.getDefaultMemberName(member);
+        return friendService.getMemberLastDisplayName(member);
     }
 }

@@ -12,6 +12,6 @@ public interface FriendCodeRepository extends JpaRepository<FriendCode, Long> {
 
     public Optional<FriendCode> findByCode(String code);
 
-    @Query(value = "select fc.default_member_name from friend_code fc where fc.member_id = :memberId order by fc.created_at desc limit 1", nativeQuery = true)
-    public Optional<String> findLastDefaultMemberName(Long memberId);
+    @Query(value = "select fc.display_name from friend_code fc where fc.member_id = :memberId order by fc.created_at desc limit 1", nativeQuery = true)
+    public Optional<String> findMemberLastDisplayName(Long memberId);
 }
