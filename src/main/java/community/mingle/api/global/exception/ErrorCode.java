@@ -38,6 +38,9 @@ public enum ErrorCode {
     COUPON_TYPE_NOT_FOUND(404, "COUPON_TYPE_NOT_FOUND", "존재하지 않는 쿠폰 타입입니다."),
     POINT_NOT_ENOUGH(406, "POINT_NOT_ENOUGH", "포인트가 부족합니다."),
     COURSE_ALREADY_EVALUATED(409, "COURSE_ALREADY_EVALUATED", "이미 해당 강의에 평가를 작성했습니다."),
+    FRIEND_CODE_EXPIRED(409, "FRIEND_CODE_EXPIRED", "친구 코드가 만료되었습니다."),
+    FRIEND_CODE_NOT_FOUND(404, "FRIEND_CODE_NOT_FOUND", "존재하지 않는 친구 코드입니다."),
+    FRIEND_ALREADY_ADDED(409, "FRIEND_ALREADY_ADDED", "이미 친구로 등록된 사용자입니다."),
 
 
     // 2. TODO post, comment 정리

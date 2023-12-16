@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: change default_member_name column to display_name
+      author: Hyeonwoo Jung
+      changes:
+        - renameColumn:
+            tableName: friend_code
+            oldColumnName: default_member_name
+            newColumnName: display_name
+            columnDataType: varchar(255)
