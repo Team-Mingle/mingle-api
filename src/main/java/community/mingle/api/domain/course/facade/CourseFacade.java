@@ -38,15 +38,14 @@ public class CourseFacade {
             throw new CustomException(COURSE_TIME_CONFLICT);
         }
 
-        Timetable timetable = timetableService.getById(timetableId);
-
-        if(timetableService.isCourseTimeConflictWithTimetable(timetable, request.courseTimeDtoList())){
-            throw new CustomException(TIMETABLE_CONFLICT);
-        }
-
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
-        courseService.createPersonalCourse(
+
+        Timetable timetable = timetableService.getById(timetableId, member);
+
+        timetableService.deleteConflictCoursesByOverrideValidation(timetable, request.courseTimeDtoList(), request.overrideValidation());
+
+        PersonalCourse personalCourse = courseService.createPersonalCourse(
                 request.courseCode(),
                 request.name(),
                 request.courseTimeDtoList(),
@@ -56,6 +55,8 @@ public class CourseFacade {
                 member.getUniversity(),
                 member
         );
+
+        timetableService.addCourse(timetable, personalCourse);
 
         return new CreatePersonalCourseResponse(
                 request.name(),
@@ -139,15 +140,20 @@ public class CourseFacade {
         List<CrawledCourse> crawledCourseList = courseService.getCrawledCourseByKeyword(keyword, member.getUniversity());
 
         return crawledCourseList.stream()
-                .map(course -> new CoursePreviewResponse(
-                        course.getId(),
-                        course.getName(),
-                        course.getCourseCode(),
-                        course.getSemester(),
-                        course.getProfessor(),
-                        course.getSubclass()
-                ))
-                .toList();
+                .map(course -> {
+                    List<CourseTimeDto> courseTimeDtoList = course.getCourseTimeList().stream()
+                            .map(CourseTime::toDto)
+                            .toList();
+                    return new CoursePreviewResponse(
+                            course.getId(),
+                            course.getName(),
+                            course.getCourseCode(),
+                            course.getSemester(),
+                            course.getProfessor(),
+                            course.getSubclass(),
+                            courseTimeDtoList
+                    );
+                }).toList();
     }
 
     private boolean isCourseTimeConflict(List<CourseTimeDto> courseTimeDtoList) {
