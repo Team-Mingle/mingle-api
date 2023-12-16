@@ -13,9 +13,12 @@ import community.mingle.api.enums.BoardType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static community.mingle.api.global.utils.DateTimeConverter.convertToDateAndTime;
 
 @Service
 @RequiredArgsConstructor
@@ -54,8 +57,14 @@ public class NotificationFacade {
                 .content(contentProvider.getContent())
                 .boardType(contentProvider.getBoardType())
                 .categoryType(contentProvider.getCategoryType())
+                .createAt(convertToDateAndTime(notification.getCreatedAt()))
                 .build();
     }
 
+    @Transactional
+    public String readNotification(Long notificationId) {
+        notificationService.readNotification(notificationId);
+        return "성공했습니다.";
+    }
 
 }

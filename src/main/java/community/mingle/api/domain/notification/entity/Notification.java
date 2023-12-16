@@ -65,6 +65,9 @@ public class Notification extends AuditLoggingBase {
     @Column(name = "`read`", nullable = false)
     private Boolean read = false;
 
+    public void markAsRead() {
+        this.read = true;
+    }
 
     //Notification 생성 로직 응집도를 위해 static method로 분리
     public static PostNotification createPostNotification(Post post, NotificationType type, Member member) {
