@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -50,9 +51,11 @@ public class TimetableService {
         return timetableRepository.save(timetable);
     }
 
-    public Timetable getById(Long timetableId) {
-        return timetableRepository.findById(timetableId)
+    public Timetable getById(Long timetableId, Member member) {
+        Timetable timetable = timetableRepository.findById(timetableId)
                 .orElseThrow(() -> new CustomException(TIMETABLE_NOT_FOUND));
+        hasPermission(member, timetable);
+        return timetable;
     }
 
     @Transactional
@@ -84,6 +87,22 @@ public class TimetableService {
 
     }
 
+    @Transactional
+    public void updateTimetableName(Timetable timetable, Member member, String name) {
+        hasPermission(member, timetable);
+        timetable.updateName(name);
+    }
+
+    @Transactional
+    public void convertPinStatus(Timetable timetable, Member member) {
+        hasPermission(member, timetable);
+        if (!timetable.getIsPinned()) {
+            timetableRepository.findByMemberAndSemesterAndIsPinnedIsTrue(member, timetable.getSemester())
+                    .ifPresent(Timetable::convertPinStatus);
+        }
+        timetable.convertPinStatus();
+    }
+
     public boolean isCourseTimeConflictWithTimetable(Timetable timetable, List<CourseTimeDto> courseTimeList) {
         List<CourseTimetable> existingCourses = timetable.getCourseTimetableList();
 
@@ -108,5 +127,14 @@ public class TimetableService {
         }
     }
 
+    public List<Timetable> getTimetableList(Member member) {
+        return timetableRepository.findAllByMember(member);
+    }
 
+    public List<Timetable> orderTimetableList(List<Timetable> timetableList) {
+        return timetableList.stream()
+                .sorted(Comparator.comparing(Timetable::getIsPinned, Comparator.reverseOrder())
+                        .thenComparing(Timetable::getOrderNumber))
+                .toList();
+    }
 }

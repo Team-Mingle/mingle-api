@@ -58,4 +58,12 @@ public class Timetable extends AuditLoggingBase {
     public void updateOrderNumber(int orderNumber) {
         this.orderNumber = orderNumber;
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void convertPinStatus() {
+        this.isPinned = !this.isPinned;
+    }
 }
