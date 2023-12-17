@@ -17,6 +17,7 @@ public enum ErrorCode {
 
     MEMBER_ALREADY_EXIST(409, "MEMBER_ALREADY_EXIST", "이미 가입된 회원입니다."), //1.8
     NICKNAME_DUPLICATED(409, "NICKNAME_DUPLICATED", "이미 존재하는 닉네임입니다."), //1.8
+
     UNIVERSITY_NOT_FOUND(404, "UNIVERSITY_NOT_FOUND", "존재하지 않는 대학입니다."), //1,8
     FAILED_TO_LOGIN(404, "FAILED_TO_LOGIN", "일치하는 이메일이나 비밀번호를 찾지 못했습니다.\n" +
                              "띄어쓰기나 잘못된 글자가 있는지 확인해 주세요."), //1.9
@@ -30,9 +31,16 @@ public enum ErrorCode {
     FAIL_TO_REISSUE_TOKEN(401, "2002", "토큰 재발급에 실패하였습니다"), //1.12
     MEMBER_NOT_FOUND(404, "2005", "존재하지 않는 회원 정보입니다."),
     COURSE_TIME_CONFLICT(409, "COURSE_TIME_CONFLICT", "강의 시간이 겹치지 않게 설정해 주세요."),
+    TIMETABLE_CONFLICT(409, "TIMETABLE_CONFLICT", "시간표가 겹칩니다."),
     COURSE_NOT_FOUND(404, "COURSE_NOT_FOUND", "존재하지 않는 강의입니다."),
     SEMESTER_NOT_FOUND(404, "SEMESTER_NOT_FOUND", "존재하지 않는 학기입니다."),
-
+    TIMETABLE_NOT_FOUND(404, "TIMETABLE_NOT_FOUND", "존재하지 않는 시간표입니다."),
+    COUPON_TYPE_NOT_FOUND(404, "COUPON_TYPE_NOT_FOUND", "존재하지 않는 쿠폰 타입입니다."),
+    POINT_NOT_ENOUGH(406, "POINT_NOT_ENOUGH", "포인트가 부족합니다."),
+    COURSE_ALREADY_EVALUATED(409, "COURSE_ALREADY_EVALUATED", "이미 해당 강의에 평가를 작성했습니다."),
+    FRIEND_CODE_EXPIRED(409, "FRIEND_CODE_EXPIRED", "친구 코드가 만료되었습니다."),
+    FRIEND_CODE_NOT_FOUND(404, "FRIEND_CODE_NOT_FOUND", "존재하지 않는 친구 코드입니다."),
+    FRIEND_ALREADY_ADDED(409, "FRIEND_ALREADY_ADDED", "이미 친구로 등록된 사용자입니다."),
 
 
     // 2. TODO post, comment 정리
@@ -56,6 +64,7 @@ public enum ErrorCode {
 
     INTERNAL_SERVER_ERROR(500, "500", "INTERNAL SERVER ERROR");
 
+    @Getter
     private final int status;
     private final String code;
     private final String message;
@@ -64,9 +73,6 @@ public enum ErrorCode {
         this.status = status;
         this.code = code;
         this.message = message;
-    }
-    public int getStatus() {
-        return status;
     }
 
 }

@@ -11,6 +11,8 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -27,9 +29,8 @@ public class Timetable extends AuditLoggingBase {
     private Long id;
 
     @NotNull
-    @Builder.Default
     @Column(name = "name", nullable = false)
-    private String name = "시간표 이름";
+    private String name;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -50,4 +51,19 @@ public class Timetable extends AuditLoggingBase {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    @OneToMany(mappedBy = "timetable")
+    private List<CourseTimetable> courseTimetableList = new ArrayList<>();
+
+    public void updateOrderNumber(int orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void convertPinStatus() {
+        this.isPinned = !this.isPinned;
+    }
 }
