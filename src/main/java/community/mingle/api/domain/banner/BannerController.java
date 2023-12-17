@@ -4,7 +4,6 @@ import community.mingle.api.domain.banner.request.CreateBannerRequest;
 import community.mingle.api.domain.banner.response.BannerResponse;
 import community.mingle.api.domain.banner.response.CreateBannerResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
-@Tag(name = "Banner Controller", description = "배너 관련 API")
 @RestController
 @RequestMapping("/banner")
 @RequiredArgsConstructor

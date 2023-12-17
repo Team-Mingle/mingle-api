@@ -1,51 +1,86 @@
 databaseChangeLog:
   - changeSet:
-      id: add coupon table
-      author: Hyeonwoo Jung
+      id: add comment_notification again
+      author: taehyun
       changes:
         - createTable:
-            tableName: coupon
             columns:
               - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
                   constraints:
                     nullable: false
                     primaryKey: true
+                  name: id
+                  type: BIGINT
               - column:
-                  name: member_id
-                  type: bigint
                   constraints:
                     nullable: false
+                  name: comment_id
+                  type: BIGINT
+            tableName: comment_notification
+  - changeSet:
+      id: add post_notification again
+      author: taehyun
+      changes:
+        - createTable:
+            columns:
               - column:
-                  name: expires_at
-                  type: timestamp
                   constraints:
                     nullable: false
+                    primaryKey: true
+                  name: id
+                  type: BIGINT
               - column:
-                  name: created_at
-                  type: timestamp
                   constraints:
                     nullable: false
-              - column:
-                  name: updated_at
-                  type: timestamp
-                  constraints:
-                    nullable: false
-              - column:
-                  name: deleted_at
-                  type: timestamp
-                  constraints:
-                    nullable: true
-              - column:
-                  name: type
-                  type: enum('MONTHLY', 'YEARLY', 'FRESHMAN')
-                  constraints:
-                      nullable: false
+                  name: post_id
+                  type: BIGINT
+            tableName: post_notification
+
+  - changeSet:
+      id: add foreign key constraints
+      author: taehyun
+      changes:
         - addForeignKeyConstraint:
-            baseTableName: coupon
-            baseColumnNames: member_id
-            constraintName: fk_coupon_member_id
-            referencedTableName: member
+            baseColumnNames: id
+            baseTableName: post_notification
+            constraintName: post_notification_ibfk_1
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
             referencedColumnNames: id
+            referencedTableName: notification
+            validate: true
+        - addForeignKeyConstraint:
+            baseColumnNames: post_id
+            baseTableName: post_notification
+            constraintName: post_notification_ibfk_2
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: post
+            validate: true
+        - addForeignKeyConstraint:
+            baseColumnNames: id
+            baseTableName: comment_notification
+            constraintName: comment_notification_ibfk_1
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: notification
+            validate: true
+        - addForeignKeyConstraint:
+            baseColumnNames: comment_id
+            baseTableName: comment_notification
+            constraintName: comment_notification_ibfk_2
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: comment
+            validate: true

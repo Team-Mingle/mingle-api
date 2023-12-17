@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class PostPreviewDto {
+public class PostPreviewResponse {
 
     private Long postId;
     private String title;

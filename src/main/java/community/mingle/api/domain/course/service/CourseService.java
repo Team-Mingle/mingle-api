@@ -70,7 +70,6 @@ public class CourseService {
         personalCourseRepository.delete(personalCourse);
     }
 
-    @Transactional
     public List<CourseTime> createCourseTime(Long personalCourseId, List<CourseTimeDto> courseTimeDtoList) {
         PersonalCourse personalCourse = getPersonalCourseById(personalCourseId);
 
@@ -98,10 +97,6 @@ public class CourseService {
 
     public Course getCourseById(Long courseId) {
         return courseRepository.findById(courseId).orElseThrow(() -> new CustomException(COURSE_NOT_FOUND));
-    }
-
-    public CrawledCourse getCrawledCourseById(Long crawledCourseId) {
-        return crawledCourseRepository.findById(crawledCourseId).orElseThrow(() -> new CustomException(COURSE_NOT_FOUND));
     }
 
     public PersonalCourse getPersonalCourseById(Long courseId) {

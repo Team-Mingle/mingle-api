@@ -58,9 +58,9 @@ public class AuthController {
 
     @Operation(summary = "1.2 학교 및 도메인 리스트 불러오기 api")
     @GetMapping("/email-domains/{countryName}")
-    public ResponseEntity<List<UniversityResponse>> getEmailDomains(@PathVariable String countryName) {
-        List<UniversityResponse> universityResponse = universityService.getUniversityList(countryName);
-        return ResponseEntity.ok().body(universityResponse);
+    public ResponseEntity<List<DomainResponse>> getEmailDomains(@PathVariable String countryName) {
+        List<DomainResponse> domainResponses = universityService.getDomains(countryName);
+        return ResponseEntity.ok().body(domainResponses);
     }
 
     @Operation(summary = "1.3 이메일 중복 검사 api")
@@ -130,7 +130,8 @@ public class AuthController {
     @ApiResponse(responseCode = "404", description =
             "- [CLIENT] FAILED_TO_LOGIN: 일치하는 이메일이나 비밀번호를 찾지 못했습니다. 띄어쓰기나 잘못된 글자가 있는지 확인해 주세요. \n" +
                     "- [CLIENT] MEMBER_DELETED_ERROR: 탈퇴한 사용자입니다. \n" +
-                    "- [CLIENT] MEMBER_REPORTED_ERROR: 신고된 사용자입니다.",
+                    "- [CLIENT] MEMBER_REPORTED_ERROR: 신고된 사용자입니다. \n" +
+                    "- MEMBER_NOT_FOUND: 존재하지 않는 회원 정보입니다.",
             content = @Content(schema = @Schema(hidden = true)))
     @PostMapping("/login")
     public ResponseEntity<LoginMemberResponse> login(@Valid @RequestBody LoginMemberRequest loginMemberRequest) {
