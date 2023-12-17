@@ -37,4 +37,11 @@ public class NotificationController {
         return ResponseEntity.ok().body(notifications);
     }
 
+    @Operation(summary = "알림 읽기 API")
+    @PatchMapping("/{notificationId}")
+    public ResponseEntity<String> readNotification(@PathVariable Long notificationId) {
+        notificationFacade.readNotification(notificationId);
+        return ResponseEntity.ok().build();
+    }
+
 }

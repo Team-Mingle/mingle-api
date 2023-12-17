@@ -11,6 +11,7 @@ import community.mingle.api.domain.notification.repository.NotificationRepositor
 import community.mingle.api.domain.notification.repository.PostNotificationRepository;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.enums.BoardType;
+import community.mingle.api.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 import static community.mingle.api.enums.BoardType.TOTAL;
 import static community.mingle.api.enums.BoardType.UNIV;
+import static community.mingle.api.global.exception.ErrorCode.NOTIFICATION_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -82,6 +84,16 @@ public class NotificationService {
 
     public List<Notification> getNotifications(Long memberId) {
         return notificationRepository.findFirst20ByMemberIdOrderByCreatedAtDesc(memberId);
+    }
+
+    @Transactional
+    public void readNotification(Long notificationId) {
+        notificationRepository.findById(notificationId)
+            .ifPresentOrElse(
+                    notification -> notification.markAsRead(),
+                    () -> {
+                        throw new CustomException(NOTIFICATION_NOT_FOUND);
+                    });
     }
 
 }
