@@ -35,7 +35,7 @@ public class Report extends AuditLoggingBase {
     @JoinColumn(name = "reported_member_id", nullable = false)
     private Member reportedMember;
 
-    @Column(name = "content_id", nullable = false)
+    @Column(name = "content_id", nullable = false) //TODO missing column
     private Long contentId;
 
     @Size(max = 200)

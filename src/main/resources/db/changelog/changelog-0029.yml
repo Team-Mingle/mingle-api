@@ -1,0 +1,55 @@
+databaseChangeLog:
+  - changeSet:
+      id: create report_notification table
+      author: taehyun
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: report_id
+                  type: BIGINT
+            tableName: report_notification
+  - changeSet:
+      id: add missing column content_id in report table
+      author: taehyun
+      changes:
+        - addColumn:
+            tableName: report
+            columns:
+              - column:
+                  name: content_id
+                  type: bigint
+  - changeSet:
+      id: create foreign key constraint
+      author: taehyun
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: id
+            baseTableName: report_notification
+            constraintName: report_notification_ibfk_1
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: notification
+            validate: true
+        - addForeignKeyConstraint:
+            baseColumnNames: comment_id
+            baseTableName: comment_notification
+            constraintName: report_notification_ibfk_2
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: report
+            validate: true
