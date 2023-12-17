@@ -62,9 +62,8 @@ public class NotificationFacade {
     }
 
     @Transactional
-    public String readNotification(Long notificationId) {
+    public void readNotification(Long notificationId) {
         notificationService.readNotification(notificationId);
-        return "성공했습니다.";
     }
 
 }
