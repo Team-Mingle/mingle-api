@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import community.mingle.api.database.DataSourceConfig;
 import community.mingle.api.dto.security.DevTokenDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
@@ -14,13 +16,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static community.mingle.api.configuration.AmazonSecretManagerConfig.SECRET_MANAGER_CLIENT;
+
 @Service
 @RequiredArgsConstructor
 public class SecretsManagerService {
 
     private final String projectName;
     private final ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().build();
-    private final SecretsManagerClient secretsManager = SecretsManagerClient.create();
+
+    private final SecretsManagerClient secretsManager;
 
     private Map<String, String> arns = new HashMap<>();
 
