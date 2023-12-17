@@ -1,6 +1,8 @@
 package community.mingle.api.domain.notification.entity;
 
+import community.mingle.api.domain.comment.entity.Comment;
 import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.entitybase.AuditLoggingBase;
 import community.mingle.api.enums.ContentType;
 import community.mingle.api.enums.NotificationType;
@@ -16,6 +18,11 @@ import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 
+
+/**
+ *  Base Notification entity
+ *  all subclasses must implement NotificationContentProvider to provide appropriate Notification content by each content type
+ */
 @Getter
 @Entity
 @Where(clause = "deleted_at IS NULL")
@@ -41,7 +48,7 @@ public class Notification extends AuditLoggingBase {
     private LocalDateTime deletedAt;
 
     @NotNull
-    @Column(name = "content_type", updatable = false, insertable = false)
+    @Column(name = "content_type", updatable = false) //TODO content_id와 함께 redirect용이라는걸 표현하는 naming으로 변경
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 
@@ -57,4 +64,33 @@ public class Notification extends AuditLoggingBase {
     @NotNull
     @Column(name = "`read`", nullable = false)
     private Boolean read = false;
+
+    public void markAsRead() {
+        this.read = true;
+    }
+
+    //Notification 생성 로직 응집도를 위해 static method로 분리
+    public static PostNotification createPostNotification(Post post, NotificationType type, Member member) {
+        return PostNotification.builder()
+                .post(post)
+                .member(member)
+                .notificationType(type) // POPULAR, POST
+                .contentId(post.getId())
+                .contentType(ContentType.POST)
+                .read(false)
+                .build();
+    }
+
+    public static CommentNotification createCommentNotification(Comment comment, Post post, Member member) {
+        return CommentNotification.builder()
+                .comment(comment)
+                .member(member)
+                .notificationType(NotificationType.COMMENT)
+                .contentId(post.getId())
+                .contentType(ContentType.POST)
+                .read(false)
+                .build();
+    }
+
+
 }

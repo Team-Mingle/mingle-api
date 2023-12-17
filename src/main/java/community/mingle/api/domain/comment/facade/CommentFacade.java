@@ -83,7 +83,7 @@ public class CommentFacade {
         Member member = memberService.getById(memberId);
         // 푸시알림 이벤트 발행
         applicationEventPublisher.publishEvent(
-                new CommentNotificationEvent(this, post, member, request.parentCommentId(), request.mentionId(), request.content())
+                new CommentNotificationEvent(this, post, comment, member, request.parentCommentId(), request.mentionId(), request.content())
         );
         return new CreateCommentResponse(comment.getId());
     }
