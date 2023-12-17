@@ -173,7 +173,7 @@ public class AuthController {
             @RequestHeader(value = "X-Refresh-Token") String refreshToken,
             @RequestBody ReissueTokenRequest reissueTokenRequest
     ) {
-        TokenResponse tokenResponse = authFacade.reissueAccessToken(refreshToken, reissueTokenRequest.getEmail());
+        TokenResponse tokenResponse = authFacade.reissueAccessToken(refreshToken, reissueTokenRequest.getEncryptedEmail());
         return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
     }
 }

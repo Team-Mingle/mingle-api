@@ -2,7 +2,6 @@ package community.mingle.api.domain.auth.service;
 
 import community.mingle.api.domain.auth.entity.RefreshToken;
 import community.mingle.api.domain.auth.repository.RefreshTokenRepository;
-import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.dto.security.CreatedTokenDto;
 import community.mingle.api.dto.security.TokenDto;
 import community.mingle.api.enums.MemberRole;
@@ -39,33 +38,35 @@ public class TokenService {
     public CreatedTokenDto createTokens(Long memberId, MemberRole memberRole, String email) {
         String accessToken = tokenHandler.createAccessToken(memberId, memberRole);
         String refreshToken = tokenHandler.createRefreshToken(memberId, memberRole);
-        saveRefreshToken(email, refreshToken, Duration.of(30, ChronoUnit.DAYS));
+        saveRefreshToken(email, refreshToken, Duration.of(1460, ChronoUnit.DAYS));
         return new CreatedTokenDto(accessToken, refreshToken);
     }
 
     /**
      * JWT 유효성 검사
      */
-    public TokenDto verifyToken(String token) {
-        return tokenVerifier.verifyToken(token);
+    public TokenDto verifyToken(String token, boolean isAccessToken) {
+        return tokenVerifier.verifyToken(token, isAccessToken);
     }
 
     /**
      * refresh token 유효성/DB 검사
      */
-    public void validateRefreshToken(String token) {
-        Optional<RefreshToken> refreshTokenOptional = findToken(token);
+    public void validateRefreshToken(String token, String encryptedEmail) {
+        Optional<RefreshToken> refreshTokenOptional = findToken(token, encryptedEmail);
 
-        refreshTokenOptional.ifPresent(refreshToken -> {
-            if (LocalDateTime.now().isAfter(refreshToken.getExpiry())) {
-                throw new CustomException(TOKEN_EXPIRED);
-            }
-        });
-        refreshTokenOptional.orElseThrow(() -> new CustomException(TOKEN_NOT_FOUND));
+        refreshTokenOptional.ifPresentOrElse(
+                refreshToken -> {
+                    if (LocalDateTime.now().isAfter(refreshToken.getExpiry())) {
+                        throw new CustomException(TOKEN_EXPIRED);
+                    }
+//                    refreshTokenRepository.delete(refreshToken);
+                },
+                () -> {throw new CustomException(TOKEN_NOT_FOUND);}
+        );
     }
-
-    public Optional<RefreshToken> findToken(String token) {
-        return refreshTokenRepository.findByToken(token);
+    public Optional<RefreshToken> findToken(String token, String encryptedEmail) {
+        return refreshTokenRepository.findByTokenAndEmail(token, encryptedEmail);
     }
 
 
@@ -75,7 +76,7 @@ public class TokenService {
 
         refreshTokenRepository.findById(email)
                 .ifPresentOrElse(
-                        existingToken -> existingToken.updateRefreshtoken(token),
+                        existingToken -> existingToken.updateRefreshtoken(token, expiry),
                         () -> {
                             RefreshToken newRefreshToken = RefreshToken.builder()
                                     .email(email)
