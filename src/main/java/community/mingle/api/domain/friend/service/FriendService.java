@@ -2,9 +2,7 @@ package community.mingle.api.domain.friend.service;
 
 import community.mingle.api.domain.friend.entity.Friend;
 import community.mingle.api.domain.friend.entity.FriendCode;
-import community.mingle.api.domain.friend.entity.FriendDisplayName;
 import community.mingle.api.domain.friend.repository.FriendCodeRepository;
-import community.mingle.api.domain.friend.repository.FriendDisplayNameRepository;
 import community.mingle.api.domain.friend.repository.FriendRepository;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.global.exception.CustomException;
@@ -25,7 +23,6 @@ public class FriendService {
 
     private final FriendCodeRepository friendCodeRepository;
     private final FriendRepository friendRepository;
-    private final FriendDisplayNameRepository friendDisplayNameRepository;
 
     @Transactional
     public FriendCode createFriendCode(Member member, String myDisplayName) {
@@ -37,8 +34,6 @@ public class FriendService {
                 .displayName(myDisplayName)
                 .expiresAt(LocalDateTime.now().plusDays(3L))
                 .build();
-
-        updateLastDisplayName(member, myDisplayName);
 
         return friendCodeRepository.save(friendCode);
     }
@@ -60,8 +55,6 @@ public class FriendService {
                 .name(myDisplayName)
                 .build();
 
-        updateLastDisplayName(member, myDisplayName);
-
         friendCodeRepository.delete(checkedFriendCode);
         friendRepository.save(friend);
         friendRepository.save(reverseFriend);
@@ -72,25 +65,8 @@ public class FriendService {
     }
 
     public String getMemberLastDisplayName(Member member) {
-        Optional<FriendDisplayName> lastDisplayName = friendDisplayNameRepository.findById(member.getId());
-        if(lastDisplayName.isEmpty()) {
-            return member.getNickname();
-        } else {
-            return lastDisplayName.get().getName();
-        }
-    }
-
-    private void updateLastDisplayName(Member member, String displayName) {
-        Optional<FriendDisplayName> lastDisplayName = friendDisplayNameRepository.findById(member.getId());
-        if(lastDisplayName.isEmpty()) {
-            FriendDisplayName friendDisplayName = FriendDisplayName.builder()
-                    .member(member)
-                    .name(displayName)
-                    .build();
-            friendDisplayNameRepository.save(friendDisplayName);
-        } else {
-            lastDisplayName.get().updateName(displayName);
-        }
+        Optional<String> memberLastDisplayName = friendCodeRepository.findMemberLastDisplayName(member.getId());
+        return memberLastDisplayName.orElseGet(member::getNickname);
     }
 
     private FriendCode checkFriendCode(String friendCode, Member member) {
