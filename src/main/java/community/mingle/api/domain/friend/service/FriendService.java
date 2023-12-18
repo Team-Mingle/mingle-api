@@ -54,7 +54,6 @@ public class FriendService {
                 .name(myDisplayName)
                 .build();
 
-        
         friendCodeRepository.delete(checkedFriendCode);
         friendRepository.save(friend);
         friendRepository.save(reverseFriend);
