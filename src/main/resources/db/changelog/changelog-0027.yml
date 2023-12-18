@@ -1,0 +1,86 @@
+databaseChangeLog:
+  - changeSet:
+      id: add comment_notification again
+      author: taehyun
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: comment_id
+                  type: BIGINT
+            tableName: comment_notification
+  - changeSet:
+      id: add post_notification again
+      author: taehyun
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: post_id
+                  type: BIGINT
+            tableName: post_notification
+
+  - changeSet:
+      id: add foreign key constraints
+      author: taehyun
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: id
+            baseTableName: post_notification
+            constraintName: post_notification_ibfk_1
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: notification
+            validate: true
+        - addForeignKeyConstraint:
+            baseColumnNames: post_id
+            baseTableName: post_notification
+            constraintName: post_notification_ibfk_2
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: post
+            validate: true
+        - addForeignKeyConstraint:
+            baseColumnNames: id
+            baseTableName: comment_notification
+            constraintName: comment_notification_ibfk_1
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: notification
+            validate: true
+        - addForeignKeyConstraint:
+            baseColumnNames: comment_id
+            baseTableName: comment_notification
+            constraintName: comment_notification_ibfk_2
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: comment
+            validate: true
