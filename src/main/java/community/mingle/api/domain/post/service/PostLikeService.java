@@ -39,11 +39,9 @@ public class PostLikeService {
 
     @Transactional
     public void delete(Long postLikeId, Long memberId) {
-        PostLike postLike = postLikeRepository.findById(postLikeId).orElseThrow(() -> new CustomException(POST_LIKE_NOT_FOUND));
-        if (!postLike.getMember().getId().equals(memberId)) {
-            throw new CustomException(MODIFY_NOT_AUTHORIZED);
-        }
-        postLikeRepository.deleteById(postLikeId);
+        PostLike postLike = postLikeRepository.findByPostIdAndMemberId(postLikeId, memberId)
+                .orElseThrow(() -> new CustomException(LIKE_NOT_FOUND));
+        postLikeRepository.delete(postLike);
     }
 
 }

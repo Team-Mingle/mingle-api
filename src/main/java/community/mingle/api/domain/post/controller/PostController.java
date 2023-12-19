@@ -115,9 +115,9 @@ public class PostController {
     }
 
     @Operation(summary = "게시물 좋아요 삭제 API")
-    @DeleteMapping("/like/delete/{postLikeId}")
-    public ResponseEntity<DeletePostLikeResponse> deletePostLike(@PathVariable Long postLikeId) {
-        DeletePostLikeResponse deletePostLikeResponse = postFacade.deletePostLike(postLikeId);
+    @DeleteMapping("/like/delete/{postId}")
+    public ResponseEntity<DeletePostLikeResponse> deletePostLike(@PathVariable Long postId) {
+        DeletePostLikeResponse deletePostLikeResponse = postFacade.deletePostLike(postId);
 
         return ResponseEntity.ok().body(deletePostLikeResponse);
     }
