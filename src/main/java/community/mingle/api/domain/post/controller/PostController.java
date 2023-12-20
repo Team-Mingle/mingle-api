@@ -48,6 +48,14 @@ public class PostController {
         return new ResponseEntity<>(createPostResponse, HttpStatus.OK);
     }
 
+    @Operation(summary = "게시물 전체글 리스트 API")
+    @GetMapping("/{boardType}/all")
+    public ResponseEntity<PostListResponse> AllPosts(@PathVariable BoardType boardType, @Parameter Pageable pageable) {
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
+        PostListResponse postPreviewList = postFacade.getAllPostList(boardType, pageRequest);
+        return ResponseEntity.ok().body(postPreviewList);
+    }
+
     @Operation(summary = "게시물 리스트 API")
     @GetMapping("/{boardType}/{categoryType}")
     //TODO status에 따른 title, content 변경
