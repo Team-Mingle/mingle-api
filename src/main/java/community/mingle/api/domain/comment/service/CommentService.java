@@ -82,11 +82,11 @@ public class CommentService {
         return commentQueryRepository.findComments(postId, memberId, true);
     }
 
-    public Map<Comment, List<Comment>> getCommentsWithCoCommentsMap(Long postId, Long memberIdByJwt) {
+    public LinkedHashMap<Comment, List<Comment>> getCommentsWithCoCommentsMap(Long postId, Long memberIdByJwt) {
         List<Comment> allComments = findComments(postId, memberIdByJwt);
         List<Comment> allCoComments = findCoComments(postId, memberIdByJwt);
 
-        Map<Comment, List<Comment>> commentListMap = new HashMap<>();
+        LinkedHashMap<Comment, List<Comment>> commentListMap = new LinkedHashMap<>();
 
         for (Comment c : allComments) {
             List<Comment> coCommentList = allCoComments.stream()
