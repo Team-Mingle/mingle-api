@@ -137,9 +137,9 @@ public class PostFacade {
     }
 
     @Transactional
-    public DeletePostLikeResponse deletePostLike(Long postLikeId) {
+    public DeletePostLikeResponse deletePostLike(Long postId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
-        postLikeService.delete(postLikeId, memberId);
+        postLikeService.delete(postId, memberId);
         return new DeletePostLikeResponse(true);
     }
 
