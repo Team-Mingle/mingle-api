@@ -1,4 +1,4 @@
-package community.mingle.api.domain.post.repository;
+package community.mingle.api.domain.report.repository;
 
 import community.mingle.api.domain.report.entity.Report;
 import community.mingle.api.enums.ContentType;

@@ -8,6 +8,7 @@ import community.mingle.api.domain.post.entity.PostImage;
 import community.mingle.api.domain.post.repository.*;
 import community.mingle.api.domain.report.entity.PostReport;
 import community.mingle.api.domain.report.entity.Report;
+import community.mingle.api.domain.report.repository.PostReportRepository;
 import community.mingle.api.dto.post.PostStatusDto;
 import community.mingle.api.enums.*;
 import community.mingle.api.global.exception.CustomException;

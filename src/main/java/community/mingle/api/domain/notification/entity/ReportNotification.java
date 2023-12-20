@@ -16,5 +16,19 @@ public class ReportNotification extends Notification implements NotificationCont
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "report_id", nullable = false)
     private Report report;
-    
+
+    @Override
+    public String getContent() {
+        return "신고가 접수되었습니다.";
+    }
+
+    @Override
+    public String getBoardType() {
+        return null;
+    }
+
+    @Override
+    public String getCategoryType() {
+        return null;
+    }
 }

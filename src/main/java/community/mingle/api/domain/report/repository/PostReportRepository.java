@@ -1,4 +1,4 @@
-package community.mingle.api.domain.post.repository;
+package community.mingle.api.domain.report.repository;
 
 import community.mingle.api.domain.report.entity.PostReport;
 import org.springframework.data.jpa.repository.JpaRepository;
