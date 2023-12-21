@@ -164,7 +164,7 @@ public class PostService {
                 yield "사유: " + reportType.getDescription();
             }
             case DELETED -> "사유: 이용약관 제 12조 위반";
-            default -> post.getTitle();
+            default -> post.getContent();
         };
     }
 
