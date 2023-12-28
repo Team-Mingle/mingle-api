@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import static community.mingle.api.global.exception.ErrorCode.*;
@@ -24,13 +25,13 @@ public class FriendService {
     private final FriendRepository friendRepository;
 
     @Transactional
-    public FriendCode createFriendCode(Member member, String defaultMemberName) {
+    public FriendCode createFriendCode(Member member, String myDisplayName) {
 
         String code = generateUniqueCode();
         FriendCode friendCode = FriendCode.builder()
                 .member(member)
                 .code(code)
-                .displayName(defaultMemberName)
+                .displayName(myDisplayName)
                 .expiresAt(LocalDateTime.now().plusDays(3L))
                 .build();
 
@@ -54,6 +55,9 @@ public class FriendService {
                 .name(myDisplayName)
                 .build();
 
+        //LastDisplayName은 friendCode의 제일 최근 이름을 가져오고 있음
+        //친구를 생성할 때의 myDisplayName도 LastDisplayName으로 사용하기 위해 임의의 friendCode를 만들어줌
+        createFriendCode(member, myDisplayName);
         friendCodeRepository.delete(checkedFriendCode);
         friendRepository.save(friend);
         friendRepository.save(reverseFriend);
@@ -61,6 +65,11 @@ public class FriendService {
 
     public List<Friend> listFriends(Member member) {
         return friendRepository.findAllByMember(member);
+    }
+
+    public String getMemberLastDisplayName(Member member) {
+        Optional<String> memberLastDisplayName = friendCodeRepository.findMemberLastDisplayName(member.getId());
+        return memberLastDisplayName.orElseGet(member::getNickname);
     }
 
     private FriendCode checkFriendCode(String friendCode, Member member) {

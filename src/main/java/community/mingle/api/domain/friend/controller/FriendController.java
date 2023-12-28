@@ -4,6 +4,7 @@ import community.mingle.api.domain.friend.controller.request.CreateFriendRequest
 import community.mingle.api.domain.friend.controller.request.CreateFriendCodeRequest;
 import community.mingle.api.domain.friend.controller.response.CreateFriendCodeResponse;
 import community.mingle.api.domain.friend.controller.response.CreateFriendResponse;
+import community.mingle.api.domain.friend.controller.response.FriendListResponse;
 import community.mingle.api.domain.friend.facade.FriendFacade;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,17 @@ public class FriendController {
         CreateFriendResponse createFriendResponse = friendFacade.createFriend(createFriendRequest);
         return ResponseEntity.ok(createFriendResponse);
     }
+
+    @GetMapping("/display-name")
+    public ResponseEntity<String> getMyLastDisplayName() {
+        return ResponseEntity.ok(friendFacade.getMyLastDisplayName());
+    }
+
+    @GetMapping()
+    public ResponseEntity<FriendListResponse> listFriends() {
+        return ResponseEntity.ok(friendFacade.listFriends());
+    }
+
 
 
 
