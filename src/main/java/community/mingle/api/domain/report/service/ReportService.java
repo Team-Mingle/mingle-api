@@ -1,18 +1,26 @@
 package community.mingle.api.domain.report.service;
 
+import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.report.entity.CommentReport;
 import community.mingle.api.domain.report.repository.CommentReportRepository;
 import community.mingle.api.domain.report.repository.PostReportRepository;
 import community.mingle.api.domain.report.entity.PostReport;
 import community.mingle.api.domain.report.entity.Report;
+import community.mingle.api.domain.report.repository.ReportRepository;
+import community.mingle.api.enums.ContentType;
+import community.mingle.api.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static community.mingle.api.global.exception.ErrorCode.ALREADY_REPORTED;
+
 
 @Service
 @RequiredArgsConstructor
 public class ReportService {
 
+    private final ReportRepository reportRepository;
     private final PostReportRepository postReportRepository;
     private final CommentReportRepository commentReportRepository;
 
@@ -26,4 +34,14 @@ public class ReportService {
         return commentReportRepository.save(report);
     }
 
+    public void checkReportDuplicated(Member reporterMember, ContentType contentType, Long contentId) {
+        reportRepository.findByReporterMemberAndContentTypeAndContentId(reporterMember, contentType, contentId)
+                .ifPresent(report -> {
+                    throw new CustomException(ALREADY_REPORTED);
+                });
+    }
+
+    public Integer getReportCount(ContentType contentType, Long contentId) {
+        return reportRepository.countByContentTypeAndContentId(contentType, contentId).intValue();
+    }
 }

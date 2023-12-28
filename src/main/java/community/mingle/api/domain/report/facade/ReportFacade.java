@@ -32,16 +32,21 @@ public class ReportFacade {
         Long reporterMemberId = tokenService.getTokenInfo().getMemberId();
         Member reporterMember = memberService.getById(reporterMemberId);
 
-        switch (request.contentType()) {
+        reportService.checkReportDuplicated(reporterMember, request.contentType(), request.contentId());
+        Integer reportCount = reportService.getReportCount(request.contentType(), request.contentId());
+
+        switch (request.contentType()) { //TODO strategy pattern 적용
             case POST -> {
                 Post post = postService.getPost(request.contentId());
                 PostReport postReport = Report.createPostReport(reporterMember, request.reportType(), post);
                 reportService.savePostReport(postReport);
+                if (reportCount == 2) post.updateStatusAsNotified();
             }
             case COMMENT -> {
                 Comment comment = commentService.getComment(request.contentId());
                 CommentReport commentReport = Report.createCommentReport(reporterMember, request.reportType(), comment);
                 reportService.saveCommentReport(commentReport);
+                if (reportCount == 2) comment.updateStatusAsNotified();
             }
         }
     }

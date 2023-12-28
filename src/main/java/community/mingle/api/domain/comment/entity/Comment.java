@@ -71,4 +71,7 @@ public class Comment extends AuditLoggingBase {
     @OneToMany(mappedBy = "comment")
     private List<CommentLike> commentLikes = new ArrayList<>();
 
+    public void updateStatusAsNotified() {
+        this.statusType = ContentStatusType.NOTIFIED;
+    }
 }
