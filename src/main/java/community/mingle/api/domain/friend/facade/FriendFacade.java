@@ -5,6 +5,7 @@ import community.mingle.api.domain.friend.controller.request.CreateFriendRequest
 import community.mingle.api.domain.friend.controller.request.CreateFriendCodeRequest;
 import community.mingle.api.domain.friend.controller.response.CreateFriendCodeResponse;
 import community.mingle.api.domain.friend.controller.response.CreateFriendResponse;
+import community.mingle.api.domain.friend.controller.response.FriendListResponse;
 import community.mingle.api.domain.friend.entity.Friend;
 import community.mingle.api.domain.friend.entity.FriendCode;
 import community.mingle.api.domain.friend.service.FriendService;
@@ -51,4 +52,15 @@ public class FriendFacade {
         Member member = memberService.getById(memberId);
         return friendService.getMemberLastDisplayName(member);
     }
+
+    public FriendListResponse listFriends() {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+        List<Friend> friendList = friendService.listFriends(member);
+        List<FriendDto> friendDtoList = friendList.stream()
+                .map(friend -> new FriendDto(friend.getId(), friend.getName()))
+                .toList();
+        return new FriendListResponse(friendDtoList);
+    }
+
 }
