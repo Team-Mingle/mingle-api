@@ -90,6 +90,12 @@ public class PostService {
                 .orElse(null);
     }
 
+
+    public List<Post> pagePostsByBoardType(BoardType boardType, PageRequest pageRequest) {
+        Page<Post> pagePosts = postRepository.findAllByBoardType(boardType, pageRequest);
+        return pagePosts.toList();
+    }
+
     public List<Post> pagePostsByBoardTypeAndCategory(BoardType boardType, CategoryType categoryType, PageRequest pageRequest) {
         Page<Post> pagePosts = postRepository.findAllByBoardTypeAndCategoryType(boardType, categoryType, pageRequest);
         return pagePosts.toList();

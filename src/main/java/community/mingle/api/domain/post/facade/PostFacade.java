@@ -105,6 +105,17 @@ public class PostFacade {
                 .build();
     }
 
+    public PostListResponse getAllPostList(BoardType boardType, PageRequest pageRequest) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        List<Post> postList = postService.pagePostsByBoardType(boardType, pageRequest);
+
+        List<PostPreviewDto> postPreviewDtoList = postList.stream()
+                .map(post -> mapToPostPreviewResponse(post, memberId))
+                .collect(Collectors.toList());
+        return new PostListResponse(postPreviewDtoList);
+    }
+
+
     public PostListResponse getPostList(BoardType boardType, CategoryType categoryType, PageRequest pageRequest) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         List<Post> postList = postService.pagePostsByBoardTypeAndCategory(boardType, categoryType, pageRequest);
