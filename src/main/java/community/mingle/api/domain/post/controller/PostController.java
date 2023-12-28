@@ -114,20 +114,11 @@ public class PostController {
         return ResponseEntity.ok().body(postPreviewResponseList);
     }
 
-
-    @Operation(summary = "게시물 좋아요 생성 API")
+    @Operation(summary = "게시물 좋아요/좋아요 취소 API")
     @PostMapping("/like/{postId}")
-    public ResponseEntity<CreatePostLikeResponse> createPostLike(@PathVariable Long postId) {
-        CreatePostLikeResponse createPostLikeResponse = postFacade.createPostLike(postId);
-        return ResponseEntity.ok().body(createPostLikeResponse);
-    }
-
-    @Operation(summary = "게시물 좋아요 삭제 API")
-    @DeleteMapping("/like/delete/{postId}")
-    public ResponseEntity<DeletePostLikeResponse> deletePostLike(@PathVariable Long postId) {
-        DeletePostLikeResponse deletePostLikeResponse = postFacade.deletePostLike(postId);
-
-        return ResponseEntity.ok().body(deletePostLikeResponse);
+    public ResponseEntity<Void> updatePostLike(@PathVariable Long postId) {
+        postFacade.updatePostLike(postId);
+        return ResponseEntity.ok().build();
     }
 
 

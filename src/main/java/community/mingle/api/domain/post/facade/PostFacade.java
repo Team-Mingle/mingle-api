@@ -39,6 +39,7 @@ public class PostFacade {
     private final CommentService commentService;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final S3Service s3Service;
+    private static final int POPULAR_NOTIFICATION_LIKE_SIZE = 5;
 
 
     public List<PostCategoryResponse> getPostCategory() {
@@ -138,20 +139,16 @@ public class PostFacade {
 
 
     @Transactional
-    public CreatePostLikeResponse createPostLike(Long postId) {
+    public void updatePostLike(Long postId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
-        PostLike postLike = postLikeService.create(postId, memberId);
-        if (postLike.getPost().getPostLikeList().size() == 5) {
-            applicationEventPublisher.publishEvent(new PopularPostNotificationEvent(this, postId, memberId));
+        if (postLikeService.isPostLiked(postId, memberId)) {
+            postLikeService.delete(postId, memberId);
+        } else {
+            PostLike postLike = postLikeService.create(postId, memberId);
+            if (postLike.getPost().getPostLikeList().size() == POPULAR_NOTIFICATION_LIKE_SIZE) {
+                applicationEventPublisher.publishEvent(new PopularPostNotificationEvent(this, postId, memberId));
+            }
         }
-        return new CreatePostLikeResponse(true);
-    }
-
-    @Transactional
-    public DeletePostLikeResponse deletePostLike(Long postId) {
-        Long memberId = tokenService.getTokenInfo().getMemberId();
-        postLikeService.delete(postId, memberId);
-        return new DeletePostLikeResponse(true);
     }
 
 
