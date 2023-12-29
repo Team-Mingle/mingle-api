@@ -2,6 +2,7 @@ package community.mingle.api.domain.auth.facade;
 
 import community.mingle.api.domain.auth.controller.request.*;
 import community.mingle.api.domain.auth.controller.response.*;
+import community.mingle.api.domain.auth.entity.Policy;
 import community.mingle.api.domain.auth.service.AuthService;
 import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.domain.auth.service.TokenService;
@@ -9,14 +10,14 @@ import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.dto.security.CreatedTokenDto;
 import community.mingle.api.dto.security.TokenDto;
 import community.mingle.api.enums.MemberRole;
+import community.mingle.api.enums.PolicyType;
 import community.mingle.api.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static community.mingle.api.domain.auth.service.AuthService.FRESHMAN_EMAIL_DOMAIN;
-import static community.mingle.api.global.exception.ErrorCode.MEMBER_ALREADY_EXIST;
-import static community.mingle.api.global.exception.ErrorCode.NICKNAME_DUPLICATED;
+import static community.mingle.api.global.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -31,9 +32,7 @@ public class AuthFacade {
     }
 
     @Transactional
-    public SendVerificationCodeResponse sendVerificationCodeEmail(EmailRequest emailRequest) {
-
-        String email = emailRequest.getEmail();
+    public SendVerificationCodeResponse sendVerificationCodeEmail(String email) {
         String domain = authService.extractDomain(email);
         if (!domain.equals(FRESHMAN_EMAIL_DOMAIN)) {
             String authKey = authService.createCode();
@@ -51,15 +50,15 @@ public class AuthFacade {
 
     @Transactional
     public SignUpResponse signUp(SignUpRequest request) {
-        if (memberService.existsByEmail(request.getEmail())) {
+        if (memberService.existsByEmail(request.email())) {
             throw new CustomException(MEMBER_ALREADY_EXIST);
         }
 
-        if (memberService.existsByNickname(request.getNickname())) {
+        if (memberService.existsByNickname(request.nickname())) {
             throw new CustomException(NICKNAME_DUPLICATED);
         }
 
-        Member member = memberService.create(request.getUnivId(), request.getNickname(), request.getEmail(), request.getPassword());
+        Member member = memberService.create(request.univId(), request.nickname(), request.email(), request.password());
         return new SignUpResponse(member.getId());
 
 
@@ -69,7 +68,13 @@ public class AuthFacade {
     @Transactional
     public LoginMemberResponse login(LoginMemberRequest loginMemberRequest) {
 
-        Member member = memberService.getByEmail(loginMemberRequest.getEmail());
+        Member member;
+        try {
+            member = memberService.getByEmail(loginMemberRequest.getEmail());
+        } catch (CustomException e) {
+            //프론트에 로그인 실패 에러를 하나로 통일해서 return 하기 위한 try-catch
+            throw new CustomException(FAILED_TO_LOGIN);
+        }
 
         authService.checkPassword(loginMemberRequest.getPassword(), member.getPassword());
         authService.checkMemberStatusActive(member);
@@ -92,12 +97,12 @@ public class AuthFacade {
     }
 
     @Transactional
-    public TokenResponse reissueAccessToken(String refreshToken, String email) {
+    public TokenResponse reissueAccessToken(String refreshToken, String encryptedEmail) {
 
-        TokenDto tokenDto = tokenService.verifyToken(refreshToken);
-        tokenService.validateRefreshToken(refreshToken);
+        TokenDto tokenDto = tokenService.verifyToken(refreshToken, false);
+        tokenService.validateRefreshToken(refreshToken, encryptedEmail);
 
-        CreatedTokenDto tokens = tokenService.createTokens(tokenDto.getMemberId(), tokenDto.getMemberRole(), email);
+        CreatedTokenDto tokens = tokenService.createTokens(tokenDto.getMemberId(), tokenDto.getMemberRole(), encryptedEmail);
 
         return TokenResponse.builder()
                 .accessToken(tokens.getAccessToken())
@@ -111,5 +116,17 @@ public class AuthFacade {
         authService.checkPassword(updatePasswordRequest.getCurrentPassword(), member.getPassword());
         memberService.updatePassword(member, updatePasswordRequest.getUpdatePassword());
         return new UpdatePasswordResponse(true);
+    }
+
+    @Transactional
+    public SendVerificationCodeResponse sendVerificationCodeEmailForPwdReset(String email) {
+        memberService.getByEmail(email); //check member exists by email
+        return sendVerificationCodeEmail(email);
+    }
+
+    public PolicyResponse getPolicy(PolicyType policyType) {
+        Policy policy = authService.getPolicy(policyType);
+        return new PolicyResponse(policy.getContent());
+
     }
 }

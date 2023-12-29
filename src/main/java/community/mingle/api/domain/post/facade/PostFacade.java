@@ -1,22 +1,32 @@
 package community.mingle.api.domain.post.facade;
 
 import community.mingle.api.domain.auth.service.TokenService;
+import community.mingle.api.domain.notification.event.PopularPostNotificationEvent;
 import community.mingle.api.domain.comment.service.CommentService;
+import community.mingle.api.domain.like.entity.PostLike;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
-import community.mingle.api.domain.post.controller.response.CreatePostResponse;
-import community.mingle.api.domain.post.controller.response.PostCategoryResponse;
-import community.mingle.api.domain.post.controller.response.UpdatePostResponse;
+import community.mingle.api.domain.post.controller.response.*;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.service.PostImageService;
+import community.mingle.api.domain.post.service.PostLikeService;
 import community.mingle.api.domain.post.service.PostService;
-import community.mingle.api.dto.security.TokenDto;
+import community.mingle.api.dto.post.PostStatusDto;
 import community.mingle.api.enums.BoardType;
+import community.mingle.api.enums.CategoryType;
+import community.mingle.api.enums.MemberRole;
+import community.mingle.api.global.s3.S3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static community.mingle.api.global.utils.DateTimeConverter.convertToDateAndTime;
 
 @RequiredArgsConstructor
 @Transactional
@@ -24,29 +34,38 @@ import java.util.List;
 public class PostFacade {
     private final PostService postService;
     private final PostImageService postImageService;
+    private final PostLikeService postLikeService;
     private final TokenService tokenService;
     private final CommentService commentService;
+    private final ApplicationEventPublisher applicationEventPublisher;
+    private final S3Service s3Service;
+    private static final int POPULAR_NOTIFICATION_LIKE_SIZE = 5;
 
-    /**
-     * 게시물 카테고리 목록 조회
-     */
-    public List<PostCategoryResponse> getPostCategory(){
-        TokenDto tokenInfo = tokenService.getTokenInfo();
-        return postService.getPostCategory(tokenInfo.getMemberRole());
+
+    public List<PostCategoryResponse> getPostCategory() {
+        MemberRole memberRole = tokenService.getTokenInfo().getMemberRole();
+
+        return postService.getCategoryListByMemberRole(memberRole).stream()
+                .map(PostCategoryResponse::new)
+                .toList();
     }
 
+
     @Transactional
-    public CreatePostResponse createPost(CreatePostRequest createPostRequest, BoardType boardType) {
-        boolean isFileAttached = (createPostRequest.getMultipartFile() != null) && (!createPostRequest.getMultipartFile().isEmpty());
+    public CreatePostResponse createPost(CreatePostRequest request, BoardType boardType) {
+        boolean isFileAttached = (request.getMultipartFile() != null) && (!request.getMultipartFile().isEmpty());
+        Long memberId = tokenService.getTokenInfo().getMemberId();
         Post post = postService.createPost(
-                                createPostRequest.getTitle(),
-                                createPostRequest.getContent(),
-                                boardType,
-                                createPostRequest.getCategoryType(),
-                                createPostRequest.getIsAnonymous(),
-                                isFileAttached);
+                memberId,
+                request.getTitle(),
+                request.getContent(),
+                boardType,
+                request.getCategoryType(),
+                request.getIsAnonymous(),
+                isFileAttached
+        );
         if (isFileAttached) {
-            postImageService.createPostImage(post, createPostRequest.getMultipartFile());
+            postImageService.createPostImage(post, request.getMultipartFile());
         }
         return CreatePostResponse.builder()
                 .postId(post.getId())
@@ -54,43 +73,170 @@ public class PostFacade {
     }
 
     @Transactional
-    public UpdatePostResponse updatePost(UpdatePostRequest updatePostRequest, BoardType boardType, Long postId) {
-
-//        Long memberIdByJwt = jwtService.getUserIdx();
-        Long memberIdByJwt = 1L;
-
-        Post post = postService.updatePost(memberIdByJwt,
-                                    postId,
-                                    updatePostRequest.getTitle(),
-                                    updatePostRequest.getContent(),
-                                    updatePostRequest.isAnonymous());
-
-        postImageService.updatePostImage(post, updatePostRequest.getImageIdsToDelete(), updatePostRequest.getImagesToAdd());
+    public UpdatePostResponse updatePost(UpdatePostRequest request, Long postId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Post post = postService.updatePost(
+                memberId,
+                postId,
+                request.getTitle(),
+                request.getContent(),
+                request.isAnonymous()
+        );
+        postImageService.updatePostImage(post, request.getImageUrlsToDelete(), request.getImagesToAdd());
 
         return UpdatePostResponse.builder()
-                        .postId(postId)
-                        .categoryType(post.getCategoryType())
-                        .title(post.getTitle())
-                        .content(post.getContent())
-                        .isAnonymous(post.getAnonymous())
-                        .build();
+                .postId(postId)
+                .categoryType(post.getCategoryType())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .isAnonymous(post.getAnonymous())
+                .build();
+    }
 
+    @Transactional
+    public DeletePostResponse deletePost(Long postId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+
+        postService.deletePost(memberId, postId);
+        commentService.deleteAllByPostId(postId);
+        postImageService.deletePostImage(postId);
+
+        return DeletePostResponse.builder()
+                .deleted(true)
+                .build();
+    }
+
+    public PostListResponse getAllPostList(BoardType boardType, PageRequest pageRequest) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        List<Post> postList = postService.pagePostsByBoardType(boardType, pageRequest);
+
+        List<PostPreviewDto> postPreviewDtoList = postList.stream()
+                .map(post -> mapToPostPreviewResponse(post, memberId))
+                .collect(Collectors.toList());
+        return new PostListResponse(postPreviewDtoList);
+    }
+
+
+    public PostListResponse getPostList(BoardType boardType, CategoryType categoryType, PageRequest pageRequest) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        List<Post> postList = postService.pagePostsByBoardTypeAndCategory(boardType, categoryType, pageRequest);
+
+        List<PostPreviewDto> postPreviewDtoList = postList.stream()
+                .map(post -> mapToPostPreviewResponse(post, memberId))
+                .collect(Collectors.toList());
+        return new PostListResponse(postPreviewDtoList);
+    }
+
+
+    public List<PostPreviewDto> getRecentPost(BoardType boardType) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        List<Post> postList = postService.getRecentPostList(boardType, memberId);
+
+        return postList.stream()
+                .map(post -> mapToPostPreviewResponse(post, memberId))
+                .collect(Collectors.toList());
+    }
+
+
+    @Transactional
+    public void updatePostLike(Long postId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        if (postLikeService.isPostLiked(postId, memberId)) {
+            postLikeService.delete(postId, memberId);
+        } else {
+            PostLike postLike = postLikeService.create(postId, memberId);
+            if (postLike.getPost().getPostLikeList().size() == POPULAR_NOTIFICATION_LIKE_SIZE) {
+                applicationEventPublisher.publishEvent(new PopularPostNotificationEvent(this, postId, memberId));
+            }
+        }
+    }
+
+
+    public PostListResponse getBestPost(PageRequest pageRequest) {
+
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+
+        Page<Post> postPage = postService.getBestPostList(memberId, pageRequest);
+
+        List<PostPreviewDto> postPreviewDtoList = postPage.stream()
+                .map(post -> mapToPostPreviewResponse(post, memberId))
+                .collect(Collectors.toList());
+        return new PostListResponse(postPreviewDtoList);
 
     }
 
     @Transactional
-    public String deletePost(Long postId) {
+    public PostDetailResponse getPostDetail(Long postId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Post post = postService.getPost(postId);
 
-        //        Long memberIdByJwt = jwtService.getUserIdx();
-        Long memberIdByJwt = 1L;
+        postService.updateView(post);
 
-        postService.deletePost(memberIdByJwt, postId);
-        commentService.deleteComment(postId);
-        postImageService.deletePostImage(postId);
-
-        String response = "게시물 삭제에 성공하였습니다";
-        return response;
-
+        return mapToPostDetailResponse(post, memberId);
     }
+
+    public PostListResponse getSearchPostList(String keyword, PageRequest pageRequest) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        List<Post> postList = postService.getPostByKeyword(keyword, memberId, pageRequest);
+
+        List<PostPreviewDto> searchPostPreviewDtoList = postList.stream()
+                .map(post -> mapToPostPreviewResponse(post, memberId))
+                .collect(Collectors.toList());
+        return new PostListResponse(searchPostPreviewDtoList);
+    }
+
+    private PostDetailResponse mapToPostDetailResponse(Post post, Long memberId) {
+        PostStatusDto postStatusDto = postService.getPostStatus(post, memberId);
+        List<String> imageUrls = postService.collectPostImageUrls(post);
+        String nickName = postService.calculateNickname(post);
+        String title = postService.titleByStatus(post);
+        String content = postService.contentByStatus(post);
+
+        return PostDetailResponse.builder()
+                .postId(post.getId())
+                .title(title)
+                .content(content)
+                .nickname(nickName)
+                .createdAt(convertToDateAndTime(post.getCreatedAt()))
+                .memberRole(post.getMember().getRole())
+                .boardType(post.getBoardType())
+                .categoryType(post.getCategoryType())
+                .status(post.getStatusType())
+                .likeCount(post.getPostLikeList().size())
+                .commentCount(postService.calculateActiveCommentCount(post))
+                .viewCount(post.getViewCount())
+                .scrapCount(post.getPostScrapList().size())
+                .isFileAttached(post.getFileAttached())
+                .isBlinded(false)
+                .isMyPost(postStatusDto.isMyPost())
+                .isLiked(postStatusDto.isLiked())
+                .isScraped(postStatusDto.isScraped())
+                .postImgUrl(imageUrls)
+                .build();
+    }
+
+    private PostPreviewDto mapToPostPreviewResponse(Post post, Long memberId) {
+        PostStatusDto postStatusDto = postService.getPostStatus(post, memberId);
+        String nickName = postService.calculateNickname(post);
+        String title = postService.titleByStatus(post);
+        String content = postService.contentByStatus(post);
+
+        return PostPreviewDto.builder()
+                .postId(post.getId())
+                .title(title)
+                .content(content)
+                .nickname(nickName)
+                .viewCount(post.getViewCount())
+                .createdAt(convertToDateAndTime(post.getCreatedAt()))
+                .boardType(post.getBoardType())
+                .memberRole(post.getMember().getRole())
+                .categoryType(post.getCategoryType())
+                .likeCount(post.getPostLikeList().size())
+                .commentCount(post.getCommentList().size())
+                .isFileAttached(post.getFileAttached())
+                .isBlinded(postStatusDto.isBlinded())
+                .build();
+    }
+
 
 }

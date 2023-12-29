@@ -26,7 +26,6 @@ public class MemberService {
     private final UniversityRepository universityRepository;
     private final PasswordEncoder passwordEncoder;
 
-
     public Member getByHashedEmail(String hashedEmail) {
         return memberRepository.findByEmail(hashedEmail)
                 .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
@@ -35,6 +34,11 @@ public class MemberService {
     public Member getByEmail(String email) {
         String hashedEmail = EmailHasher.hashEmail(email);
         return getByHashedEmail(hashedEmail);
+    }
+
+    public Member getById(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
     }
 
     public Boolean existsByEmail(String email) {

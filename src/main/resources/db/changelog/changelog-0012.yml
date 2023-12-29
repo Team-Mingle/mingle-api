@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: add seed data for course_type table
+      author: Taehyun Kim
+      changes:
+        - sql:
+            sql: INSERT INTO course_type (type) VALUES ('CRAWL'), ('PERSONAL')

@@ -44,11 +44,23 @@ public class SecretsManagerService {
         return getSecretValue("mingle-api/jwt-dev-token", DevTokenDto.class);
     }
 
+    public String getS3BucketName() {
+        return getSecretValueString("mingle-api/s3-bucket");
+    }
+
     public String getJwtSecretKey() {
         return getSecretValueString("mingle-api/jwt-secret-key");
     }
+    public String getRefreshJwtSecretKey() {
+        return getSecretValueString("mingle-api/refresh-jwt-secret-key");
+    }
+
     public DataSourceConfig getDataSourceConfig(String profile) throws IOException {
         return getSecretValue(projectName + "/" + profile + "/db", DataSourceConfig.class);
+    }
+
+    public String getFcmToken(String profile)  {
+        return getSecretValueString(projectName + "/" + profile + "/fcm-token");
     }
 
     private String getSecretValueString(String name) {

@@ -16,7 +16,7 @@ public class CountryService {
     public List<CountryResponse> getCountries() {
         List<Country> countries = countryRepository.findAll();
         return countries.stream()
-                .map(country -> new CountryResponse(country.getCountry()))
+                .map(country -> new CountryResponse(country.getName()))
                 .collect(Collectors.toList());
     }
 }

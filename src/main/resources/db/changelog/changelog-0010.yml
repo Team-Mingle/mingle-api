@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: add_seed_data_country
+      author: your_name
+      changes:
+        - sql:
+            sql: INSERT INTO country (name) VALUES ('HONGKONG'), ('SINGAPORE')
+
+  - changeSet:
+      id: add_seed_data_university
+      author: your_name
+      changes:
+        - sql:
+            sql: INSERT INTO university (email_domain, country, name) VALUES
+              ('connect.hku.hk', 'HONGKONG', 'HKU'),
+              ('connect.ust.hk', 'HONGKONG', 'HKUST'),
+              ('u.nus.edu', 'SINGAPORE', 'NUS'),
+              ('e.ntu.edu.sg', 'SINGAPORE', 'NTU')
+
+  - changeSet:
+      id: add_seed_data_member
+      author: your_name
+      changes:
+        - sql:
+            sql: INSERT INTO member (id, university_id, nickname, email, password, created_at, updated_at, status, role) VALUES
+              ('1', '1', 'hkuUser', '9e198c491979793b3c985a1a9ecf3ab65a1869ed087b21c5e9a45be5a187001d', '$2a$10$FsoiX3ZO0svqvVrf9mNPre0ADHVH4wI2fAc0dTNhrMdmWxwbP02XC', '2023-01-01 00:00:00', '2023-01-01 00:00:00', 'ACTIVE', 'USER'),
+              ('2', '1', 'hkuAdmin', '589e883405ad513aea2d57605144b8581c4a809b38ae973cd863b1ee9f78c681', '$2a$10$nTA9bpPXA7QtJHHJuiOv0uB3rMysxrM6YzNRTuHEwDM7kaFGDH.6W', '2023-01-01 00:00:00', '2023-01-01 00:00:00', 'ACTIVE', 'ADMIN'),
+              ('3', '1', 'hkuKsa', 'cc236b8b960fc69fb1fa9d8a29672c51feced3a59cf0487597d51ace306d3427', '$2a$10$Blxvg4aEMeRKkWxnPU7v4OP3cL7qp9/0VUF4iwaRqY9CjMrj.LCoq', '2023-01-01 00:00:00', '2023-01-01 00:00:00', 'ACTIVE', 'KSA'),
+              ('4', '3', 'nusUser', '37868ba93b4430e8c9da564090596f9728d2b0384378627a9984e901cba66ffd', '$2a$10$PfIQ0Zs/eJv94qUK1nj8U.2HaOGeHJkyNnhaAUIlA.g4vkVtnLLUa', '2023-01-01 00:00:00', '2023-01-01 00:00:00', 'ACTIVE', 'USER')

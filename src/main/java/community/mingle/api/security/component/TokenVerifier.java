@@ -10,6 +10,7 @@ import community.mingle.api.enums.MemberRole;
 import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.global.exception.ErrorCode;
 import community.mingle.api.infra.SecretsManagerService;
+import community.mingle.api.security.configuration.JwtVerifierFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class TokenVerifier {
     private final SecretsManagerService secretsManagerService;
-    private final JWTVerifier tokenVerifier;
+    private final JwtVerifierFactory jwtVerifierFactory;
 
 
     public TokenDto verify(HttpServletRequest request) {
@@ -29,22 +30,22 @@ public class TokenVerifier {
             return null;
         }
 
-        return verifyToken(authorizationHeader);
+        return verifyToken(authorizationHeader, true);
     }
 
-    public TokenDto verifyToken(String bearerToken) {
+    public TokenDto verifyToken(String bearerToken, boolean isAccessToken) {
         try {
             DevTokenDto devToken = secretsManagerService.getJwtDevToken();
             String token = extractBearerToken(bearerToken);
 
             if (token.equals(devToken.getMingleUser())) {
-                return new TokenDto(5L, MemberRole.USER);
+                return new TokenDto(1L, MemberRole.USER);
             } else if (token.equals(devToken.getMingleAdmin())) {
                 return new TokenDto(2L, MemberRole.ADMIN);
             } else if (token.equals(devToken.getMingleKsa())) {
                 return new TokenDto(3L, MemberRole.KSA);
             } else {
-                return verifyIssuedToken(token);
+                return verifyIssuedToken(token, isAccessToken);
             }
         } catch (TokenExpiredException e) {
             throw new CustomException(ErrorCode.TOKEN_EXPIRED);
@@ -53,7 +54,8 @@ public class TokenVerifier {
         }
     }
 
-    private TokenDto verifyIssuedToken(String token) {
+    private TokenDto verifyIssuedToken(String token, boolean isAccessToken) {
+        JWTVerifier tokenVerifier = jwtVerifierFactory.jwtVerifier(isAccessToken);
         DecodedJWT verifiedJwt = tokenVerifier.verify(token);
         return new TokenDto(verifiedJwt.getClaim("memberId").asLong(), MemberRole.valueOf(verifiedJwt.getClaim("memberRole").asString()));
     }

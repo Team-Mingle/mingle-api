@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: add university to banner table
+      author: admin
+      changes:
+        - addColumn:
+            tableName: banner
+            columns:
+            - column:
+                name: university_id
+                type: int
+                constraints:
+                  nullable: false
+        - addForeignKeyConstraint:
+            baseColumnNames: university_id
+            baseTableName: banner
+            constraintName: banner_ibfk_1
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: university
+            validate: true

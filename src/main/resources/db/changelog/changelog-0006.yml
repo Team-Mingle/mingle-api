@@ -1,113 +1,19 @@
 databaseChangeLog:
   - changeSet:
-      id: create item table
-      author: Boyeong Choi
+      id: modify country pk from country to name
+      author: Hyeonwoo Jung
       changes:
-        - createTable:
-            columns:
-              - column:
-                  autoIncrement: true
-                  constraints:
-                    nullable: false
-                    primaryKey: true
-                  name: id
-                  type: BIGINT
-              - column:
-                  constraints:
-                    nullable: false
-                  name: member_id
-                  type: BIGINT
-              - column:
-                  constraints:
-                    nullable: false
-                  name: title
-                  type: VARCHAR(100)
-              - column:
-                  constraints:
-                    nullable: false
-                  name: price
-                  type: BIGINT
-              - column:
-                  constraints:
-                    nullable: false
-                  name: currency
-                  type: VARCHAR(45)
-              - column:
-                  constraints:
-                    nullable: false
-                  name: content
-                  type: TEXT
-              - column:
-                  constraints:
-                    nullable: false
-                  name: location
-                  type: VARCHAR(100)
-              - column:
-                  constraints:
-                    nullable: false
-                  name: chat_url
-                  type: TEXT
-              - column:
-                  constraints:
-                    nullable: false
-                  name: anonymous
-                  type: BIT(1)
-              - column:
-                  constraints:
-                    nullable: false
-                  name: status
-                  type: VARCHAR(45)
-              - column:
-                  name: view_count
-                  type: INT
-              - column:
-                  constraints:
-                    nullable: false
-                  name: created_at
-                  type: timestamp
-              - column:
-                  constraints:
-                    nullable: false
-                  name: updated_at
-                  type: timestamp
-              - column:
-                  name: deleted_at
-                  type: timestamp
-            tableName: item
-  - changeSet:
-      id: created item_image table
-      author: Boyeong Choi
-      changes:
-        - createTable:
-            columns:
-              - column:
-                  autoIncrement: true
-                  constraints:
-                    nullable: false
-                    primaryKey: true
-                  name: id
-                  type: BIGINT
-              - column:
-                  constraints:
-                    nullable: false
-                  name: item_id
-                  type: BIGINT
-              - column:
-                  constraints:
-                    nullable: false
-                  name: url
-                  type: TEXT
-              - column:
-                  constraints:
-                    nullable: false
-                  name: created_at
-                  type: timestamp
-              - column:
-                  constraints:
-                    nullable: false
-                  name: updated_at
-                  type: timestamp
-              - column:
-                  name: deleted_at
-                  type: timestamp
-            tableName: item_image
+        - dropForeignKeyConstraint:
+            baseTableName: university
+            constraintName: university_ibfk_1
+        - renameColumn:
+            tableName: country
+            oldColumnName: country
+            newColumnName: name
+            columnDataType: varchar(45)
+        - addForeignKeyConstraint:
+            baseTableName: university
+            baseColumnNames: country
+            referencedTableName: country
+            referencedColumnNames: name
+            constraintName: university_ibfk_1

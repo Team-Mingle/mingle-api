@@ -1,0 +1,60 @@
+databaseChangeLog:
+  - changeSet:
+      id: add contentType, contentId columns to Notification
+      author: Taehyun
+      changes:
+        - addColumn:
+            tableName: notification
+            columns:
+              - column:
+                  name: content_type
+                  type: VARCHAR(45)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: content_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: remove foreign_key constraint from Notification table
+      author: Taehyun
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: notification
+            constraintName: notification_ibfk_2
+        - dropForeignKeyConstraint:
+            baseTableName: notification
+            constraintName: notification_ibfk_3
+
+  - changeSet:
+      id: remove boardType, categoryType columns
+      author: Taehyun
+      changes:
+        - dropColumn:
+            tableName: notification
+            columnName: board
+        - dropColumn:
+            tableName: notification
+            columnName: category
+  - changeSet:
+      id: drop post_notification and comment_notification table
+      author: Taehyun Kim
+      changes:
+        - dropForeignKeyConstraint:
+            constraintName: post_notification_ibfk_1
+            baseTableName: post_notification
+        - dropForeignKeyConstraint:
+            constraintName: post_notification_ibfk_2
+            baseTableName: post_notification
+        - dropForeignKeyConstraint:
+            constraintName: comment_notification_ibfk_1
+            baseTableName: comment_notification
+        - dropForeignKeyConstraint:
+            constraintName: comment_notification_ibfk_2
+            baseTableName: comment_notification
+        - dropTable:
+            tableName: post_notification
+        - dropTable:
+            tableName: comment_notification

@@ -45,17 +45,17 @@ public class GlobalExceptionHandler {
         resHeaders.add("Content-Type", "application/json;charset=UTF-8");
 
         String messageCode = "RUNTIME_ERROR";
-        String errorMessage = e.getMessage(); //TODO exception log 고려 필요
+        String errorMessage = e.getMessage(); //TODO exception log 고려 필요 (다 표시하면 안됨)
         ErrorResponse errorResponse = getErrorResponse(messageCode, errorMessage);
         return new ResponseEntity<>(errorResponse, resHeaders, INTERNAL_SERVER_ERROR);
     }
 
     public ErrorResponse getErrorResponse(String originCode, String message) {
         return switch (originCode) {
-            case "NotBlank" -> new ErrorResponse(BAD_REQUEST.value(), "1001", message);
-            case "Email", "Pattern" -> new ErrorResponse(BAD_REQUEST.value(), "1002", message);
-            case "Max", "Min", "Size" -> new ErrorResponse(BAD_REQUEST.value(), "1003", message);
-            default -> new ErrorResponse(INTERNAL_SERVER_ERROR.value(), "1000", message);
+            case "NotBlank" -> new ErrorResponse(BAD_REQUEST.value(), "EMPTY_FIELD_ERROR", message);
+            case "Email", "Pattern" -> new ErrorResponse(BAD_REQUEST.value(), "REGEX_ERROR", message);
+            case "Max", "Min", "Size" -> new ErrorResponse(BAD_REQUEST.value(), "SIZE_LIMIT_ERROR", message);
+            default -> new ErrorResponse(INTERNAL_SERVER_ERROR.value(), "UNEXPECTED_ERROR", message);
         };
     }
 }

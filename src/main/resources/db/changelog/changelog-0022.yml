@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: add point table
+      author: Hyeonwoo Jung
+      changes:
+        - createTable:
+            tableName: point
+            columns:
+              - column:
+                  name: member_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: amount
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: point
+            baseColumnNames: member_id
+            constraintName: fk_point_member_id
+            referencedTableName: member
+            referencedColumnNames: id
