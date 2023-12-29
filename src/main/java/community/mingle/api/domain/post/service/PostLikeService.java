@@ -25,15 +25,11 @@ public class PostLikeService {
     public PostLike create(Long postId, Long memberId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_EXIST));
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-        if (postLikeRepository.existsByPostIdAndMemberId(postId, memberId)) {
-            throw new CustomException(LIKE_ALREADY_EXIST);
-        }
 
         PostLike postLike = PostLike.builder()
                 .post(post)
                 .member(member)
                 .build();
-
         return postLikeRepository.save(postLike);
     }
 
@@ -43,5 +39,10 @@ public class PostLikeService {
                 .orElseThrow(() -> new CustomException(LIKE_NOT_FOUND));
         postLikeRepository.delete(postLike);
     }
+
+    public boolean isPostLiked(Long postId, Long memberId) {
+        return postLikeRepository.existsByPostIdAndMemberId(postId, memberId);
+    }
+
 
 }

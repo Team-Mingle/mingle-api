@@ -37,18 +37,11 @@ public class CommentController {
         return new ResponseEntity<>(deleteCommentResponse, HttpStatus.OK);
     }
 
-    @Operation(summary = "댓글 좋아요 생성 API")
+    @Operation(summary = "댓글 좋아요/좋아요 취소 API")
     @PatchMapping("/like/{commentId}")
-    public ResponseEntity<CreateCommentLikeResponse> createCommentLike(@PathVariable Long commentId) {
-        CreateCommentLikeResponse createCommentLikeResponse = commentFacade.createCommentLike(commentId);
-        return new ResponseEntity<>(createCommentLikeResponse, HttpStatus.OK);
-    }
-
-    @Operation(summary = "댓글 좋아요 삭제 API")
-    @DeleteMapping("/like/delete/{commentId}")
-    public ResponseEntity<DeleteCommentLikeResponse> deleteCommentLike(@PathVariable Long commentId) {
-        DeleteCommentLikeResponse deleteCommentLikeResponse = commentFacade.deleteCommentLike(commentId);
-        return new ResponseEntity<>(deleteCommentLikeResponse, HttpStatus.OK);
+    public ResponseEntity<Void> updateCommentLike(@PathVariable Long commentId) {
+        commentFacade.updateCommentLike(commentId);
+        return ResponseEntity.ok().build();
     }
 
 }

@@ -25,10 +25,6 @@ public class CommentLikeService {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
-        if (commentLikeRepository.existsByCommentAndMember(comment, member)) {
-            throw new CustomException(LIKE_ALREADY_EXIST);
-        }
-
         CommentLike commentLike = CommentLike.builder()
                 .comment(comment)
                 .member(member)
@@ -43,6 +39,10 @@ public class CommentLikeService {
             throw new CustomException(MODIFY_NOT_AUTHORIZED);
         }
         commentLikeRepository.delete(commentLike);
+    }
+
+    public boolean isCommentLiked(Long commentId, Long memberId) {
+        return commentLikeRepository.existsByCommentIdAndMemberId(commentId, memberId);
     }
 }
 
