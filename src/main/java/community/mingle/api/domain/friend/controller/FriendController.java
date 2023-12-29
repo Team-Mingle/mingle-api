@@ -6,6 +6,7 @@ import community.mingle.api.domain.friend.controller.response.CreateFriendCodeRe
 import community.mingle.api.domain.friend.controller.response.CreateFriendResponse;
 import community.mingle.api.domain.friend.controller.response.FriendListResponse;
 import community.mingle.api.domain.friend.facade.FriendFacade;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,8 @@ public class FriendController {
 
     private final FriendFacade friendFacade;
 
-     @PostMapping("/code")
+    @Operation(summary = "친구코드 생성 API")
+    @PostMapping("/code")
      public ResponseEntity<CreateFriendCodeResponse> createFriendCode(
              @RequestBody
              CreateFriendCodeRequest request
@@ -31,6 +33,7 @@ public class FriendController {
          return ResponseEntity.ok(friendFacade.createFriendCode(request));
      }
 
+    @Operation(summary = "친구 추가 API")
     @PostMapping("/create")
     public ResponseEntity<CreateFriendResponse> createFriend(
             @RequestBody
@@ -40,6 +43,10 @@ public class FriendController {
         return ResponseEntity.ok(createFriendResponse);
     }
 
+    @Operation(
+            summary = "친구에게 보여질 기본 이름 가져오기 API",
+            description = "가장 마지막으로 사용한 친구에게 보여질 이름을 가져옵니다."
+    )
     @GetMapping("/display-name")
     public ResponseEntity<String> getMyLastDisplayName() {
         return ResponseEntity.ok(friendFacade.getMyLastDisplayName());
