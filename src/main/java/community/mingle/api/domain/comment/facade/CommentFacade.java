@@ -93,18 +93,15 @@ public class CommentFacade {
     }
 
     @Transactional
-    public CreateCommentLikeResponse createCommentLike(Long commentId) {
+    public void updateCommentLike(Long commentId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
-        commentLikeService.create(commentId, memberId);
-        return new CreateCommentLikeResponse(true);
+        if (commentLikeService.isCommentLiked(commentId, memberId)) {
+            commentLikeService.delete(commentId, memberId);
+        } else {
+            commentLikeService.create(commentId, memberId);
+        }
     }
 
-    @Transactional
-    public DeleteCommentLikeResponse deleteCommentLike(Long commentId) {
-        Long memberId = tokenService.getTokenInfo().getMemberId();
-        commentLikeService.delete(commentId, memberId);
-        return new DeleteCommentLikeResponse(true);
-    }
 
     private PostDetailCommentResponse createCommentResponse(CommentDto commentDto, List<CoCommentDto> coCommentDtoList) {
         //TODO isAdmin -> role, isDeleted/isReported -> status 변경가능?
