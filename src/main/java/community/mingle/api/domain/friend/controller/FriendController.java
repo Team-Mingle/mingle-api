@@ -52,6 +52,7 @@ public class FriendController {
         return ResponseEntity.ok(friendFacade.getMyLastDisplayName());
     }
 
+    @Operation(summary = "친구 리스트 API")
     @GetMapping()
     public ResponseEntity<FriendListResponse> listFriends() {
         return ResponseEntity.ok(friendFacade.listFriends());
