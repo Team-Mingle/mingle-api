@@ -4,11 +4,10 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import community.mingle.api.enums.MemberRole;
 import community.mingle.api.global.exception.CustomException;
+import community.mingle.api.infra.SecretsManagerService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
 
 import static community.mingle.api.global.exception.ErrorCode.FAILED_TO_CREATEJWT;
@@ -17,45 +16,36 @@ import static community.mingle.api.global.exception.ErrorCode.FAILED_TO_CREATEJW
 @AllArgsConstructor
 public class TokenHandler {
 
-    private final Algorithm tokenAlgorithm;
+    private final SecretsManagerService secretsManagerService;
 
     public String createAccessToken(Long memberId, MemberRole memberRole) {
         try {
+            String jwtSecretKey = secretsManagerService.getJwtSecretKey();
+            Date now = new Date();
             return JWT.create()
                     .withClaim("memberId", memberId)
                     .withClaim("memberRole", memberRole.toString())
                     .withExpiresAt(
-                            Date.from(
-                                    LocalDateTime
-                                            .now()
-                                            .plusMinutes(30)
-                                            .atZone(ZoneId.of("Asia/Seoul"))
-                                            .toInstant()
-                            )
+                            new Date(now.getTime() + 30 * 60 * 1000L)
                     )
-                    .sign(tokenAlgorithm);
+                    .sign(Algorithm.HMAC256(jwtSecretKey));
         } catch (Exception e) {
             throw new CustomException(FAILED_TO_CREATEJWT);
         }
     }
 
-
     public String createRefreshToken(Long memberId, MemberRole memberRole) {
         try {
-
+            String refreshJwtSecretKey = secretsManagerService.getRefreshJwtSecretKey();
+            Date now = new Date();
             return JWT.create()
                     .withClaim("memberId", memberId)
                     .withClaim("memberRole", memberRole.toString())
                     .withExpiresAt(
-                            Date.from(
-                                    LocalDateTime
-                                            .now()
-                                            .plusDays(30)
-                                            .atZone(ZoneId.of("Asia/Seoul"))
-                                            .toInstant()
-                            )
+                            new Date(now.getTime() + 1460 * 24 * 60 * 60 * 1000L)
                     )
-                    .sign(tokenAlgorithm);
+                    .sign(Algorithm.HMAC256(refreshJwtSecretKey)
+                    );
         } catch (Exception e) {
             throw new CustomException(FAILED_TO_CREATEJWT);
         }

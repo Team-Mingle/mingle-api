@@ -90,6 +90,12 @@ public class PostService {
                 .orElse(null);
     }
 
+
+    public List<Post> pagePostsByBoardType(BoardType boardType, PageRequest pageRequest) {
+        Page<Post> pagePosts = postRepository.findAllByBoardType(boardType, pageRequest);
+        return pagePosts.toList();
+    }
+
     public List<Post> pagePostsByBoardTypeAndCategory(BoardType boardType, CategoryType categoryType, PageRequest pageRequest) {
         Page<Post> pagePosts = postRepository.findAllByBoardTypeAndCategoryType(boardType, categoryType, pageRequest);
         return pagePosts.toList();
@@ -164,7 +170,7 @@ public class PostService {
                 yield "사유: " + reportType.getDescription();
             }
             case DELETED -> "사유: 이용약관 제 12조 위반";
-            default -> post.getTitle();
+            default -> post.getContent();
         };
     }
 

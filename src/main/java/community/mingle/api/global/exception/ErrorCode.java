@@ -62,6 +62,9 @@ public enum ErrorCode {
     INVALID_IMAGE_FORMAT(400, "INVALID_IMAGE_FORMAT", "지원하지 않는 파일 형식입니다."),
     DELETE_FAIL_IMAGE(500,"DELETE_FAIL_IMAGE" , "이미지 삭제에 실패하였습니다,"),
 
+    //notification
+    NOTIFICATION_NOT_FOUND(404, "NOTIFICATION_NOT_FOUND", "존재하지 않는 알림입니다."),
+
     //Internal server error
 
     INTERNAL_SERVER_ERROR(500, "500", "INTERNAL SERVER ERROR");

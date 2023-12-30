@@ -48,6 +48,14 @@ public class PostController {
         return new ResponseEntity<>(createPostResponse, HttpStatus.OK);
     }
 
+    @Operation(summary = "게시물 전체글 리스트 API")
+    @GetMapping("/{boardType}/all")
+    public ResponseEntity<PostListResponse> AllPosts(@PathVariable BoardType boardType, @Parameter Pageable pageable) {
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
+        PostListResponse postPreviewList = postFacade.getAllPostList(boardType, pageRequest);
+        return ResponseEntity.ok().body(postPreviewList);
+    }
+
     @Operation(summary = "게시물 리스트 API")
     @GetMapping("/{boardType}/{categoryType}")
     //TODO status에 따른 title, content 변경
@@ -106,20 +114,11 @@ public class PostController {
         return ResponseEntity.ok().body(postPreviewResponseList);
     }
 
-
-    @Operation(summary = "게시물 좋아요 생성 API")
+    @Operation(summary = "게시물 좋아요/좋아요 취소 API")
     @PostMapping("/like/{postId}")
-    public ResponseEntity<CreatePostLikeResponse> createPostLike(@PathVariable Long postId) {
-        CreatePostLikeResponse createPostLikeResponse = postFacade.createPostLike(postId);
-        return ResponseEntity.ok().body(createPostLikeResponse);
-    }
-
-    @Operation(summary = "게시물 좋아요 삭제 API")
-    @DeleteMapping("/like/delete/{postLikeId}")
-    public ResponseEntity<DeletePostLikeResponse> deletePostLike(@PathVariable Long postLikeId) {
-        DeletePostLikeResponse deletePostLikeResponse = postFacade.deletePostLike(postLikeId);
-
-        return ResponseEntity.ok().body(deletePostLikeResponse);
+    public ResponseEntity<Void> updatePostLike(@PathVariable Long postId) {
+        postFacade.updatePostLike(postId);
+        return ResponseEntity.ok().build();
     }
 
 

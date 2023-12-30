@@ -12,4 +12,6 @@ import org.springframework.stereotype.Repository;
 public interface PostRepository extends JpaRepository<Post, Long>{
 
     public Page<Post> findAllByBoardTypeAndCategoryType(BoardType boardType, CategoryType categoryType, PageRequest pageRequest);
+
+    Page<Post> findAllByBoardType(BoardType boardType, PageRequest pageRequest);
 }

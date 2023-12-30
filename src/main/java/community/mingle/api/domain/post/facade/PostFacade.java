@@ -39,6 +39,7 @@ public class PostFacade {
     private final CommentService commentService;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final S3Service s3Service;
+    private static final int POPULAR_NOTIFICATION_LIKE_SIZE = 5;
 
 
     public List<PostCategoryResponse> getPostCategory() {
@@ -105,6 +106,17 @@ public class PostFacade {
                 .build();
     }
 
+    public PostListResponse getAllPostList(BoardType boardType, PageRequest pageRequest) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        List<Post> postList = postService.pagePostsByBoardType(boardType, pageRequest);
+
+        List<PostPreviewDto> postPreviewDtoList = postList.stream()
+                .map(post -> mapToPostPreviewResponse(post, memberId))
+                .collect(Collectors.toList());
+        return new PostListResponse(postPreviewDtoList);
+    }
+
+
     public PostListResponse getPostList(BoardType boardType, CategoryType categoryType, PageRequest pageRequest) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         List<Post> postList = postService.pagePostsByBoardTypeAndCategory(boardType, categoryType, pageRequest);
@@ -127,20 +139,16 @@ public class PostFacade {
 
 
     @Transactional
-    public CreatePostLikeResponse createPostLike(Long postId) {
+    public void updatePostLike(Long postId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
-        PostLike postLike = postLikeService.create(postId, memberId);
-        if (postLike.getPost().getPostLikeList().size() == 5) {
-            applicationEventPublisher.publishEvent(new PopularPostNotificationEvent(this, postId, memberId));
+        if (postLikeService.isPostLiked(postId, memberId)) {
+            postLikeService.delete(postId, memberId);
+        } else {
+            PostLike postLike = postLikeService.create(postId, memberId);
+            if (postLike.getPost().getPostLikeList().size() == POPULAR_NOTIFICATION_LIKE_SIZE) {
+                applicationEventPublisher.publishEvent(new PopularPostNotificationEvent(this, postId, memberId));
+            }
         }
-        return new CreatePostLikeResponse(true);
-    }
-
-    @Transactional
-    public DeletePostLikeResponse deletePostLike(Long postLikeId) {
-        Long memberId = tokenService.getTokenInfo().getMemberId();
-        postLikeService.delete(postLikeId, memberId);
-        return new DeletePostLikeResponse(true);
     }
 
 
