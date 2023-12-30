@@ -20,6 +20,7 @@ import community.mingle.api.enums.Semester;
 import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -27,8 +28,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static community.mingle.api.global.exception.ErrorCode.COURSE_TIME_CONFLICT;
+import static community.mingle.api.global.exception.ErrorCode.MEMBER_NOT_FRIEND;
 
 @Service
 @RequiredArgsConstructor
@@ -63,6 +66,7 @@ public class TimetableFacade {
         Course course = courseService.getCourseById(request.courseId());
         List<CourseTimeDto> courseTimeDtoList = course.getCourseTimeList().stream().map(CourseTime::toDto).toList();
 
+        timetableService.checkCourseAlreadyAdded(timetable, course);
         timetableService.deleteConflictCoursesByOverrideValidation(timetable, courseTimeDtoList, request.overrideValidation());
 
         timetableService.addCourse(timetable, course);
@@ -142,6 +146,27 @@ public class TimetableFacade {
         Member member = memberService.getById(memberId);
 
         Timetable timetable = timetableService.getById(timetableId, member);
+        return getTimetableDetailResponse(timetable);
+    }
+
+    public FriendTimetableDetailResponse getFriendTimetableList(Long friendMemberId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+
+        Member friend = memberService.getById(friendMemberId);
+        boolean isMyFriend = friend.getFriendsOfMine().stream()
+                .anyMatch(it -> it.getId().equals(memberId));
+        if (!isMyFriend) {
+            throw new CustomException(MEMBER_NOT_FRIEND);
+        }
+        List<Timetable> pinnedTimetableList = timetableService.listByIdAndIsPinnedTrue(friend);
+        List<TimetableDetailResponse> timetableDetailResponseList = pinnedTimetableList.stream()
+                .map(this::getTimetableDetailResponse).toList();
+
+        return new FriendTimetableDetailResponse(timetableDetailResponseList);
+    }
+
+    @NotNull
+    private TimetableDetailResponse getTimetableDetailResponse(Timetable timetable) {
         List<CoursePreviewResponse> coursePreviewResponseList = timetable.getCourseTimetableList().stream()
                 .map(courseTimetable -> {
                     Course course = courseTimetable.getCourse();
@@ -158,7 +183,6 @@ public class TimetableFacade {
                     );
                 })
                 .toList();
-
         return new TimetableDetailResponse(
                 timetable.getName(),
                 timetable.getSemester(),
