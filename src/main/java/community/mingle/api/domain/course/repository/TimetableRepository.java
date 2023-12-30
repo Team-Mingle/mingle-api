@@ -17,4 +17,6 @@ public interface TimetableRepository extends JpaRepository<Timetable, Long> {
 
     public List<Timetable> findAllByMember(Member member);
     public Optional<Timetable> findByMemberAndSemesterAndIsPinnedIsTrue(Member member, Semester semester);
+
+    public List<Timetable> findAllByMemberAndIsPinnedTrue(Member member);
 }

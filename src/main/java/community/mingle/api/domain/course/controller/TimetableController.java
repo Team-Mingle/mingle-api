@@ -3,10 +3,7 @@ package community.mingle.api.domain.course.controller;
 import community.mingle.api.domain.course.controller.request.CreateTimetableRequest;
 import community.mingle.api.domain.course.controller.request.UpdateTimetableCourseRequest;
 import community.mingle.api.domain.course.controller.request.UpdateTimetableNameRequest;
-import community.mingle.api.domain.course.controller.response.CreateTimetableResponse;
-import community.mingle.api.domain.course.controller.response.TimetableDetailResponse;
-import community.mingle.api.domain.course.controller.response.TimetableListResponse;
-import community.mingle.api.domain.course.controller.response.UpdateTimetableCourseResponse;
+import community.mingle.api.domain.course.controller.response.*;
 import community.mingle.api.domain.course.facade.TimetableFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -64,7 +61,7 @@ public class TimetableController {
     public ResponseEntity<Void> updateTimetableName(
             @PathVariable Long timetableId,
             @RequestBody UpdateTimetableNameRequest request
-            ) {
+    ) {
         timetableFacade.updateTimetableName(timetableId, request);
         return ResponseEntity.ok().build();
     }
@@ -91,5 +88,15 @@ public class TimetableController {
     ) {
         return ResponseEntity.ok(timetableFacade.getTimetableDetail(timetableId));
     }
+
+    @Operation(summary = "친구 시간표 상세 리스트 API")
+    @GetMapping("/friend/{friendMemberId}")
+    public ResponseEntity<FriendTimetableDetailResponse> getFriendTimetableList(
+            @PathVariable Long friendMemberId
+    ) {
+        return ResponseEntity.ok(timetableFacade.getFriendTimetableList(friendMemberId));
+    }
+
+
 
 }

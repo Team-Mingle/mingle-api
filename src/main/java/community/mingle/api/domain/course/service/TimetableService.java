@@ -13,12 +13,15 @@ import community.mingle.api.dto.course.CourseTimeDto;
 import community.mingle.api.enums.CourseType;
 import community.mingle.api.enums.Semester;
 import community.mingle.api.global.exception.CustomException;
+import community.mingle.api.global.exception.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.Time;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static community.mingle.api.global.exception.ErrorCode.*;
@@ -114,7 +117,14 @@ public class TimetableService {
         } else if (overrideValidation && !conflictCourseList.isEmpty()) {
             conflictCourseList.stream()
                     .filter(course -> course.getType().equals(CourseType.CRAWL))
-                    .forEach(course -> courseTimetableRepository.deleteAll(course.getCourseTimetableList()));
+                    .forEach(course -> {
+                        CourseTimetable courseTimetable = courseTimetableRepository
+                                .findByTimetableIdAndCourseId(
+                                        timetable.getId(),
+                                        course.getId())
+                                .get();
+                        courseTimetableRepository.delete(courseTimetable);
+                    });
 
             conflictCourseList.stream()
                     .filter(course -> course.getType().equals(CourseType.PERSONAL))
@@ -122,7 +132,18 @@ public class TimetableService {
         }
     }
 
-    public List<Course> coursesConflictWithNewCourseTime(Timetable timetable, List<CourseTimeDto> courseTimeList) {
+    public void checkCourseAlreadyAdded(Timetable timetable, Course course) {
+        courseTimetableRepository.findByTimetableIdAndCourseId(timetable.getId(), course.getId())
+                .ifPresent(it -> {
+                    throw new CustomException(COURSE_ALREADY_ADDED);
+                });
+    }
+
+    public List<Timetable> listByIdAndIsPinnedTrue(Member member) {
+        return timetableRepository.findAllByMember(member);
+    }
+
+    private List<Course> coursesConflictWithNewCourseTime(Timetable timetable, List<CourseTimeDto> courseTimeList) {
         List<CourseTimetable> existingCourses = timetable.getCourseTimetableList();
 
         return existingCourses.stream()
