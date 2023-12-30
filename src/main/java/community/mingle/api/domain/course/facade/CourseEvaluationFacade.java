@@ -2,14 +2,19 @@ package community.mingle.api.domain.course.facade;
 
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.course.controller.request.CreateCourseEvaluationRequest;
+import community.mingle.api.domain.course.controller.response.CourseEvaluationResponse;
 import community.mingle.api.domain.course.entity.Course;
+import community.mingle.api.domain.course.entity.CourseEvaluation;
 import community.mingle.api.domain.course.service.CourseEvaluationService;
 import community.mingle.api.domain.course.service.CourseService;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
+import community.mingle.api.dto.course.CourseEvaluationDto;
 import community.mingle.api.enums.Semester;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,5 +39,21 @@ public class CourseEvaluationFacade {
                 request.comment(),
                 request.rating()
         );
+    }
+
+    public CourseEvaluationResponse getCourseEvaluationList(Long courseId) {
+        Course course = courseService.getCourseById(courseId);
+        List<CourseEvaluation> courseEvaluationList = courseEvaluationService.getByCourse(course);
+        List<CourseEvaluationDto> courseEvaluationDtoList = courseEvaluationList.stream()
+                .map(courseEvaluation -> {
+                    return new CourseEvaluationDto(
+                            courseEvaluation.getId(),
+                            courseEvaluation.getSemester(),
+                            courseEvaluation.getComment(),
+                            courseEvaluation.getRating()
+                    );
+                }).toList();
+
+        return new CourseEvaluationResponse(courseEvaluationDtoList);
     }
 }
