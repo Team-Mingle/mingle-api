@@ -8,20 +8,18 @@ import community.mingle.api.domain.course.repository.CourseRepository;
 import community.mingle.api.domain.course.repository.CourseTimetableRepository;
 import community.mingle.api.domain.course.repository.TimetableRepository;
 import community.mingle.api.domain.member.entity.Member;
-import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.dto.course.CourseTimeDto;
+import community.mingle.api.enums.CourseColourRgb;
 import community.mingle.api.enums.CourseType;
 import community.mingle.api.enums.Semester;
 import community.mingle.api.global.exception.CustomException;
-import community.mingle.api.global.exception.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.sql.Time;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static community.mingle.api.global.exception.ErrorCode.*;
@@ -66,9 +64,12 @@ public class TimetableService {
 
     @Transactional
     public CourseTimetable addCourse(Timetable timetable, Course course) {
+
+        CourseColourRgb rgb = getRandomRgb(timetable);
         CourseTimetable courseTimetable = CourseTimetable.builder()
                 .timetable(timetable)
                 .course(course)
+                .rgb(rgb.getStringRgb())
                 .build();
         return courseTimetableRepository.save(courseTimetable);
     }
@@ -167,6 +168,31 @@ public class TimetableService {
     private void hasPermission(Member member, Timetable timetable) {
         if (!timetable.getMember().getId().equals(member.getId())) {
             throw new CustomException(MODIFY_NOT_AUTHORIZED);
+        }
+    }
+
+    private CourseColourRgb getRandomRgb(Timetable timetable) {
+        List<CourseColourRgb> colourRgbs = timetable.getCourseTimetableList().stream()
+                .map(it -> CourseColourRgb.getByRgb(it.getRgb()))
+                .toList();
+
+        if (colourRgbs.isEmpty()) {
+            return Arrays.stream(CourseColourRgb.values())
+                    .findFirst().get();
+        } else if (colourRgbs.size() < CourseColourRgb.values().length) {
+            return EnumSet.complementOf(EnumSet.copyOf(colourRgbs))
+                    .stream()
+                    .findAny().get();
+        } else {
+            Map<CourseColourRgb, Long> countByEnum = colourRgbs.stream()
+                    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+            long minCount = countByEnum.values().stream().min(Long::compareTo).orElse(0L);
+
+            return countByEnum.entrySet().stream()
+                    .filter(entry -> entry.getValue() == minCount)
+                    .map(Map.Entry::getKey)
+                    .findAny().get();
         }
     }
 
