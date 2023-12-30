@@ -1,6 +1,7 @@
 package community.mingle.api.domain.course.controller;
 
 import community.mingle.api.domain.course.controller.request.CreateCourseEvaluationRequest;
+import community.mingle.api.domain.course.controller.response.CourseEvaluationResponse;
 import community.mingle.api.domain.course.facade.CourseEvaluationFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,5 +26,15 @@ public class CourseEvaluationController {
     ) {
         courseEvaluationFacade.create(request);
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "강의 평가 리스트 API")
+    @GetMapping("/{courseId}")
+    public ResponseEntity<CourseEvaluationResponse> getCourseEvaluationList(
+            @PathVariable
+            Long courseId
+    ) {
+        CourseEvaluationResponse response = courseEvaluationFacade.getCourseEvaluationList(courseId);
+        return ResponseEntity.ok().body(response);
     }
 }

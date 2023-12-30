@@ -14,6 +14,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CourseEvaluationService {
@@ -38,6 +40,10 @@ public class CourseEvaluationService {
         earnPoint(member);
 
         return courseEvaluationRepository.save(courseEvaluation);
+    }
+
+    public List<CourseEvaluation> getByCourse(Course course) {
+        return courseEvaluationRepository.findAllByCourse(course);
     }
 
     private void checkCourseEvaluated(Member member, Course course) {
