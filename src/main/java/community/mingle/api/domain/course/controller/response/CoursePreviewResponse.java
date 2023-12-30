@@ -11,7 +11,8 @@ public record CoursePreviewResponse(
         String semester,
         String professor,
         String subclass,
-        List<CourseTimeDto> courseTimeDtoList
+        List<CourseTimeDto> courseTimeDtoList,
+        String rgb
 
         ) {
 }

@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: add rgb column to course_timetable table
+      author: Hyeonwoo Jung
+      changes:
+        - addColumn:
+            tableName: course_timetable
+            columns:
+              - column:
+                  name: rgb
+                  type: varchar(45)
+                  constraints:
+                    nullable: false

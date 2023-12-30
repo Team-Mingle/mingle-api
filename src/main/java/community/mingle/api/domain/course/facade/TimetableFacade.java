@@ -3,8 +3,6 @@ package community.mingle.api.domain.course.facade;
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.course.controller.request.CreateTimetableRequest;
 import community.mingle.api.domain.course.controller.request.UpdateTimetableCourseRequest;
-import community.mingle.api.domain.course.controller.response.CreateTimetableResponse;
-import community.mingle.api.domain.course.controller.response.UpdateTimetableCourseResponse;
 import community.mingle.api.domain.course.controller.request.UpdateTimetableNameRequest;
 import community.mingle.api.domain.course.controller.response.*;
 import community.mingle.api.domain.course.entity.Course;
@@ -28,9 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static community.mingle.api.global.exception.ErrorCode.COURSE_TIME_CONFLICT;
 import static community.mingle.api.global.exception.ErrorCode.MEMBER_NOT_FRIEND;
 
 @Service
@@ -179,7 +175,8 @@ public class TimetableFacade {
                             course.getSubclass(),
                             course.getCourseTimeList().stream()
                                     .map(CourseTime::toDto)
-                                    .toList()
+                                    .toList(),
+                            courseTimetable.getRgb()
                     );
                 })
                 .toList();
