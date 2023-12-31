@@ -90,11 +90,11 @@ public class TimetableController {
     }
 
     @Operation(summary = "친구 시간표 상세 리스트 API")
-    @GetMapping("/friend/{friendMemberId}")
+    @GetMapping("/friend/{friendId}")
     public ResponseEntity<FriendTimetableDetailResponse> getFriendTimetableList(
-            @PathVariable Long friendMemberId
+            @PathVariable Long friendId
     ) {
-        return ResponseEntity.ok(timetableFacade.getFriendTimetableList(friendMemberId));
+        return ResponseEntity.ok(timetableFacade.getFriendTimetableList(friendId));
     }
 
 

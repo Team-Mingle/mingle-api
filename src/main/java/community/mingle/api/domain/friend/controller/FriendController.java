@@ -67,7 +67,4 @@ public class FriendController {
         friendFacade.deleteFriend(friendId);
         return ResponseEntity.ok().build();
     }
-
-
-
 }

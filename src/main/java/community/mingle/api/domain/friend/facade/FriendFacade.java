@@ -42,7 +42,7 @@ public class FriendFacade {
         friendService.createFriend(member, request.friendCode(), request.myDisplayName());
         List<Friend> friendList = friendService.listFriends(member);
         List<FriendDto> friendDtoList = friendList.stream()
-                .map(friend -> new FriendDto(friend.getId(), friend.getName()))
+                .map(friend -> new FriendDto(friend.getId(), friend.getFriendName()))
                 .toList();
         return new CreateFriendResponse(friendDtoList);
     }
@@ -58,7 +58,7 @@ public class FriendFacade {
         Member member = memberService.getById(memberId);
         List<Friend> friendList = friendService.listFriends(member);
         List<FriendDto> friendDtoList = friendList.stream()
-                .map(friend -> new FriendDto(friend.getId(), friend.getName()))
+                .map(friend -> new FriendDto(friend.getId(), friend.getFriendName()))
                 .toList();
         return new FriendListResponse(friendDtoList);
     }
@@ -67,8 +67,7 @@ public class FriendFacade {
     public void deleteFriend(Long friendId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
-        Member friend = memberService.getById(friendId);
-        friendService.deleteFriend(member, friend);
+        friendService.deleteFriend(member, friendId);
     }
 
 }
