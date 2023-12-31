@@ -10,6 +10,8 @@ import community.mingle.api.domain.course.entity.CourseTime;
 import community.mingle.api.domain.course.entity.Timetable;
 import community.mingle.api.domain.course.service.CourseService;
 import community.mingle.api.domain.course.service.TimetableService;
+import community.mingle.api.domain.friend.entity.Friend;
+import community.mingle.api.domain.friend.service.FriendService;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.dto.course.CourseTimeDto;
@@ -38,6 +40,7 @@ public class TimetableFacade {
     private final CourseService courseService;
     private final TokenService tokenService;
     private final MemberService memberService;
+    private final FriendService friendService;
 
     @Transactional
     public CreateTimetableResponse createTimetable(CreateTimetableRequest request) {
@@ -145,12 +148,12 @@ public class TimetableFacade {
         return getTimetableDetailResponse(timetable);
     }
 
-    public FriendTimetableDetailResponse getFriendTimetableList(Long friendMemberId) {
+    public FriendTimetableDetailResponse getFriendTimetableList(Long friendId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
-
-        Member friend = memberService.getById(friendMemberId);
+        Friend friendRelation = friendService.getById(friendId);
+        Member friend = friendRelation.getFriend();
         boolean isMyFriend = friend.getFriendsOfMine().stream()
-                .anyMatch(it -> it.getId().equals(memberId));
+                .anyMatch(it -> it.getFriend().getId().equals(memberId));
         if (!isMyFriend) {
             throw new CustomException(MEMBER_NOT_FRIEND);
         }

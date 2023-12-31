@@ -24,6 +24,10 @@ public class FriendService {
     private final FriendCodeRepository friendCodeRepository;
     private final FriendRepository friendRepository;
 
+    public Friend getById(Long friendId) {
+        return friendRepository.findById(friendId).orElseThrow(() -> new CustomException(FRIEND_NOT_FOUND));
+    }
+
     @Transactional
     public FriendCode createFriendCode(Member member, String myDisplayName) {
 
@@ -46,13 +50,13 @@ public class FriendService {
         Friend friend = Friend.builder()
                 .member(member)
                 .friend(checkedFriendCode.getMember())
-                .name(checkedFriendCode.getDisplayName())
+                .friendName(checkedFriendCode.getDisplayName())
                 .build();
 
         Friend reverseFriend = Friend.builder()
                 .member(checkedFriendCode.getMember())
                 .friend(member)
-                .name(myDisplayName)
+                .friendName(myDisplayName)
                 .build();
 
         //LastDisplayName은 friendCode의 제일 최근 이름을 가져오고 있음
@@ -68,11 +72,15 @@ public class FriendService {
     }
 
     @Transactional
-    public void deleteFriend(Member member, Member friend) {
-        friendRepository.findByMemberAndFriend(member, friend)
-                .ifPresent(friendRepository::delete);
-        friendRepository.findByMemberAndFriend(friend, member)
-                .ifPresent(friendRepository::delete);
+    public void deleteFriend(Member member, Long friendId) {
+        Friend memberToFriendRelation = friendRepository.findById(friendId).orElseThrow(() -> new CustomException(FRIEND_NOT_FOUND));
+        if (!member.equals(memberToFriendRelation.getMember())) {
+            throw new CustomException(MEMBER_NOT_FRIEND);
+        }
+        Member friend = memberToFriendRelation.getFriend();
+        Friend friendToMemberRelation = friendRepository.findByMemberAndFriend(friend, member).orElseThrow(() -> new CustomException(FRIEND_NOT_FOUND));
+        friendRepository.delete(memberToFriendRelation);
+        friendRepository.delete(friendToMemberRelation);
     }
 
     public String getMemberLastDisplayName(Member member) {

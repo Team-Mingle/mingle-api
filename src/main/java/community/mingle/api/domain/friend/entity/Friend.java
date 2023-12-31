@@ -35,7 +35,7 @@ public class Friend extends AuditLoggingBase {
 
     @NotNull
     @Column(name = "name", nullable = false)
-    private String name;
+    private String friendName;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
