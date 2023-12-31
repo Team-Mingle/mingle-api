@@ -1,7 +1,9 @@
 package community.mingle.api.domain.point.event.eventhandler;
 
-import community.mingle.api.domain.course.entity.Point;
-import community.mingle.api.domain.course.repository.PointRepository;
+import community.mingle.api.domain.point.entity.Point;
+import community.mingle.api.domain.point.entity.PointLog;
+import community.mingle.api.domain.point.repository.PointLogRepository;
+import community.mingle.api.domain.point.repository.PointRepository;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.domain.point.event.EarningPointEvent;
@@ -19,8 +21,9 @@ public class PointEventHandler {
 
     private final PointRepository pointRepository;
     private final MemberRepository memberRepository;
+    private final PointLogRepository pointLogRepository;
+
     @EventListener(EarningPointEvent.class)
-    @Async
     @Transactional
     public void handleEarningPointEvent(EarningPointEvent event) {
         pointRepository.findById(event.getMemberId())
@@ -37,5 +40,12 @@ public class PointEventHandler {
                             pointRepository.save(point);
                         }
                 );
+        pointLogRepository.save(
+                PointLog.builder()
+                        .memberId(event.getMemberId())
+                        .changedAmount(event.getPointEarningType().getEarningAmount())
+                        .reason(event.getPointEarningType().getReason())
+                        .build()
+        );
     }
 }
