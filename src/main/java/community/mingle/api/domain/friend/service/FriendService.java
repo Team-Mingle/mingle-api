@@ -5,9 +5,12 @@ import community.mingle.api.domain.friend.entity.FriendCode;
 import community.mingle.api.domain.friend.repository.FriendCodeRepository;
 import community.mingle.api.domain.friend.repository.FriendRepository;
 import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.domain.point.event.EarningPointEvent;
+import community.mingle.api.enums.PointEarningType;
 import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,6 +26,7 @@ public class FriendService {
 
     private final FriendCodeRepository friendCodeRepository;
     private final FriendRepository friendRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public Friend getById(Long friendId) {
         return friendRepository.findById(friendId).orElseThrow(() -> new CustomException(FRIEND_NOT_FOUND));
@@ -65,6 +69,9 @@ public class FriendService {
         friendCodeRepository.delete(checkedFriendCode);
         friendRepository.save(friend);
         friendRepository.save(reverseFriend);
+
+        applicationEventPublisher.publishEvent(new EarningPointEvent(this, PointEarningType.ADD_FRIEND, member.getId()));
+        applicationEventPublisher.publishEvent(new EarningPointEvent(this, PointEarningType.ADD_FRIEND, friend.getFriend().getId()));
     }
 
     public List<Friend> listFriends(Member member) {
