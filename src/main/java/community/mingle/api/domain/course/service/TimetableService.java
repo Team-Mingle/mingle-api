@@ -38,7 +38,11 @@ public class TimetableService {
         List<Timetable> timetableList = timetableRepository.findAllByMemberAndSemesterOrderByOrderNumberDesc(member, semesterEnum);
 
         int orderNumber;
-        if(timetableList.isEmpty()) orderNumber = 1;
+        boolean isPinned = false;
+        if(timetableList.isEmpty()) {
+            orderNumber = 1;
+            isPinned = true;
+        }
         else orderNumber = timetableList.get(0).getOrderNumber() + 1;
 
         String defaultName = "시간표 " + orderNumber;
@@ -46,9 +50,8 @@ public class TimetableService {
         Timetable timetable = Timetable.builder()
                 .name(defaultName)
                 .semester(semesterEnum)
-
                 .orderNumber(orderNumber)
-                .isPinned(false)
+                .isPinned(isPinned)
                 .member(member)
                 .build();
 
@@ -101,12 +104,13 @@ public class TimetableService {
     }
 
     @Transactional
-    public void convertPinStatus(Timetable timetable, Member member) {
+    public void changePinnedTimetable(Timetable timetable, Member member) {
         hasPermission(member, timetable);
-        if (!timetable.getIsPinned()) {
-            timetableRepository.findByMemberAndSemesterAndIsPinnedIsTrue(member, timetable.getSemester())
-                    .ifPresent(Timetable::convertPinStatus);
+        if (timetable.getIsPinned()) {
+            throw new CustomException(TIMETABLE_ALREADY_PINNED);
         }
+        timetableRepository.findByMemberAndSemesterAndIsPinnedIsTrue(member, timetable.getSemester())
+                .ifPresent(Timetable::convertPinStatus);
         timetable.convertPinStatus();
     }
 

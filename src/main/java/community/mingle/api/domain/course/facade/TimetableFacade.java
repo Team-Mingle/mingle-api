@@ -100,11 +100,11 @@ public class TimetableFacade {
     }
 
     @Transactional
-    public void convertPinStatus(Long timetableId) {
+    public void changePinnedTimetable(Long timetableId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
         Timetable timetable = timetableService.getById(timetableId, member);
-        timetableService.convertPinStatus(timetable, member);
+        timetableService.changePinnedTimetable(timetable, member);
     }
 
     public TimetableListResponse getTimetableList() {

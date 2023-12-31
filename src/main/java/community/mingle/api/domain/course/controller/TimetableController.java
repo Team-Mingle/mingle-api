@@ -66,12 +66,12 @@ public class TimetableController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "시간표 고정/고정 취소 API")
+    @Operation(summary = "기본 시간표 변경 API")
     @PatchMapping("/{timetableId}/pin")
-    public ResponseEntity<Void> updateTimetablePin(
+    public ResponseEntity<Void> changePinnedTimetable(
             @PathVariable Long timetableId
     ) {
-        timetableFacade.convertPinStatus(timetableId);
+        timetableFacade.changePinnedTimetable(timetableId);
         return ResponseEntity.ok().build();
     }
 

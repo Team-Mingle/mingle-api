@@ -43,6 +43,7 @@ public enum ErrorCode {
     FRIEND_ALREADY_ADDED(409, "FRIEND_ALREADY_ADDED", "이미 친구로 등록된 사용자입니다."),
     MEMBER_NOT_FRIEND(403, "MEMBER_NOT_FRIEND", "해당 유저의 친구로 등록된 유저가 아닙니다."),
     COURSE_ALREADY_ADDED(409, "COURSE_ALREADY_ADDED", "이미 추가된 강의입니다."),
+    TIMETABLE_ALREADY_PINNED(409, "TIMETABLE_ALREADY_PINNED", "이미 고정된 시간표입니다."),
 
     // 2. TODO post, comment 정리
     MODIFY_NOT_AUTHORIZED(403, "MODIFY_NOT_AUTHORIZED", "수정 권한이 없습니다"),
