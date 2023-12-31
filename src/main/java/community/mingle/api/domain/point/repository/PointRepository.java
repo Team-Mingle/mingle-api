@@ -1,6 +1,6 @@
-package community.mingle.api.domain.course.repository;
+package community.mingle.api.domain.point.repository;
 
-import community.mingle.api.domain.course.entity.Point;
+import community.mingle.api.domain.point.entity.Point;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
