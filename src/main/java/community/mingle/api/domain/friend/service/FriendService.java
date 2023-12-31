@@ -67,6 +67,14 @@ public class FriendService {
         return friendRepository.findAllByMember(member);
     }
 
+    @Transactional
+    public void deleteFriend(Member member, Member friend) {
+        friendRepository.findByMemberAndFriend(member, friend)
+                .ifPresent(friendRepository::delete);
+        friendRepository.findByMemberAndFriend(friend, member)
+                .ifPresent(friendRepository::delete);
+    }
+
     public String getMemberLastDisplayName(Member member) {
         Optional<String> memberLastDisplayName = friendCodeRepository.findMemberLastDisplayName(member.getId());
         return memberLastDisplayName.orElseGet(member::getNickname);

@@ -63,4 +63,12 @@ public class FriendFacade {
         return new FriendListResponse(friendDtoList);
     }
 
+    @Transactional
+    public void deleteFriend(Long friendId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+        Member friend = memberService.getById(friendId);
+        friendService.deleteFriend(member, friend);
+    }
+
 }

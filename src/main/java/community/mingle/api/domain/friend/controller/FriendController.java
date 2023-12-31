@@ -58,6 +58,15 @@ public class FriendController {
         return ResponseEntity.ok(friendFacade.listFriends());
     }
 
+    @Operation(summary = "친구 삭제 API")
+    @DeleteMapping("/{friendId}")
+    public ResponseEntity<Void> deleteFriend(
+            @PathVariable
+            Long friendId
+    ) {
+        friendFacade.deleteFriend(friendId);
+        return ResponseEntity.ok().build();
+    }
 
 
 
