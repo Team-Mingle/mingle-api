@@ -107,11 +107,9 @@ public class PostController {
 
     @Operation(summary = "최신 게시판 조회 API")
     @GetMapping("/{boardType}/recent")
-    public ResponseEntity<List<PostPreviewDto>> getRecentPost(@PathVariable(value = "boardType") BoardType boardType) {
-
-        List<PostPreviewDto> postPreviewResponseList = postFacade.getRecentPost(boardType);
-
-        return ResponseEntity.ok().body(postPreviewResponseList);
+    public ResponseEntity<PostListResponse> getRecentPost(@PathVariable(value = "boardType") BoardType boardType) {
+        PostListResponse recentPostList = postFacade.getRecentPost(boardType);
+        return ResponseEntity.ok().body(recentPostList);
     }
 
     @Operation(summary = "게시물 좋아요/좋아요 취소 API")

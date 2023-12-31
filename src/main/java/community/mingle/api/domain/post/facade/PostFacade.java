@@ -128,13 +128,14 @@ public class PostFacade {
     }
 
 
-    public List<PostPreviewDto> getRecentPost(BoardType boardType) {
+    public PostListResponse getRecentPost(BoardType boardType) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         List<Post> postList = postService.getRecentPostList(boardType, memberId);
 
-        return postList.stream()
+        List<PostPreviewDto> postPreviewDtoList = postList.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))
                 .collect(Collectors.toList());
+        return new PostListResponse(postPreviewDtoList);
     }
 
 
