@@ -1,11 +1,17 @@
 package community.mingle.api.domain.course.controller;
 
+import community.mingle.api.domain.course.controller.request.CreatePersonalCourseRequest;
 import community.mingle.api.domain.course.controller.request.CreateTimetableRequest;
 import community.mingle.api.domain.course.controller.request.UpdateTimetableCourseRequest;
 import community.mingle.api.domain.course.controller.request.UpdateTimetableNameRequest;
 import community.mingle.api.domain.course.controller.response.*;
+import community.mingle.api.domain.course.facade.CourseFacade;
 import community.mingle.api.domain.course.facade.TimetableFacade;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
 public class TimetableController {
 
     private final TimetableFacade timetableFacade;
+    private final CourseFacade courseFacade;
+
 
     @Operation(summary = "시간표 생성 API")
     @PostMapping()
@@ -28,13 +36,27 @@ public class TimetableController {
         return ResponseEntity.ok(timetableFacade.createTimetable(request));
     }
 
-    @Operation(summary = "시간표 강의 추가 API")
+    @Operation(summary = "시간표 학교 강의 추가 API")
     @PostMapping("/{timetableId}/course")
     public ResponseEntity<UpdateTimetableCourseResponse> updateTimetableCourse(
             @PathVariable Long timetableId,
             @RequestBody UpdateTimetableCourseRequest request
     ) {
         return ResponseEntity.ok(timetableFacade.updateTimetableCourse(timetableId, request));
+    }
+
+    @Operation(summary = "시간표 개인 강의 추가 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "409", description = "TIMETABLE_CONFLICT - 시간표가 겹칩니다.", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "409", description = "COURSE_TIME_CONFLICT - 강의 시간이 겹치지 않게 설정해 주세요.", content = @Content(schema = @Schema(hidden = true)))
+    })
+    @PostMapping("/{timetableId}/course/personal")
+    public ResponseEntity<CreatePersonalCourseResponse> createPersonalCourse(
+            @RequestParam
+            Long timetableId,
+            @RequestBody CreatePersonalCourseRequest request
+    ) {
+        return ResponseEntity.ok(courseFacade.createPersonalCourse(timetableId, request));
     }
 
     @Operation(summary = "시간표 강의 삭제 API")
