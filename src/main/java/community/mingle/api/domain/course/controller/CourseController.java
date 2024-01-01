@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Tag(name = "Course Controller", description = "강의 관련 API")
 @RestController
@@ -31,7 +29,7 @@ public class CourseController {
 
     @Operation(summary = "강의 검색 API")
     @GetMapping("/search")
-    public ResponseEntity<List<CoursePreviewResponse>> searchCourse(
+    public ResponseEntity<CoursePreviewResponse> searchCourse(
             @RequestParam String keyword
     ) {
         return ResponseEntity.ok(courseFacade.searchCourse(keyword));

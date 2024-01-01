@@ -14,6 +14,7 @@ import community.mingle.api.domain.friend.entity.Friend;
 import community.mingle.api.domain.friend.service.FriendService;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
+import community.mingle.api.dto.course.CoursePreviewDto;
 import community.mingle.api.dto.course.CourseTimeDto;
 import community.mingle.api.enums.CourseType;
 import community.mingle.api.enums.Semester;
@@ -166,10 +167,10 @@ public class TimetableFacade {
 
     @NotNull
     private TimetableDetailResponse getTimetableDetailResponse(Timetable timetable) {
-        List<CoursePreviewResponse> coursePreviewResponseList = timetable.getCourseTimetableList().stream()
+        List<CoursePreviewDto> coursePreviewResponseList = timetable.getCourseTimetableList().stream()
                 .map(courseTimetable -> {
                     Course course = courseTimetable.getCourse();
-                    return new CoursePreviewResponse(
+                    return new CoursePreviewDto(
                             course.getId(),
                             course.getName(),
                             course.getCourseCode(),

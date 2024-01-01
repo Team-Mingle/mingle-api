@@ -11,6 +11,7 @@ import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.service.PostImageService;
 import community.mingle.api.domain.post.service.PostLikeService;
 import community.mingle.api.domain.post.service.PostService;
+import community.mingle.api.dto.post.PostPreviewDto;
 import community.mingle.api.dto.post.PostStatusDto;
 import community.mingle.api.enums.BoardType;
 import community.mingle.api.enums.CategoryType;
