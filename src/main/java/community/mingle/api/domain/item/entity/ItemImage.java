@@ -3,9 +3,7 @@ package community.mingle.api.domain.item.entity;
 import community.mingle.api.entitybase.AuditLoggingBase;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -17,6 +15,8 @@ import java.time.LocalDateTime;
 @SQLDelete(sql = "UPDATE item_image SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Table(name = "item_image")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
 public class ItemImage extends AuditLoggingBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

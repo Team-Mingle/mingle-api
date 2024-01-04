@@ -1,5 +1,6 @@
 package community.mingle.api.domain.item.entity;
 
+import community.mingle.api.domain.item.controller.request.CreateItemRequest;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.entitybase.AuditLoggingBase;
 import community.mingle.api.enums.CurrencyType;
@@ -7,9 +8,7 @@ import community.mingle.api.enums.ItemStatusType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -90,4 +89,18 @@ public class Item extends AuditLoggingBase {
     private List<ItemLike> itemLikeList = new ArrayList<>();
 
 
+    public static Item createItem(CreateItemRequest request, Member member) {
+        Item item = new Item();
+        item.member = member;
+        item.title = request.title();
+        item.price = request.price();
+        item.currency = request.currencyType();
+        item.content = request.content();
+        item.location = request.location();
+        item.chatUrl = request.chatUrl();
+        item.anonymous = request.isAnonymous();
+        item.status = ItemStatusType.SELLING;
+        item.viewCount = 0;
+        return item;
+    }
 }
