@@ -2,9 +2,11 @@ package community.mingle.api.domain.item.entity;
 
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.entitybase.AuditLoggingBase;
-import community.mingle.api.enums.*;
+import community.mingle.api.enums.CurrencyType;
+import community.mingle.api.enums.ItemStatusType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +14,8 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Getter
@@ -46,7 +50,8 @@ public class Item extends AuditLoggingBase {
     private CurrencyType currency;
 
     @NotNull
-    @Column(columnDefinition = "TEXT", name = "content", nullable = false)
+    @Lob
+    @Column(name = "content", nullable = false)
     private String content;
 
     @Size(max = 100)
@@ -54,8 +59,9 @@ public class Item extends AuditLoggingBase {
     @Column(name = "location", nullable = false, length = 100)
     private String location;
 
+    @Lob
     @NotNull
-    @Column(columnDefinition = "TEXT", name = "chat_url", nullable = false)
+    @Column(name = "chat_url", nullable = false)
     private String chatUrl;
 
     @NotNull
@@ -73,5 +79,15 @@ public class Item extends AuditLoggingBase {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    @OneToMany(mappedBy = "item")
+    private List<ItemComment> itemCommentList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item")
+    private List<ItemImage> itemImageList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item")
+    private List<ItemLike> itemLikeList = new ArrayList<>();
+
 
 }
