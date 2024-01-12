@@ -1,12 +1,15 @@
 package community.mingle.api.domain.item.controller.response;
 
 import community.mingle.api.enums.CurrencyType;
+import community.mingle.api.enums.ItemStatusType;
+import lombok.Builder;
 
 import java.util.List;
 
-public record ItemResponse(
+@Builder
+public record ItemDetailResponse(
 
-        Long itemId,
+        Long id,
         String title,
         String content,
         String price,
@@ -14,9 +17,6 @@ public record ItemResponse(
         String location,
         String chatUrl,
         String nickname,
-        String boardType,
-        String categoryType,
-        String memberRole,
         int likeCount,
         int commentCount,
         int viewCount,
@@ -27,6 +27,8 @@ public record ItemResponse(
         boolean isLiked,
         boolean isReported,
         boolean isBlinded,
+        boolean isAdmin,
+        ItemStatusType status,
         String createdAt
 ) {
 }

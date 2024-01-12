@@ -2,10 +2,12 @@ package community.mingle.api.domain.item.controller;
 
 import community.mingle.api.domain.item.controller.request.CreateItemRequest;
 import community.mingle.api.domain.item.controller.response.CreateItemResponse;
+import community.mingle.api.domain.item.controller.response.ItemDetailResponse;
 import community.mingle.api.domain.item.controller.response.ItemListResponse;
 import community.mingle.api.domain.item.facade.ItemFacade;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.response.CreatePostResponse;
+import community.mingle.api.domain.post.controller.response.PostDetailCommentResponse;
 import community.mingle.api.domain.post.controller.response.PostListResponse;
 import community.mingle.api.enums.BoardType;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +26,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Tag(name = "Item Controller", description = "장터 관련 API")
@@ -58,6 +62,20 @@ public class ItemController {
         return new ResponseEntity<>(itemListResponse, HttpStatus.OK);
     }
 
+    @Operation(summary = "장터 게시물 상세 API")
+    @GetMapping(path = "/{itemId}")
+    public ResponseEntity<ItemDetailResponse> getItemPost(@PathVariable Long itemId) {
+        ItemDetailResponse itemDetailResponse = itemFacade.getItemPostDetail(itemId);
+        return new ResponseEntity<>(itemDetailResponse, HttpStatus.OK);
+    }
+
+
+    @Operation(summary = "장터 게시물 댓글 조회 API")
+    @GetMapping(path = "/{itemId}/comment")
+    public ResponseEntity<List<PostDetailCommentResponse>> getItemPostComment(@PathVariable Long itemId) {
+        List<PostDetailCommentResponse> commentListResponse = itemFacade.getItemComments(itemId);
+        return new ResponseEntity<>(commentListResponse, HttpStatus.OK);
+    }
 
 
 }
