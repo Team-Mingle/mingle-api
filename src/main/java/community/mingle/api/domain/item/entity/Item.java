@@ -103,4 +103,8 @@ public class Item extends AuditLoggingBase {
         item.viewCount = 0;
         return item;
     }
+
+    public void updateView() {
+        this.viewCount += 1;
+    }
 }
