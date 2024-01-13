@@ -123,4 +123,14 @@ public class ItemService {
         }
         return item;
     }
+
+    @Transactional
+    public void deleteItemPost(Long memberId, Long itemId) {
+        Item item = getValidItem(itemId);
+
+        if (!item.getMember().getId().equals(memberId))
+            throw new CustomException(ErrorCode.MODIFY_NOT_AUTHORIZED);
+
+        itemRepository.delete(item);
+    }
 }

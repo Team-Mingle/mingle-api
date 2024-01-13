@@ -3,6 +3,7 @@ package community.mingle.api.domain.item.controller;
 import community.mingle.api.domain.item.controller.request.CreateItemRequest;
 import community.mingle.api.domain.item.controller.request.UpdateItemPostRequest;
 import community.mingle.api.domain.item.controller.response.CreateItemResponse;
+import community.mingle.api.domain.item.controller.response.DeleteItemPostResponse;
 import community.mingle.api.domain.item.controller.response.ItemDetailResponse;
 import community.mingle.api.domain.item.controller.response.ItemListResponse;
 import community.mingle.api.domain.item.facade.ItemFacade;
@@ -84,6 +85,13 @@ public class ItemController {
     @PatchMapping(path ="/{itemId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ItemDetailResponse> updatePost(@Valid @ModelAttribute UpdateItemPostRequest request, @PathVariable Long itemId) {
         ItemDetailResponse response = itemFacade.updateItemPost(request, itemId);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @Operation(summary = "장터 게시물 삭제 API")
+    @DeleteMapping(path = "/{itemId}")
+    public ResponseEntity<DeleteItemPostResponse> deletePost(@PathVariable Long itemId) {
+        DeleteItemPostResponse response = itemFacade.deleteItemPost(itemId);
         return ResponseEntity.ok().body(response);
     }
 

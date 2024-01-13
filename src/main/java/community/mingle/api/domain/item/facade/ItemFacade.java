@@ -4,6 +4,7 @@ import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.item.controller.request.CreateItemRequest;
 import community.mingle.api.domain.item.controller.request.UpdateItemPostRequest;
 import community.mingle.api.domain.item.controller.response.CreateItemResponse;
+import community.mingle.api.domain.item.controller.response.DeleteItemPostResponse;
 import community.mingle.api.domain.item.controller.response.ItemDetailResponse;
 import community.mingle.api.domain.item.controller.response.ItemListResponse;
 import community.mingle.api.domain.item.entity.Item;
@@ -14,6 +15,7 @@ import community.mingle.api.domain.item.service.ItemImageService;
 import community.mingle.api.domain.item.service.ItemService;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
+import community.mingle.api.domain.post.controller.response.DeletePostResponse;
 import community.mingle.api.domain.post.controller.response.PostDetailCommentResponse;
 import community.mingle.api.domain.post.controller.response.UpdatePostResponse;
 import community.mingle.api.dto.comment.CoCommentDto;
@@ -234,4 +236,16 @@ public class ItemFacade {
     }
 
 
+    @Transactional
+    public DeleteItemPostResponse deleteItemPost(Long itemId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+
+        itemService.deleteItemPost(memberId, itemId);
+        itemCommentService.deleteAllByItemId(itemId);
+        itemImageService.deleteItemImage(itemId);
+
+        return DeleteItemPostResponse.builder()
+                .deleted(true)
+                .build();
+    }
 }

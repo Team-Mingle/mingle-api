@@ -49,4 +49,10 @@ public class ItemImageService {
                 .filter(itemImage -> imageUrlsToDelete.contains(itemImage.getUrl()))
                 .forEach(itemImageRepository::delete);
     }
+
+    @Transactional
+    public void deleteItemImage(Long itemId) {
+        List<ItemImage> itemImages = itemImageRepository.findAllByItemId(itemId);
+        itemImageRepository.deleteAll(itemImages);
+    }
 }
