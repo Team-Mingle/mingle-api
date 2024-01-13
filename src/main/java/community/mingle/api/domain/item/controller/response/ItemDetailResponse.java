@@ -28,7 +28,7 @@ public record ItemDetailResponse(
         boolean isReported,
         boolean isBlinded,
         boolean isAdmin,
-        ItemStatusType status,
+        String status,
         String createdAt
 ) {
 }

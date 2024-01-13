@@ -5,6 +5,8 @@ import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.entitybase.AuditLoggingBase;
 import community.mingle.api.enums.CurrencyType;
 import community.mingle.api.enums.ItemStatusType;
+import community.mingle.api.global.exception.CustomException;
+import community.mingle.api.global.exception.ErrorCode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -106,5 +108,28 @@ public class Item extends AuditLoggingBase {
 
     public void updateView() {
         this.viewCount += 1;
+    }
+
+    public Item updateItemPost(
+            Long memberId,
+            String title,
+            String content,
+            Long price,
+            CurrencyType currency,
+            String location,
+            String chatUrl,
+            boolean anonymous
+    ) {
+        if (!memberId.equals(this.member.getId())) {
+            throw new CustomException(ErrorCode.MODIFY_NOT_AUTHORIZED);
+        }
+        this.title = title;
+        this.content = content;
+        this.price = price;
+        this.currency = currency;
+        this.location = location;
+        this.chatUrl = chatUrl;
+        this.anonymous = anonymous;
+        return this;
     }
 }

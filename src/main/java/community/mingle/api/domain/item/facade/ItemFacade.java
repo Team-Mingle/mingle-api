@@ -2,6 +2,7 @@ package community.mingle.api.domain.item.facade;
 
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.item.controller.request.CreateItemRequest;
+import community.mingle.api.domain.item.controller.request.UpdateItemPostRequest;
 import community.mingle.api.domain.item.controller.response.CreateItemResponse;
 import community.mingle.api.domain.item.controller.response.ItemDetailResponse;
 import community.mingle.api.domain.item.controller.response.ItemListResponse;
@@ -14,6 +15,7 @@ import community.mingle.api.domain.item.service.ItemService;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.domain.post.controller.response.PostDetailCommentResponse;
+import community.mingle.api.domain.post.controller.response.UpdatePostResponse;
 import community.mingle.api.dto.comment.CoCommentDto;
 import community.mingle.api.dto.comment.CommentDto;
 import community.mingle.api.dto.item.ItemPreviewDto;
@@ -118,6 +120,7 @@ public class ItemFacade {
                 .likeCount(item.getItemLikeList().size())
                 .commentCount(item.getItemCommentList().size())
                 .viewCount(item.getViewCount())
+                .status(item.getStatus().getName())
                 .itemImgUrl(item.getItemImageList() != null ? item.getItemImageList().stream().map(ItemImage::getUrl).toList() : null)
                 .isFileAttached(item.getItemImageList() != null)
                 .isAnonymous(item.getAnonymous())
@@ -208,5 +211,27 @@ public class ItemFacade {
                 .coCommentsList(coCommentDtoList)
                 .build();
     }
+
+    @Transactional
+    public ItemDetailResponse updateItemPost(UpdateItemPostRequest request, Long itemId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Item item = itemService.getValidItem(itemId);
+
+        Item updatedItem = item.updateItemPost(
+                memberId,
+                request.title(),
+                request.content(),
+                request.price(),
+                request.currency(),
+                request.location(),
+                request.chatUrl(),
+                request.isAnonymous()
+        );
+
+        itemImageService.updateItemImage(item, request.imageUrlsToDelete(), request.imagesToAdd());
+
+        return mapToItemDetailResponse(updatedItem, memberId);
+    }
+
 
 }

@@ -5,15 +5,16 @@ import community.mingle.api.domain.item.repository.ItemBlindRepository;
 import community.mingle.api.domain.item.repository.ItemLikeRepository;
 import community.mingle.api.domain.item.repository.ItemReportRepository;
 import community.mingle.api.domain.item.repository.ItemRepository;
+import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.report.entity.ItemReport;
 import community.mingle.api.domain.report.entity.Report;
 import community.mingle.api.dto.item.ItemStatusDto;
-import community.mingle.api.dto.post.PostStatusDto;
-import community.mingle.api.enums.ContentStatusType;
-import community.mingle.api.enums.ItemStatusType;
-import community.mingle.api.enums.MemberRole;
-import community.mingle.api.enums.ReportType;
+import community.mingle.api.enums.*;
 import community.mingle.api.global.exception.CustomException;
+import community.mingle.api.global.exception.ErrorCode;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static community.mingle.api.enums.ContentStatusType.REPORTED;
 import static community.mingle.api.global.exception.ErrorCode.POST_NOT_EXIST;
 
 @Service
@@ -48,7 +48,7 @@ public class ItemService {
 
     public ItemStatusDto getItemStatus(Item item, Long memberId) {
         boolean isMyPost = Objects.equals(item.getMember().getId(), memberId);
-        boolean isLiked  = itemLikeRepository.countByItemIdAndMemberId(item.getId(), memberId) > 0;
+        boolean isLiked = itemLikeRepository.countByItemIdAndMemberId(item.getId(), memberId) > 0;
         boolean isReported = item.getStatus().equals(ItemStatusType.REPORTED) || item.getStatus().equals(ItemStatusType.DELETED);
         boolean isAdmin = item.getMember().getRole().equals(MemberRole.ADMIN);
         boolean isBlinded = !itemBlindRepository.findByIdAndMemberId(item.getId(), memberId).isEmpty();
@@ -113,5 +113,14 @@ public class ItemService {
 
     public boolean isValidItemPost(Item item) {
         return !item.getStatus().equals(ItemStatusType.DELETED) && !item.getStatus().equals(ItemStatusType.REPORTED);
+    }
+    public Item getValidItem(Long itemId) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new CustomException(POST_NOT_EXIST));
+
+        if (!isValidItemPost(item)) {
+            throw new CustomException(POST_NOT_EXIST);
+        }
+        return item;
     }
 }
