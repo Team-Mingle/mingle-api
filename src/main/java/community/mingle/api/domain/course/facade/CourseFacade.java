@@ -95,7 +95,7 @@ public class CourseFacade {
                 .map(CourseTime::toDto)
                 .toList();
 
-        return new CourseDetailResponse(
+        return new CourseDetailResponse( //TODO 참고
                 updatedPersonalCourse.getId(),
                 updatedPersonalCourse.getName(),
                 updatedPersonalCourse.getCourseCode(),

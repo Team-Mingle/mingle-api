@@ -34,4 +34,25 @@ public class ItemImageService {
                 ).toList();
         itemImageRepository.saveAll(itemImages);
     }
+
+    @Transactional
+    public void updateItemImage(Item item, List<String> imageUrlsToDelete, List<MultipartFile> imagesToAdd) {
+        if (imageUrlsToDelete != null && !imageUrlsToDelete.isEmpty())
+            deleteImages(item, imageUrlsToDelete);
+        if (imagesToAdd != null && !imagesToAdd.isEmpty())
+            createItemImage(item, imagesToAdd);
+    }
+
+    private void deleteImages(Item item, List<String> imageUrlsToDelete) {
+        List<ItemImage> itemImageList = item.getItemImageList();
+        itemImageList.stream()
+                .filter(itemImage -> imageUrlsToDelete.contains(itemImage.getUrl()))
+                .forEach(itemImageRepository::delete);
+    }
+
+    @Transactional
+    public void deleteItemImage(Long itemId) {
+        List<ItemImage> itemImages = itemImageRepository.findAllByItemId(itemId);
+        itemImageRepository.deleteAll(itemImages);
+    }
 }

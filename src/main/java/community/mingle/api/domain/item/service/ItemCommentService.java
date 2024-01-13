@@ -91,5 +91,11 @@ public class ItemCommentService {
                 .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
         return getDisplayName(comment, postAuthorId);
     }
+
+    @Transactional
+    public void deleteAllByItemId(Long itemId) {
+        List<ItemComment> comments = itemCommentRepository.findAllByItemId(itemId);
+        itemCommentRepository.deleteAll(comments);
+    }
 }
 
