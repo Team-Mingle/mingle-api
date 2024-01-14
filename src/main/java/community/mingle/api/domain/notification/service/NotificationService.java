@@ -1,12 +1,16 @@
 package community.mingle.api.domain.notification.service;
 
 import community.mingle.api.domain.comment.repository.CommentRepository;
+import community.mingle.api.domain.item.entity.Item;
+import community.mingle.api.domain.item.repository.ItemCommentRepository;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.domain.notification.entity.CommentNotification;
+import community.mingle.api.domain.notification.entity.ItemCommentNotification;
 import community.mingle.api.domain.notification.entity.Notification;
 import community.mingle.api.domain.notification.entity.PostNotification;
 import community.mingle.api.domain.notification.repository.CommentNotificationRepository;
+import community.mingle.api.domain.notification.repository.ItemCommentNotificationRepository;
 import community.mingle.api.domain.notification.repository.NotificationRepository;
 import community.mingle.api.domain.notification.repository.PostNotificationRepository;
 import community.mingle.api.domain.post.entity.Post;
@@ -30,8 +34,17 @@ public class NotificationService {
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
     private final CommentNotificationRepository commentNotificationRepository;
+    private final ItemCommentNotificationRepository itemCommentNotificationRepository;
     private final PostNotificationRepository postNotificationRepository;
     private final NotificationRepository notificationRepository;
+    private final ItemCommentRepository itemCommentRepository;
+
+
+
+    @Transactional
+    public Notification saveItemCommentNotification(ItemCommentNotification notification) {
+        return itemCommentNotificationRepository.save(notification);
+    }
 
 
     @Transactional
@@ -71,6 +84,20 @@ public class NotificationService {
             commentRepository.findById(parentCommentId).ifPresent(comment -> targetMembers.add(comment.getMember()));
         if (mentionId != null)
             commentRepository.findById(mentionId).ifPresent(comment -> targetMembers.add(comment.getMember()));
+        targetMembers.remove(creatorMember);
+        return new ArrayList<>(targetMembers);
+    }
+
+    public List<Member> getTargetUserTokenMembersForItemComment(Long parentCommentId, Long mentionId, Member creatorMember, Item item) {
+        if (parentCommentId == null && item.getMember().equals(creatorMember)) {
+            return Collections.emptyList();
+        }
+        Set<Member> targetMembers = new HashSet<>();
+        targetMembers.add(item.getMember());
+        if (parentCommentId != null)
+            itemCommentRepository.findById(parentCommentId).ifPresent(comment -> targetMembers.add(comment.getMember()));
+        if (mentionId != null)
+            itemCommentRepository.findById(mentionId).ifPresent(comment -> targetMembers.add(comment.getMember()));
         targetMembers.remove(creatorMember);
         return new ArrayList<>(targetMembers);
     }

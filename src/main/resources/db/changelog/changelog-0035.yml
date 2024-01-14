@@ -1,0 +1,46 @@
+databaseChangeLog:
+  - changeSet:
+      id: add item_comment_notification
+      author: taehyun
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: item_comment_id
+                  type: BIGINT
+            tableName: item_comment_notification
+
+  - changeSet:
+      id: add foreign key constraints
+      author: taehyun
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: id
+            baseTableName: item_comment_notification
+            constraintName: item_comment_notification_ibfk_1
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: notification
+            validate: true
+        - addForeignKeyConstraint:
+            baseColumnNames: item_comment_id
+            baseTableName: item_comment_notification
+            constraintName: item_comment_notification_ibfk_2
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: item_comment
+            validate: true
