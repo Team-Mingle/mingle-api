@@ -15,9 +15,7 @@ import community.mingle.api.domain.item.service.ItemImageService;
 import community.mingle.api.domain.item.service.ItemService;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
-import community.mingle.api.domain.post.controller.response.DeletePostResponse;
 import community.mingle.api.domain.post.controller.response.PostDetailCommentResponse;
-import community.mingle.api.domain.post.controller.response.UpdatePostResponse;
 import community.mingle.api.dto.comment.CoCommentDto;
 import community.mingle.api.dto.comment.CommentDto;
 import community.mingle.api.dto.item.ItemPreviewDto;
@@ -97,7 +95,7 @@ public class ItemFacade {
 
     public ItemDetailResponse getItemPostDetail(Long itemId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
-        Item item = itemService.getItem(itemId);
+        Item item = itemService.getById(itemId);
 
         itemService.updateView(item);
 
@@ -138,7 +136,7 @@ public class ItemFacade {
     public List<PostDetailCommentResponse> getItemComments(Long itemId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
 
-        Item item = itemService.getItem(itemId);
+        Item item = itemService.getById(itemId);
         if (!itemService.isValidItemPost(item)) return new ArrayList<>();
 
         List<PostDetailCommentResponse> responseList = new ArrayList<>();

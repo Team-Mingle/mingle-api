@@ -5,16 +5,12 @@ import community.mingle.api.domain.item.repository.ItemBlindRepository;
 import community.mingle.api.domain.item.repository.ItemLikeRepository;
 import community.mingle.api.domain.item.repository.ItemReportRepository;
 import community.mingle.api.domain.item.repository.ItemRepository;
-import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.report.entity.ItemReport;
 import community.mingle.api.domain.report.entity.Report;
 import community.mingle.api.dto.item.ItemStatusDto;
 import community.mingle.api.enums.*;
 import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.global.exception.ErrorCode;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -102,7 +98,7 @@ public class ItemService {
     }
 
 
-    public Item getItem(Long itemId) {
+    public Item getById(Long itemId) {
         return itemRepository.findById(itemId)
                 .orElseThrow(() -> new CustomException(POST_NOT_EXIST));
     }
