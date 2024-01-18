@@ -1,11 +1,10 @@
 package community.mingle.api.domain.item.controller;
 
+import community.mingle.api.domain.item.controller.request.CreateItemCommentRequest;
 import community.mingle.api.domain.item.controller.request.CreateItemRequest;
 import community.mingle.api.domain.item.controller.request.UpdateItemPostRequest;
-import community.mingle.api.domain.item.controller.response.CreateItemResponse;
-import community.mingle.api.domain.item.controller.response.DeleteItemPostResponse;
-import community.mingle.api.domain.item.controller.response.ItemDetailResponse;
-import community.mingle.api.domain.item.controller.response.ItemListResponse;
+import community.mingle.api.domain.item.controller.response.*;
+import community.mingle.api.domain.item.facade.ItemCommentFacade;
 import community.mingle.api.domain.item.facade.ItemFacade;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
@@ -49,6 +48,7 @@ import java.util.List;
 public class ItemController {
 
     private final ItemFacade itemFacade;
+    private final ItemCommentFacade itemCommentFacade;
 
 
     @Operation(summary = "장터 게시물 생성 API")
@@ -96,6 +96,12 @@ public class ItemController {
     }
 
 
+    @Operation(summary = "댓글 생성 API")
+    @PostMapping("/item/{itemId}/comment")
+    public ResponseEntity<CreateItemCommentResponse> create(@RequestBody @Valid CreateItemCommentRequest request) {
+        CreateItemCommentResponse response = itemCommentFacade.createComment(request);
+        return ResponseEntity.ok().body(response);
+    }
 
 
 

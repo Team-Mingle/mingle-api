@@ -19,12 +19,6 @@ public class ItemCommentController {
 
     private final ItemCommentFacade itemCommentFacade;
 
-    @Operation(summary = "댓글 생성 API")
-    @PostMapping
-    public ResponseEntity<CreateItemCommentResponse> create(@RequestBody @Valid CreateItemCommentRequest request) {
-        CreateItemCommentResponse response = itemCommentFacade.createComment(request);
-        return ResponseEntity.ok().body(response);
-    }
 
 
 
