@@ -20,7 +20,9 @@ public record ItemDetailResponse(
         int likeCount,
         int commentCount,
         int viewCount,
-        List<String> itemImgUrl,
+        String imgThumbnailUrl,
+        List<String> itemImgList,
+
         boolean isFileAttached,
         boolean isAnonymous,
         boolean isMyPost,
