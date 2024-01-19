@@ -132,4 +132,8 @@ public class Item extends AuditLoggingBase {
         this.anonymous = anonymous;
         return this;
     }
+
+    public void modifyItemStatus(ItemStatusType itemStatusType) {
+        this.status = itemStatusType;
+    }
 }

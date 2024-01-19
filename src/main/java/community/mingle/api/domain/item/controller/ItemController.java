@@ -8,6 +8,7 @@ import community.mingle.api.domain.item.controller.response.*;
 import community.mingle.api.domain.item.facade.ItemCommentFacade;
 import community.mingle.api.domain.item.facade.ItemFacade;
 import community.mingle.api.domain.post.controller.response.PostDetailCommentResponse;
+import community.mingle.api.enums.ItemStatusType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -77,7 +78,7 @@ public class ItemController {
     }
 
     @Operation(summary = "장터 게시물 수정 API")
-    @PatchMapping(path ="/{itemId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(path = "/{itemId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ItemDetailResponse> updatePost(@Valid @ModelAttribute UpdateItemPostRequest request, @PathVariable Long itemId) {
         ItemDetailResponse response = itemFacade.updateItemPost(request, itemId);
         return ResponseEntity.ok().body(response);
@@ -91,7 +92,34 @@ public class ItemController {
     }
 
 
+    @Operation(summary = "장터 게시물 찜/찜 취소 API")
+    @PatchMapping("/like/{itemId}")
+    public ResponseEntity<Void> updateItemLike(@PathVariable Long itemId) {
+        itemFacade.updateItemLike(itemId);
+        return ResponseEntity.ok().build();
+    }
 
+    @Operation(summary = "판매 상태 변경 API")
+    @PatchMapping("/{itemId}/status/{itemStatusType}")
+    public ResponseEntity<Void> updateItemStatus(@PathVariable Long itemId, @PathVariable ItemStatusType itemStatusType) {
+        itemFacade.updateItemStatus(itemId, itemStatusType);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "장터 게시물 가리기/가리기 취소 API")
+    @PatchMapping("/{itemId}/blind")
+    public ResponseEntity<Void> updateItemBlind(@PathVariable Long itemId) {
+        itemFacade.updateItemBlind(itemId);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "장터 게시물 검색 API")
+    @GetMapping("/search")
+    public ResponseEntity<ItemListResponse> searchItem(@RequestParam(value = "keyword") String keyword, @Parameter Pageable pageable) {
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
+        ItemListResponse searchItemList = itemFacade.getSearchItemList(keyword, pageRequest);
+        return ResponseEntity.ok().body(searchItemList);
+    }
 
 
     @Operation(summary = "장터 게시물 댓글 생성 API")
