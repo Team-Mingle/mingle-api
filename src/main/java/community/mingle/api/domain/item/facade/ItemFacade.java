@@ -20,6 +20,7 @@ import community.mingle.api.dto.comment.CoCommentDto;
 import community.mingle.api.dto.comment.CommentDto;
 import community.mingle.api.dto.item.ItemPreviewDto;
 import community.mingle.api.dto.item.ItemStatusDto;
+import community.mingle.api.enums.ItemStatusType;
 import community.mingle.api.enums.MemberRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -246,5 +247,50 @@ public class ItemFacade {
         return DeleteItemPostResponse.builder()
                 .deleted(true)
                 .build();
+    }
+
+    @Transactional
+    public void updateItemLike(Long itemId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+        Item item = itemService.getValidItem(itemId);
+
+        if (itemService.isItemLiked(item, member)) {
+            itemService.deleteItemLike(item, member);
+        } else {
+            itemService.createItemLike(item, member);
+        }
+    }
+
+    @Transactional
+    public void updateItemStatus(Long itemId, ItemStatusType itemStatusType) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+        Item item = itemService.getValidItem(itemId);
+        itemService.updateItemStatus(item, itemStatusType, member);
+    }
+
+    @Transactional
+    public void updateItemBlind(Long itemId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+        Item item = itemService.getValidItem(itemId);
+
+        if (itemService.isItemBlinded(item, member)) {
+            itemService.deleteItemBlind(item, member);
+        } else {
+            itemService.createItemBlind(item, member);
+        }
+    }
+
+    public ItemListResponse getSearchItemList(String keyword, PageRequest pageRequest) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+        List<Item> itemList = itemService.searchItemWithKeyword(keyword, member, pageRequest);
+
+        List<ItemPreviewDto> itemPreviewDtoList = itemList.stream()
+                .map(item -> mapToItemPreviewDto(item, memberId))
+                .toList();
+        return new ItemListResponse(itemPreviewDtoList);
     }
 }

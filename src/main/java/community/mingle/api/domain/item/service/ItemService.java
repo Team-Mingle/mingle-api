@@ -1,14 +1,19 @@
 package community.mingle.api.domain.item.service;
 
+import community.mingle.api.domain.comment.entity.Comment;
 import community.mingle.api.domain.item.entity.Item;
-import community.mingle.api.domain.item.repository.ItemBlindRepository;
-import community.mingle.api.domain.item.repository.ItemLikeRepository;
-import community.mingle.api.domain.item.repository.ItemReportRepository;
-import community.mingle.api.domain.item.repository.ItemRepository;
+import community.mingle.api.domain.item.entity.ItemBlind;
+import community.mingle.api.domain.item.entity.ItemLike;
+import community.mingle.api.domain.item.repository.*;
+import community.mingle.api.domain.like.entity.CommentLike;
+import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.domain.report.entity.ItemReport;
 import community.mingle.api.domain.report.entity.Report;
 import community.mingle.api.dto.item.ItemStatusDto;
-import community.mingle.api.enums.*;
+import community.mingle.api.enums.ItemStatusType;
+import community.mingle.api.enums.MemberRole;
+import community.mingle.api.enums.ReportType;
 import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static community.mingle.api.global.exception.ErrorCode.POST_NOT_EXIST;
+import static community.mingle.api.global.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +36,7 @@ public class ItemService {
     private final ItemLikeRepository itemLikeRepository;
     private final ItemReportRepository itemReportRepository;
     private final ItemBlindRepository itemBlindRepository;
+    private final ItemQueryRepository itemQueryRepository;
 
     @Transactional
     public Item saveItem(Item item) {
@@ -110,6 +116,7 @@ public class ItemService {
     public boolean isValidItemPost(Item item) {
         return !item.getStatus().equals(ItemStatusType.DELETED) && !item.getStatus().equals(ItemStatusType.REPORTED);
     }
+
     public Item getValidItem(Long itemId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new CustomException(POST_NOT_EXIST));
@@ -128,5 +135,64 @@ public class ItemService {
             throw new CustomException(ErrorCode.MODIFY_NOT_AUTHORIZED);
 
         itemRepository.delete(item);
+    }
+
+
+    @Transactional
+    public ItemLike createItemLike(Item item, Member member) {
+        ItemLike itemLike = ItemLike.builder()
+                .item(item)
+                .member(member)
+                .build();
+        return itemLikeRepository.save(itemLike);
+    }
+
+
+    @Transactional
+    public void deleteItemLike(Item item, Member member) {
+        ItemLike itemLike = itemLikeRepository.findByItemIdAndMemberId(item.getId(), member.getId()).orElseThrow(() -> new CustomException(LIKE_NOT_FOUND));
+        if (!itemLike.getMember().getId().equals(member.getId())) {
+            throw new CustomException(MODIFY_NOT_AUTHORIZED);
+        }
+        itemLikeRepository.delete(itemLike);
+    }
+
+    public boolean isItemLiked(Item item, Member member) {
+        return itemLikeRepository.countByItemIdAndMemberId(item.getId(), member.getId()) > 0;
+    }
+
+    @Transactional
+    public void updateItemStatus(Item item, ItemStatusType itemStatusType, Member member) {
+        if (!item.getMember().getId().equals(member.getId())) {
+            throw new CustomException(MODIFY_NOT_AUTHORIZED);
+        }
+        item.modifyItemStatus(itemStatusType);
+    }
+
+
+    public boolean isItemBlinded(Item item, Member member) {
+        return !itemBlindRepository.findByIdAndMemberId(item.getId(), member.getId()).isEmpty();
+    }
+
+    @Transactional
+    public void deleteItemBlind(Item item, Member member) {
+        if (!item.getMember().getId().equals(member.getId())) {
+            throw new CustomException(MODIFY_NOT_AUTHORIZED);
+        }
+        itemBlindRepository.deleteById(item.getId());
+    }
+
+    @Transactional
+    public void createItemBlind(Item item, Member member) {
+        ItemBlind itemBlind = ItemBlind.builder()
+                .item(item)
+                .member(member)
+                .build();
+
+        itemBlindRepository.save(itemBlind);
+    }
+
+    public List<Item> searchItemWithKeyword(String keyword, Member member, PageRequest pageRequest) {
+        return itemQueryRepository.findSearchItems(keyword, member, pageRequest).toList();
     }
 }
