@@ -1,18 +1,13 @@
 package community.mingle.api.domain.item.controller;
 
+import community.mingle.api.domain.comment.controller.response.DeleteCommentResponse;
 import community.mingle.api.domain.item.controller.request.CreateItemCommentRequest;
 import community.mingle.api.domain.item.controller.request.CreateItemRequest;
 import community.mingle.api.domain.item.controller.request.UpdateItemPostRequest;
 import community.mingle.api.domain.item.controller.response.*;
 import community.mingle.api.domain.item.facade.ItemCommentFacade;
 import community.mingle.api.domain.item.facade.ItemFacade;
-import community.mingle.api.domain.post.controller.request.CreatePostRequest;
-import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
-import community.mingle.api.domain.post.controller.response.CreatePostResponse;
 import community.mingle.api.domain.post.controller.response.PostDetailCommentResponse;
-import community.mingle.api.domain.post.controller.response.PostListResponse;
-import community.mingle.api.domain.post.controller.response.UpdatePostResponse;
-import community.mingle.api.enums.BoardType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -96,13 +91,29 @@ public class ItemController {
     }
 
 
-    @Operation(summary = "댓글 생성 API")
-    @PostMapping("/item/{itemId}/comment")
+
+
+
+    @Operation(summary = "장터 게시물 댓글 생성 API")
+    @PostMapping("/{itemId}/comment")
     public ResponseEntity<CreateItemCommentResponse> create(@RequestBody @Valid CreateItemCommentRequest request) {
         CreateItemCommentResponse response = itemCommentFacade.createComment(request);
         return ResponseEntity.ok().body(response);
     }
 
+    @Operation(summary = "장터 게시물 댓글 삭제 API")
+    @DeleteMapping("/comment/{commentId}")
+    public ResponseEntity<DeleteItemCommentResponse> delete(@PathVariable Long commentId) {
+        DeleteItemCommentResponse deleteCommentResponse = itemCommentFacade.delete(commentId);
+        return new ResponseEntity<>(deleteCommentResponse, HttpStatus.OK);
+    }
+
+    @Operation(summary = "댓글 좋아요/좋아요 취소 API")
+    @PatchMapping("/comment/like/{commentId}")
+    public ResponseEntity<Void> updateCommentLike(@PathVariable Long commentId) {
+        itemCommentFacade.updateItemCommentLike(commentId);
+        return ResponseEntity.ok().build();
+    }
 
 
 }
