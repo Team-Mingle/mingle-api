@@ -180,5 +180,14 @@ public class ItemCommentService {
                 .orElse(1L);
     }
 
+
+    @Transactional
+    public void delete(Long commentId, Long memberId) {
+        ItemComment itemComment = itemCommentRepository.findById(commentId).orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
+        if (!itemComment.getMember().getId().equals(memberId)) {
+            throw new CustomException(MODIFY_NOT_AUTHORIZED);
+        }
+        itemCommentRepository.delete(itemComment);
+    }
 }
 
