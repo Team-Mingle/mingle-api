@@ -46,7 +46,7 @@ public class PostService {
             boolean anonymous,
             boolean fileAttached
     ) {
-        Member member = memberRepository.findById(memberId).orElseThrow(()->new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         Post post = Post.builder()
                 .title(title)
                 .content(content)
@@ -77,6 +77,7 @@ public class PostService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         return postQueryRepository.findRecentPost(boardType, viewMember);
     }
+
     public ReportType getReportedPostReason(Long postId) {
         List<PostReport> postReportList = postReportRepository.findAllByContentId(postId);
 
@@ -100,6 +101,27 @@ public class PostService {
         Page<Post> pagePosts = postRepository.findAllByBoardTypeAndCategoryType(boardType, categoryType, pageRequest);
         return pagePosts.toList();
     }
+
+    public List<Post> pagePostsByBoardTypeAndMember(BoardType boardType, Member member, PageRequest pageRequest) {
+        Page<Post> pagePosts = postRepository.findAllByBoardTypeAndMember(boardType, member, pageRequest);
+        return pagePosts.toList();
+    }
+
+    public List<Post> pageCommentPostsByBoardTypeAndMember(BoardType boardType, Member member, PageRequest pageRequest) {
+        Page<Post> pagePosts = postRepository.findAllByCommentMemberIdAndBoardType(member.getId(), boardType, pageRequest);
+        return pagePosts.toList();
+    }
+
+    public List<Post> pageScrapPostsByBoardTypeAndMember(BoardType boardType, Member member, PageRequest pageRequest) {
+        Page<Post> pagePosts = postRepository.findAllByScrapMemberIdAndBoardType(member.getId(), boardType, pageRequest);
+        return pagePosts.toList();
+    }
+
+    public List<Post> pageLikePostsByBoardTypeAndMember(BoardType boardType, Member member, PageRequest pageRequest) {
+        Page<Post> pagePosts = postRepository.findAllByLikeMemberIdAndBoardType(member.getId(), boardType, pageRequest);
+        return pagePosts.toList();
+    }
+
 
     @Transactional
     public Post updatePost(Long memberId, Long postId, String title, String content, Boolean isAnonymous) {
@@ -137,7 +159,7 @@ public class PostService {
 
     public PostStatusDto getPostStatus(Post post, Long memberIdByJwt) {
         boolean isMyPost = Objects.equals(post.getMember().getId(), memberIdByJwt);
-        boolean isLiked  = postLikeRepository.countByPostIdAndMemberId(post.getId(), memberIdByJwt) > 0;
+        boolean isLiked = postLikeRepository.countByPostIdAndMemberId(post.getId(), memberIdByJwt) > 0;
         boolean isScraped = postScrapRepository.countByPostIdAndMemberId(post.getId(), memberIdByJwt) > 0;
         boolean isBlinded; //TODO
         return new PostStatusDto(isMyPost, isLiked, isScraped, false);
@@ -209,5 +231,6 @@ public class PostService {
         Member viewerMember = memberRepository.findById(viewerMemberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
         return postQueryRepository.findSearchPosts(keyword, viewerMember, pageRequest).toList();
     }
+
 }
 

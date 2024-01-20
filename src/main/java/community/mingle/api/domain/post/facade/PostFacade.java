@@ -1,9 +1,11 @@
 package community.mingle.api.domain.post.facade;
 
 import community.mingle.api.domain.auth.service.TokenService;
-import community.mingle.api.domain.notification.event.PopularPostNotificationEvent;
 import community.mingle.api.domain.comment.service.CommentService;
 import community.mingle.api.domain.like.entity.PostLike;
+import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.domain.member.service.MemberService;
+import community.mingle.api.domain.notification.event.PopularPostNotificationEvent;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
 import community.mingle.api.domain.post.controller.response.*;
@@ -16,6 +18,7 @@ import community.mingle.api.dto.post.PostStatusDto;
 import community.mingle.api.enums.BoardType;
 import community.mingle.api.enums.CategoryType;
 import community.mingle.api.enums.MemberRole;
+import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.global.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -27,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static community.mingle.api.global.exception.ErrorCode.EMPTY_MYPOST_LIST;
 import static community.mingle.api.global.utils.DateTimeConverter.convertToDateAndTime;
 
 @RequiredArgsConstructor
@@ -40,6 +44,7 @@ public class PostFacade {
     private final CommentService commentService;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final S3Service s3Service;
+    private final MemberService memberService;
     private static final int POPULAR_NOTIFICATION_LIKE_SIZE = 5;
 
 
@@ -238,6 +243,63 @@ public class PostFacade {
                 .isFileAttached(post.getFileAttached())
                 .isBlinded(postStatusDto.isBlinded())
                 .build();
+    }
+
+
+    /**
+     * 마이페이지
+     */
+    public PostListResponse getMyPagePostList(BoardType boardType, PageRequest pageRequest) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+
+        List<Post> postList = postService.pagePostsByBoardTypeAndMember(boardType, member, pageRequest);
+        if (postList.isEmpty()) throw new CustomException(EMPTY_MYPOST_LIST);
+
+        List<PostPreviewDto> postPreviewDtoList = postList.stream()
+                .map(post -> mapToPostPreviewResponse(post, memberId))
+                .collect(Collectors.toList());
+        return new PostListResponse(postPreviewDtoList);
+    }
+
+
+    public PostListResponse getMyPageCommentList(BoardType boardType, PageRequest pageRequest) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+
+        List<Post> postList = postService.pageCommentPostsByBoardTypeAndMember(boardType, member, pageRequest);
+        if (postList.isEmpty()) throw new CustomException(EMPTY_MYPOST_LIST);
+
+        List<PostPreviewDto> postPreviewDtoList = postList.stream()
+                .map(post -> mapToPostPreviewResponse(post, memberId))
+                .collect(Collectors.toList());
+        return new PostListResponse(postPreviewDtoList);
+    }
+
+    public PostListResponse getMyPageScrapList(BoardType boardType, PageRequest pageRequest) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+
+        List<Post> postList = postService.pageScrapPostsByBoardTypeAndMember(boardType, member, pageRequest);
+        if (postList.isEmpty()) throw new CustomException(EMPTY_MYPOST_LIST);
+
+        List<PostPreviewDto> postPreviewDtoList = postList.stream()
+                .map(post -> mapToPostPreviewResponse(post, memberId))
+                .collect(Collectors.toList());
+        return new PostListResponse(postPreviewDtoList);
+    }
+
+    public PostListResponse getMyPageLikePostList(BoardType boardType, PageRequest pageRequest) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+
+        List<Post> postList = postService.pageLikePostsByBoardTypeAndMember(boardType, member, pageRequest);
+        if (postList.isEmpty()) throw new CustomException(EMPTY_MYPOST_LIST);
+
+        List<PostPreviewDto> postPreviewDtoList = postList.stream()
+                .map(post -> mapToPostPreviewResponse(post, memberId))
+                .collect(Collectors.toList());
+        return new PostListResponse(postPreviewDtoList);
     }
 
 
