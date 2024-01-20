@@ -12,7 +12,7 @@ public record ItemDetailResponse(
         Long id,
         String title,
         String content,
-        String price,
+        Long price,
         CurrencyType currency,
         String location,
         String chatUrl,

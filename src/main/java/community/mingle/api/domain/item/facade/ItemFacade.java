@@ -113,7 +113,7 @@ public class ItemFacade {
                 .id(item.getId())
                 .title(title)
                 .content(content)
-                .price(item.getPrice().toString())
+                .price(item.getPrice())
                 .currency(item.getCurrency())
                 .location(item.getLocation())
                 .chatUrl(item.getChatUrl())
