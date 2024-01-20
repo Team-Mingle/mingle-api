@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: drop foreign key constraint in item table
+      author: taehyun
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: item
+            constraintName: item_content_status_type_type_fk

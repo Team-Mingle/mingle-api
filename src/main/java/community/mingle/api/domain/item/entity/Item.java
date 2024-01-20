@@ -1,17 +1,22 @@
 package community.mingle.api.domain.item.entity;
 
+import community.mingle.api.domain.item.controller.request.CreateItemRequest;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.entitybase.AuditLoggingBase;
-import community.mingle.api.enums.*;
+import community.mingle.api.enums.CurrencyType;
+import community.mingle.api.enums.ItemStatusType;
+import community.mingle.api.global.exception.CustomException;
+import community.mingle.api.global.exception.ErrorCode;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Getter
@@ -46,7 +51,8 @@ public class Item extends AuditLoggingBase {
     private CurrencyType currency;
 
     @NotNull
-    @Column(columnDefinition = "TEXT", name = "content", nullable = false)
+    @Lob
+    @Column(name = "content", nullable = false)
     private String content;
 
     @Size(max = 100)
@@ -54,8 +60,9 @@ public class Item extends AuditLoggingBase {
     @Column(name = "location", nullable = false, length = 100)
     private String location;
 
+    @Lob
     @NotNull
-    @Column(columnDefinition = "TEXT", name = "chat_url", nullable = false)
+    @Column(name = "chat_url", nullable = false)
     private String chatUrl;
 
     @NotNull
@@ -74,4 +81,59 @@ public class Item extends AuditLoggingBase {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @OneToMany(mappedBy = "item")
+    private List<ItemComment> itemCommentList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item")
+    private List<ItemImage> itemImageList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item")
+    private List<ItemLike> itemLikeList = new ArrayList<>();
+
+
+    public static Item createItem(CreateItemRequest request, Member member) {
+        Item item = new Item();
+        item.member = member;
+        item.title = request.title();
+        item.price = request.price();
+        item.currency = request.currencyType();
+        item.content = request.content();
+        item.location = request.location();
+        item.chatUrl = request.chatUrl();
+        item.anonymous = request.isAnonymous();
+        item.status = ItemStatusType.SELLING;
+        item.viewCount = 0;
+        return item;
+    }
+
+    public void updateView() {
+        this.viewCount += 1;
+    }
+
+    public Item updateItemPost(
+            Long memberId,
+            String title,
+            String content,
+            Long price,
+            CurrencyType currency,
+            String location,
+            String chatUrl,
+            boolean anonymous
+    ) {
+        if (!memberId.equals(this.member.getId())) {
+            throw new CustomException(ErrorCode.MODIFY_NOT_AUTHORIZED);
+        }
+        this.title = title;
+        this.content = content;
+        this.price = price;
+        this.currency = currency;
+        this.location = location;
+        this.chatUrl = chatUrl;
+        this.anonymous = anonymous;
+        return this;
+    }
+
+    public void modifyItemStatus(ItemStatusType itemStatusType) {
+        this.status = itemStatusType;
+    }
 }

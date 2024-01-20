@@ -1,8 +1,8 @@
 package community.mingle.api.domain.item.entity;
 
+import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.entitybase.AuditLoggingBase;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -11,28 +11,28 @@ import java.time.LocalDateTime;
 
 @Getter
 @Entity
-@Where(clause = "deleted_at IS NULL")
-@SQLDelete(sql = "UPDATE item_image SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
-@Table(name = "item_image")
+@Table(name = "item_like")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Where(clause = "deleted_at IS NULL")
 @Builder
 @AllArgsConstructor
-public class ItemImage extends AuditLoggingBase {
+@SQLDelete(sql = "UPDATE item_like SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+public class ItemLike extends AuditLoggingBase {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
-    @NotNull
-    @Column(name = "url", nullable = false)
-    private String url;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
-    @Column(name = "deleted_at")
+    @Column(name = "deleted_at", nullable = false)
     private LocalDateTime deletedAt;
 
 }
