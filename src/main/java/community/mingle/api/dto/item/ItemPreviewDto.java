@@ -14,7 +14,7 @@ public class ItemPreviewDto {
     private final String title;
     private final String content;
     private final Long price;
-    private String nickName;
+    private String nickname;
     private final String createdAt;
     private final int likeCount;
     private final int commentCount;

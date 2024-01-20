@@ -80,7 +80,7 @@ public class ItemFacade {
                 .title(title)
                 .content(content)
                 .price(item.getPrice())
-                .nickName(nickname)
+                .nickname(nickname)
                 .createdAt(convertToDateAndTime(item.getCreatedAt()))
                 .likeCount(item.getItemLikeList().size())
                 .commentCount(item.getItemCommentList().size())
