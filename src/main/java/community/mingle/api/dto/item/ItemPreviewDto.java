@@ -6,24 +6,24 @@ import lombok.Getter;
 
 import java.util.List;
 
-@Getter
+//@Getter
 @Builder
-public class ItemPreviewDto {
+public record ItemPreviewDto(
 
-    private final Long id;
-    private final String title;
-    private final String content;
-    private final Long price;
-    private String nickname;
-    private final String createdAt;
-    private final int likeCount;
-    private final int commentCount;
-    private final String status;
-    private final String imgThumbnailUrl;
-    private final String location;
-    private final List<String> itemImgList;
-    private final String chatUrl;
-    private final boolean isLiked;
-    private final CurrencyType currency;
-
+            Long id,
+            String title,
+            String content,
+            Long price,
+            String nickname,
+            String createdAt,
+            int likeCount,
+            int commentCount,
+            String status,
+            String imgThumbnailUrl,
+            String location,
+            List<String> itemImgList,
+            String chatUrl,
+            boolean isLiked,
+            CurrencyType currency
+) {
 }
