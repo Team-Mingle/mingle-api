@@ -1,5 +1,6 @@
 package community.mingle.api.domain.member.controller;
 
+import community.mingle.api.domain.member.facade.MemberFacade;
 import community.mingle.api.domain.post.controller.response.PostListResponse;
 import community.mingle.api.domain.post.facade.PostFacade;
 import community.mingle.api.enums.BoardType;
@@ -34,6 +35,18 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final PostFacade postFacade;
+    private final MemberFacade memberFacade;
+
+
+    @Operation(summary = "닉네임 수정 API")
+    @PatchMapping(path = "/nickname")
+    @ApiResponses({
+            @ApiResponse(responseCode = "2017", description = "중복된 닉네임입니다.", content = @Content(schema = @Schema(hidden = true))),
+    })
+    public ResponseEntity<Void> updateNickname(@Parameter String nickname) {
+        memberFacade.updateNickname(nickname);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     //TODO 중복 제거
     @Operation(summary = "내가 쓴 글 조회 API")
