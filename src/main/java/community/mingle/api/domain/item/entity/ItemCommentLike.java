@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Where(clause = "deleted_at IS NULL")
 @Builder
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE item_comment_like SET deleted_at = CURRENT_TIMESTAMP, status = 'INACTIVE' WHERE id = ?")
+@SQLDelete(sql = "UPDATE item_comment_like SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 public class ItemCommentLike extends AuditLoggingBase {
 
     @Id
