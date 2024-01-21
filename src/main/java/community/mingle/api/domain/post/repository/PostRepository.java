@@ -24,7 +24,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByScrapMemberIdAndBoardType(Long memberId, BoardType boardType, PageRequest pageRequest);
 
     @Query("select p from PostLike pl join pl.member m join pl.post p where m.id = :memberId and p.boardType = :boardType")
-    Page<Post> findAllByLikeMemberIdAndBoardType(Long id, BoardType boardType, PageRequest pageRequest);
+    Page<Post> findAllByLikeMemberIdAndBoardType(Long memberId, BoardType boardType, PageRequest pageRequest);
 
     Page<Post> findAllByBoardType(BoardType boardType, PageRequest pageRequest);
 }
