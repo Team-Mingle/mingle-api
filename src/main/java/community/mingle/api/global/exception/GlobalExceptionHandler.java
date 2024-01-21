@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
 
     public ErrorResponse getErrorResponse(String originCode, String message) {
         return switch (originCode) {
-            case "NotBlank" -> new ErrorResponse(BAD_REQUEST.value(), "EMPTY_FIELD_ERROR", message);
+            case "NotBlank", "NotEmpty" -> new ErrorResponse(BAD_REQUEST.value(), "EMPTY_FIELD_ERROR", message);
             case "Email", "Pattern" -> new ErrorResponse(BAD_REQUEST.value(), "REGEX_ERROR", message);
             case "Max", "Min", "Size" -> new ErrorResponse(BAD_REQUEST.value(), "SIZE_LIMIT_ERROR", message);
             default -> new ErrorResponse(INTERNAL_SERVER_ERROR.value(), "UNEXPECTED_ERROR", message);
