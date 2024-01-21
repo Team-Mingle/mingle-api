@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: drop unique key from member table email column
+      author: Hyeonwoo Jung
+      changes:
+        - dropUniqueConstraint:
+            tableName: member
+            constraintName: email
