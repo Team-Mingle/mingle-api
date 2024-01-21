@@ -1,6 +1,5 @@
 package community.mingle.api.domain.member.service;
 
-import community.mingle.api.domain.auth.entity.RefreshToken;
 import community.mingle.api.domain.auth.repository.RefreshTokenRepository;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.entity.University;
@@ -16,10 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
-import static community.mingle.api.global.exception.ErrorCode.MEMBER_NOT_FOUND;
-import static community.mingle.api.global.exception.ErrorCode.UNIVERSITY_NOT_FOUND;
+import static community.mingle.api.global.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -86,11 +83,17 @@ public class MemberService {
     }
 
     @Transactional
-    public void logout(Member member) {
+    public void deleteRefreshToken(Member member) {
         refreshTokenRepository.findById(member.getEmail())
                 .ifPresentOrElse(refreshTokenRepository::delete, () -> {
                 });
-        member.setFcmToken(null);
     }
+
+    public void checkIsSameMemberAsTokenMember(Member tokenMember, Member member) {
+        if (!tokenMember.getEmail().equals(member.getEmail())) {
+            throw new CustomException(FAILED_TO_LOGIN);
+        }
+    }
+
 
 }
