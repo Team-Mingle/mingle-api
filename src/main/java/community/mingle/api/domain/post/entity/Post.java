@@ -96,5 +96,8 @@ public class Post extends AuditLoggingBase {
     public void updateView() {
         this.viewCount += 1;
     }
+    public void updateStatusAsNotified() {
+        this.statusType = ContentStatusType.NOTIFIED;
+    }
 
 }

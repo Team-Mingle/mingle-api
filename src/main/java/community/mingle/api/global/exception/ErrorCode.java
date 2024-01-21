@@ -66,6 +66,9 @@ public enum ErrorCode {
     //notification
     NOTIFICATION_NOT_FOUND(404, "NOTIFICATION_NOT_FOUND", "존재하지 않는 알림입니다."),
 
+
+    //Report
+    ALREADY_REPORTED(409, "ALREADY_REPORTED", "이미 신고한 컨텐츠입니다."),
     //mypage
     EMPTY_MYPOST_LIST(404, "EMPTY_MYPOST_LIST", "게시글이 없어요."),
 

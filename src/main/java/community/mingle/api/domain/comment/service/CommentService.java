@@ -27,6 +27,11 @@ public class CommentService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
 
+
+    public Comment getComment(Long commentId) {
+        return commentRepository.findById(commentId).orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
+    }
+
     @Transactional
     public Comment create(
             Long memberId,
