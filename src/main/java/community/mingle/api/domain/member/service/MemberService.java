@@ -1,5 +1,7 @@
 package community.mingle.api.domain.member.service;
 
+import community.mingle.api.domain.auth.entity.RefreshToken;
+import community.mingle.api.domain.auth.repository.RefreshTokenRepository;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.entity.University;
 import community.mingle.api.domain.member.repository.MemberRepository;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static community.mingle.api.global.exception.ErrorCode.MEMBER_NOT_FOUND;
 import static community.mingle.api.global.exception.ErrorCode.UNIVERSITY_NOT_FOUND;
@@ -24,6 +27,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final UniversityRepository universityRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
 
     public Member getByHashedEmail(String hashedEmail) {
@@ -51,7 +55,7 @@ public class MemberService {
     }
 
     @Transactional
-    public Member create( int universityId, String nickname, String email, String password) {
+    public Member create(int universityId, String nickname, String email, String password) {
         String hashedEmail = EmailHasher.hashEmail(email);
         String encodedPassword = passwordEncoder.encode(password);
 
@@ -80,4 +84,13 @@ public class MemberService {
         String encodedPassword = passwordEncoder.encode(password);
         member.updatePassword(encodedPassword);
     }
+
+    @Transactional
+    public void logout(Member member) {
+        refreshTokenRepository.findById(member.getEmail())
+                .ifPresentOrElse(refreshTokenRepository::delete, () -> {
+                });
+        member.setFcmToken(null);
+    }
+
 }

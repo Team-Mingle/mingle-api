@@ -30,4 +30,12 @@ public class MemberFacade {
         }
         member.updateNickname(nickname);
     }
+
+    @Transactional
+    public void logout() {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+
+        memberService.logout(member);
+    }
 }
