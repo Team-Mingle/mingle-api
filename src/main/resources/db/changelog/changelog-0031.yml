@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      id: add point_log table
+      author: Hyeonwoo Jung
+      changes:
+        - createTable:
+            tableName: point_log
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                  autoIncrement: true
+              - column:
+                  name: member_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: changed_amount
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reason
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false

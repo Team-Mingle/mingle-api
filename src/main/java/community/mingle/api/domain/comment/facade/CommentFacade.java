@@ -23,10 +23,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static community.mingle.api.enums.ContentStatusType.INACTIVE;
 import static community.mingle.api.enums.ContentStatusType.REPORTED;
@@ -46,14 +43,14 @@ public class CommentFacade {
     private final ApplicationEventPublisher applicationEventPublisher;
 
 
-    public List<PostDetailCommentResponse> getPostDetailComments(Long postId) {
+    public List<PostDetailCommentResponse> getPostDetailComments(Long postId) { //TODO 성능 확인 (쿼리 N개)
         Post post = postService.getPost(postId);
         if (!postService.isValidPost(post)) return new ArrayList<>();
         Long memberIdByJwt = tokenService.getTokenInfo().getMemberId();
         List<PostDetailCommentResponse> responseList = new ArrayList<>();
 
         Map<Comment, List<Comment>> commentListMap = commentService.getCommentsWithCoCommentsMap(postId, memberIdByJwt);
-        Map<CommentDto, List<CoCommentDto>> commentDtoListMap = new HashMap<>();
+        Map<CommentDto, List<CoCommentDto>> commentDtoListMap = new LinkedHashMap<>();
 
         commentListMap.forEach((comment, coCommentList) -> {
             CommentDto commentDto = createCommentDto(comment, memberIdByJwt, post.getMember().getId());
@@ -96,18 +93,15 @@ public class CommentFacade {
     }
 
     @Transactional
-    public CreateCommentLikeResponse createCommentLike(Long commentId) {
+    public void updateCommentLike(Long commentId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
-        commentLikeService.create(commentId, memberId);
-        return new CreateCommentLikeResponse(true);
+        if (commentLikeService.isCommentLiked(commentId, memberId)) {
+            commentLikeService.delete(commentId, memberId);
+        } else {
+            commentLikeService.create(commentId, memberId);
+        }
     }
 
-    @Transactional
-    public DeleteCommentLikeResponse deleteCommentLike(Long commentId) {
-        Long memberId = tokenService.getTokenInfo().getMemberId();
-        commentLikeService.delete(commentId, memberId);
-        return new DeleteCommentLikeResponse(true);
-    }
 
     private PostDetailCommentResponse createCommentResponse(CommentDto commentDto, List<CoCommentDto> coCommentDtoList) {
         //TODO isAdmin -> role, isDeleted/isReported -> status 변경가능?

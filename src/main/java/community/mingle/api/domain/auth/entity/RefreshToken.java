@@ -27,8 +27,8 @@ public class RefreshToken extends AuditLoggingBase {
     @Column(name = "expiry", nullable = false)
     private LocalDateTime expiry;
 
-    public void updateRefreshtoken(String token) {
+    public void updateRefreshtoken(String token, LocalDateTime expiry) {
         this.token = token;
-        this.expiry = LocalDateTime.now().plusDays(30);
+        this.expiry = expiry;
     }
 }

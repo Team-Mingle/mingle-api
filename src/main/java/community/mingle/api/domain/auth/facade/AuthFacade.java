@@ -97,12 +97,12 @@ public class AuthFacade {
     }
 
     @Transactional
-    public TokenResponse reissueAccessToken(String refreshToken, String email) {
+    public TokenResponse reissueAccessToken(String refreshToken, String encryptedEmail) {
 
-        TokenDto tokenDto = tokenService.verifyToken(refreshToken); //TODO 로직 변경해야함
-        tokenService.validateRefreshToken(refreshToken);
+        TokenDto tokenDto = tokenService.verifyToken(refreshToken, false);
+        tokenService.validateRefreshToken(refreshToken, encryptedEmail);
 
-        CreatedTokenDto tokens = tokenService.createTokens(tokenDto.getMemberId(), tokenDto.getMemberRole(), email);
+        CreatedTokenDto tokens = tokenService.createTokens(tokenDto.getMemberId(), tokenDto.getMemberRole(), encryptedEmail);
 
         return TokenResponse.builder()
                 .accessToken(tokens.getAccessToken())

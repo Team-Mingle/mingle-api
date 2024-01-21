@@ -1,4 +1,4 @@
-package community.mingle.api.domain.course.entity;
+package community.mingle.api.domain.point.entity;
 
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.entitybase.AuditLoggingBase;
@@ -34,7 +34,7 @@ public class Point extends AuditLoggingBase {
     private Long amount;
 
     public void useAmount(Long amount) {
-        if (this.amount <= amount) {
+        if (this.amount < amount) {
             throw new CustomException(POINT_NOT_ENOUGH);
         }
         this.amount -= amount;

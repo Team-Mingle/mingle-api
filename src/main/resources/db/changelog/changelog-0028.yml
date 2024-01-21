@@ -1,11 +1,12 @@
 databaseChangeLog:
   - changeSet:
-      id: add comment_notification again
-      author: taehyun
+      id: create item table
+      author: Boyeong Choi
       changes:
         - createTable:
             columns:
               - column:
+                  autoIncrement: true
                   constraints:
                     nullable: false
                     primaryKey: true
@@ -14,16 +15,73 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
-                  name: comment_id
+                  name: member_id
                   type: BIGINT
-            tableName: comment_notification
+              - column:
+                  constraints:
+                    nullable: false
+                  name: title
+                  type: VARCHAR(100)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: price
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: currency
+                  type: VARCHAR(45)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: content
+                  type: TEXT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: location
+                  type: VARCHAR(100)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: chat_url
+                  type: TEXT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: anonymous
+                  type: BIT(1)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: status
+                  type: VARCHAR(45)
+              - column:
+                  name: view_count
+                  type: INT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_at
+                  type: timestamp
+              - column:
+                  constraints:
+                    nullable: false
+                  name: updated_at
+                  type: timestamp
+              - column:
+                  name: deleted_at
+                  type: timestamp
+            tableName: item
   - changeSet:
-      id: add post_notification again
-      author: taehyun
+      id: created item_image table
+      author: Boyeong Choi
       changes:
         - createTable:
             columns:
               - column:
+                  autoIncrement: true
                   constraints:
                     nullable: false
                     primaryKey: true
@@ -32,55 +90,24 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
-                  name: post_id
+                  name: item_id
                   type: BIGINT
-            tableName: post_notification
-
-  - changeSet:
-      id: add foreign key constraints
-      author: taehyun
-      changes:
-        - addForeignKeyConstraint:
-            baseColumnNames: id
-            baseTableName: post_notification
-            constraintName: post_notification_ibfk_1
-            deferrable: false
-            initiallyDeferred: false
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
-            referencedColumnNames: id
-            referencedTableName: notification
-            validate: true
-        - addForeignKeyConstraint:
-            baseColumnNames: post_id
-            baseTableName: post_notification
-            constraintName: post_notification_ibfk_2
-            deferrable: false
-            initiallyDeferred: false
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
-            referencedColumnNames: id
-            referencedTableName: post
-            validate: true
-        - addForeignKeyConstraint:
-            baseColumnNames: id
-            baseTableName: comment_notification
-            constraintName: comment_notification_ibfk_1
-            deferrable: false
-            initiallyDeferred: false
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
-            referencedColumnNames: id
-            referencedTableName: notification
-            validate: true
-        - addForeignKeyConstraint:
-            baseColumnNames: comment_id
-            baseTableName: comment_notification
-            constraintName: comment_notification_ibfk_2
-            deferrable: false
-            initiallyDeferred: false
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
-            referencedColumnNames: id
-            referencedTableName: comment
-            validate: true
+              - column:
+                  constraints:
+                    nullable: false
+                  name: url
+                  type: TEXT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_at
+                  type: timestamp
+              - column:
+                  constraints:
+                    nullable: false
+                  name: updated_at
+                  type: timestamp
+              - column:
+                  name: deleted_at
+                  type: timestamp
+            tableName: item_image

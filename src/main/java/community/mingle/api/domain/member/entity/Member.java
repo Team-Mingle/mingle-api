@@ -95,4 +95,14 @@ public class Member extends AuditLoggingBase {
     public void updatePassword(String password) {
         this.password = password;
     }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void withDraw() {
+        this.status = MemberStatus.INACTIVE;
+        this.deletedAt = LocalDateTime.now();
+        this.fcmToken = null;
+    }
 }

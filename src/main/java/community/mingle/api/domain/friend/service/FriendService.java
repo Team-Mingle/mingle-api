@@ -5,13 +5,17 @@ import community.mingle.api.domain.friend.entity.FriendCode;
 import community.mingle.api.domain.friend.repository.FriendCodeRepository;
 import community.mingle.api.domain.friend.repository.FriendRepository;
 import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.domain.point.event.EarningPointEvent;
+import community.mingle.api.enums.PointEarningType;
 import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import static community.mingle.api.global.exception.ErrorCode.*;
@@ -22,15 +26,20 @@ public class FriendService {
 
     private final FriendCodeRepository friendCodeRepository;
     private final FriendRepository friendRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
+
+    public Friend getById(Long friendId) {
+        return friendRepository.findById(friendId).orElseThrow(() -> new CustomException(FRIEND_NOT_FOUND));
+    }
 
     @Transactional
-    public FriendCode createFriendCode(Member member, String defaultMemberName) {
+    public FriendCode createFriendCode(Member member, String myDisplayName) {
 
         String code = generateUniqueCode();
         FriendCode friendCode = FriendCode.builder()
                 .member(member)
                 .code(code)
-                .displayName(defaultMemberName)
+                .displayName(myDisplayName)
                 .expiresAt(LocalDateTime.now().plusDays(3L))
                 .build();
 
@@ -45,22 +54,45 @@ public class FriendService {
         Friend friend = Friend.builder()
                 .member(member)
                 .friend(checkedFriendCode.getMember())
-                .name(checkedFriendCode.getDisplayName())
+                .friendName(checkedFriendCode.getDisplayName())
                 .build();
 
         Friend reverseFriend = Friend.builder()
                 .member(checkedFriendCode.getMember())
                 .friend(member)
-                .name(myDisplayName)
+                .friendName(myDisplayName)
                 .build();
 
+        //LastDisplayName은 friendCode의 제일 최근 이름을 가져오고 있음
+        //친구를 생성할 때의 myDisplayName도 LastDisplayName으로 사용하기 위해 임의의 friendCode를 만들어줌
+        createFriendCode(member, myDisplayName);
         friendCodeRepository.delete(checkedFriendCode);
         friendRepository.save(friend);
         friendRepository.save(reverseFriend);
+
+        applicationEventPublisher.publishEvent(new EarningPointEvent(this, PointEarningType.ADD_FRIEND, member.getId()));
+        applicationEventPublisher.publishEvent(new EarningPointEvent(this, PointEarningType.ADD_FRIEND, friend.getFriend().getId()));
     }
 
     public List<Friend> listFriends(Member member) {
         return friendRepository.findAllByMember(member);
+    }
+
+    @Transactional
+    public void deleteFriend(Member member, Long friendId) {
+        Friend memberToFriendRelation = friendRepository.findById(friendId).orElseThrow(() -> new CustomException(FRIEND_NOT_FOUND));
+        if (!member.equals(memberToFriendRelation.getMember())) {
+            throw new CustomException(MEMBER_NOT_FRIEND);
+        }
+        Member friend = memberToFriendRelation.getFriend();
+        Friend friendToMemberRelation = friendRepository.findByMemberAndFriend(friend, member).orElseThrow(() -> new CustomException(FRIEND_NOT_FOUND));
+        friendRepository.delete(memberToFriendRelation);
+        friendRepository.delete(friendToMemberRelation);
+    }
+
+    public String getMemberLastDisplayName(Member member) {
+        Optional<String> memberLastDisplayName = friendCodeRepository.findMemberLastDisplayName(member.getId());
+        return memberLastDisplayName.orElseGet(member::getNickname);
     }
 
     private FriendCode checkFriendCode(String friendCode, Member member) {

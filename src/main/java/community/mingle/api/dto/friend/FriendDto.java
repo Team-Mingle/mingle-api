@@ -1,7 +1,7 @@
 package community.mingle.api.dto.friend;
 
 public record FriendDto(
-        Long friendMemberId,
+        Long friendId,
         String friendName
 ) {
 }

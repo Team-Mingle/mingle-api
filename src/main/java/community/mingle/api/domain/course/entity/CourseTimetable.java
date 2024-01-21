@@ -37,6 +37,11 @@ public class CourseTimetable extends AuditLoggingBase {
     @JoinColumn(name = "timetable_id", nullable = false)
     private Timetable timetable;
 
+    @NotNull
+    @Column(name = "rgb", nullable = false)
+    private String rgb;
+
+
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 

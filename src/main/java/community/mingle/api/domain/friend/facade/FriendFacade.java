@@ -5,6 +5,7 @@ import community.mingle.api.domain.friend.controller.request.CreateFriendRequest
 import community.mingle.api.domain.friend.controller.request.CreateFriendCodeRequest;
 import community.mingle.api.domain.friend.controller.response.CreateFriendCodeResponse;
 import community.mingle.api.domain.friend.controller.response.CreateFriendResponse;
+import community.mingle.api.domain.friend.controller.response.FriendListResponse;
 import community.mingle.api.domain.friend.entity.Friend;
 import community.mingle.api.domain.friend.entity.FriendCode;
 import community.mingle.api.domain.friend.service.FriendService;
@@ -29,7 +30,7 @@ public class FriendFacade {
     public CreateFriendCodeResponse createFriendCode(CreateFriendCodeRequest request) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
-        FriendCode friendCode = friendService.createFriendCode(member, request.defaultMemberName());
+        FriendCode friendCode = friendService.createFriendCode(member, request.myDisplayName());
         return new CreateFriendCodeResponse(friendCode.getCode());
     }
 
@@ -41,8 +42,32 @@ public class FriendFacade {
         friendService.createFriend(member, request.friendCode(), request.myDisplayName());
         List<Friend> friendList = friendService.listFriends(member);
         List<FriendDto> friendDtoList = friendList.stream()
-                .map(friend -> new FriendDto(friend.getId(), friend.getName()))
+                .map(friend -> new FriendDto(friend.getId(), friend.getFriendName()))
                 .toList();
         return new CreateFriendResponse(friendDtoList);
     }
+
+    public String getMyLastDisplayName() {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+        return friendService.getMemberLastDisplayName(member);
+    }
+
+    public FriendListResponse listFriends() {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+        List<Friend> friendList = friendService.listFriends(member);
+        List<FriendDto> friendDtoList = friendList.stream()
+                .map(friend -> new FriendDto(friend.getId(), friend.getFriendName()))
+                .toList();
+        return new FriendListResponse(friendDtoList);
+    }
+
+    @Transactional
+    public void deleteFriend(Long friendId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+        friendService.deleteFriend(member, friendId);
+    }
+
 }

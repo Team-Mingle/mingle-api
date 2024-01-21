@@ -1,4 +1,4 @@
-package community.mingle.api.domain.post.controller.response;
+package community.mingle.api.dto.post;
 
 import community.mingle.api.enums.BoardType;
 import community.mingle.api.enums.CategoryType;

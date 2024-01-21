@@ -46,6 +46,7 @@ public class GlobalExceptionHandler {
 
         String messageCode = "RUNTIME_ERROR";
         String errorMessage = e.getMessage(); //TODO exception log 고려 필요 (다 표시하면 안됨)
+        e.printStackTrace();
         ErrorResponse errorResponse = getErrorResponse(messageCode, errorMessage);
         return new ResponseEntity<>(errorResponse, resHeaders, INTERNAL_SERVER_ERROR);
     }

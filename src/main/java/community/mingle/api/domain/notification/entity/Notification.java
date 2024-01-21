@@ -1,6 +1,9 @@
 package community.mingle.api.domain.notification.entity;
 
 import community.mingle.api.domain.comment.entity.Comment;
+import community.mingle.api.domain.item.entity.Item;
+import community.mingle.api.domain.item.entity.ItemComment;
+import community.mingle.api.domain.item.repository.ItemCommentRepository;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.entitybase.AuditLoggingBase;
@@ -92,5 +95,15 @@ public class Notification extends AuditLoggingBase {
                 .build();
     }
 
+    public static ItemCommentNotification createItemCommentNotification(ItemComment comment, Item item, Member member) {
+        return ItemCommentNotification.builder()
+                .itemComment(comment)
+                .member(member)
+                .notificationType(NotificationType.COMMENT)
+                .contentId(item.getId())
+                .contentType(ContentType.ITEM)
+                .read(false)
+                .build();
+    }
 
 }

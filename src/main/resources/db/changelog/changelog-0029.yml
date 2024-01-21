@@ -1,55 +1,96 @@
 databaseChangeLog:
   - changeSet:
-      id: create report_notification table
-      author: taehyun
+      id: add course_raw table
+      author: Hyeonwoo Jung
       changes:
         - createTable:
+            tableName: course_raw
             columns:
               - column:
+                  name: id
+                  type: bigint
                   constraints:
                     nullable: false
                     primaryKey: true
-                  name: id
-                  type: BIGINT
+                  autoIncrement: true
               - column:
+                  name: course_code
+                  type: varchar(1023)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: semester
+                  type: varchar(1023)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: day_of_week
+                  type: enum ('SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY')
+                  constraints:
+                    nullable: true
+              - column:
+                  name: start_time
+                  type: time
+                  constraints:
+                    nullable: true
+              - column:
+                  name: end_time
+                  type: time
+                  constraints:
+                    nullable: true
+              - column:
+                  name: venue
+                  type: varchar(1023)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: professor
+                  type: varchar(1023)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: subclass
+                  type: varchar(1023)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: memo
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: prerequisite
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: university_id
+                  type: int
                   constraints:
                     nullable: false
-                  name: report_id
-                  type: BIGINT
-            tableName: report_notification
-  - changeSet:
-      id: add missing column content_id in report table
-      author: taehyun
-      changes:
-        - addColumn:
-            tableName: report
-            columns:
               - column:
-                  name: content_id
-                  type: bigint
+                  name: type
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
   - changeSet:
-      id: create foreign key constraint
-      author: taehyun
+      id: course_time column is nullable
+      author: Hyeonwoo Jung
       changes:
-        - addForeignKeyConstraint:
-            baseColumnNames: id
-            baseTableName: report_notification
-            constraintName: report_notification_ibfk_1
-            deferrable: false
-            initiallyDeferred: false
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
-            referencedColumnNames: id
-            referencedTableName: notification
-            validate: true
-        - addForeignKeyConstraint:
-            baseColumnNames: comment_id
-            baseTableName: comment_notification
-            constraintName: report_notification_ibfk_2
-            deferrable: false
-            initiallyDeferred: false
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
-            referencedColumnNames: id
-            referencedTableName: report
-            validate: true
+        - dropNotNullConstraint:
+            tableName: course_time
+            columnName: day_of_week
+            columnDataType: enum ('SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY')
+        - dropNotNullConstraint:
+            tableName: course_time
+            columnName: start_time
+            columnDataType: time
+        - dropNotNullConstraint:
+            tableName: course_time
+            columnName: end_time
+            columnDataType: time

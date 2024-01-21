@@ -1,0 +1,375 @@
+databaseChangeLog:
+  - changeSet:
+      id: drop Existing Tables
+      author: taehyun
+      changes:
+        - dropTable:
+            tableName: item
+        - dropTable:
+            tableName: item_image
+
+  - changeSet:
+      id: create Item Table
+      author: taehyun
+      changes:
+        - createTable:
+            tableName: item
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: member_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: content
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: location
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: chat_url
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: anonymous
+                  type: bit(1)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: view_count
+                  type: int
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: timestamp
+
+  - changeSet:
+      id: create ItemBlind Table
+      author: taehyun
+      changes:
+        - createTable:
+            tableName: item_blind
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: item_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: member_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: timestamp
+
+  - changeSet:
+      id: create ItemComment Table
+      author: taehyun
+      changes:
+        - createTable:
+            tableName: item_comment
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: item_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: member_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: parent_comment_id
+                  type: bigint
+              - column:
+                  name: mention_id
+                  type: bigint
+              - column:
+                  name: content
+                  type: varchar(1000)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: anonymous
+                  type: bit(1)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: anonymous_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: timestamp
+              - column:
+                  name: status
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: create ItemCommentLike Table
+      author: taehyun
+      changes:
+        - createTable:
+            tableName: item_comment_like
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: item_comment_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: member_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: timestamp
+
+  - changeSet:
+      id: create ItemImage Table
+      author: taehyun
+      changes:
+        - createTable:
+            tableName: item_image
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: item_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: url
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: timestamp
+
+  - changeSet:
+      id: create ItemLike Table
+      author: taehyun
+      changes:
+        - createTable:
+            tableName: item_like
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: item_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: member_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: timestamp
+
+  - changeSet:
+      id: Add foreign key constraints
+      author: taehyun
+      changes:
+        - addForeignKeyConstraint:
+            constraintName: item_member_id_fk
+            baseTableName: item
+            baseColumnNames: member_id
+            referencedTableName: member
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            constraintName: item_content_status_type_type_fk
+            baseTableName: item
+            baseColumnNames: status
+            referencedTableName: content_status_type
+            referencedColumnNames: type
+
+        - addForeignKeyConstraint:
+            constraintName: item_comment_content_status_type_type_fk
+            baseTableName: item_comment
+            baseColumnNames: status
+            referencedTableName: content_status_type
+            referencedColumnNames: type
+
+        - addForeignKeyConstraint:
+            constraintName: item_blind_item_id_fk
+            baseTableName: item_blind
+            baseColumnNames: item_id
+            referencedTableName: item
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            constraintName: item_comment_item_id_fk
+            baseTableName: item_comment
+            baseColumnNames: item_id
+            referencedTableName: item
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            constraintName: item_comment_member_id_fk
+            baseTableName: item_comment
+            baseColumnNames: member_id
+            referencedTableName: member
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            constraintName: item_comment_like_item_comment_id_fk
+            baseTableName: item_comment_like
+            baseColumnNames: item_comment_id
+            referencedTableName: item_comment
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            constraintName: item_comment_like_member_id_fk
+            baseTableName: item_comment_like
+            baseColumnNames: member_id
+            referencedTableName: member
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            constraintName: item_image_item_id_fk
+            baseTableName: item_image
+            baseColumnNames: item_id
+            referencedTableName: item
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            constraintName: item_like_item_id_fk
+            baseTableName: item_like
+            baseColumnNames: item_id
+            referencedTableName: item
+            referencedColumnNames: id
