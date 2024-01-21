@@ -1,5 +1,6 @@
 package community.mingle.api.domain.member.controller;
 
+import community.mingle.api.domain.member.controller.request.WithdrawMemberRequest;
 import community.mingle.api.domain.member.facade.MemberFacade;
 import community.mingle.api.domain.post.controller.response.PostListResponse;
 import community.mingle.api.domain.post.facade.PostFacade;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -89,4 +91,12 @@ public class MemberController {
         memberFacade.logout();
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @Operation(summary = "회원 탈퇴 API")
+    @DeleteMapping(path = "/withdrawal")
+    public ResponseEntity<Void> withdrawMember(@RequestBody @Valid WithdrawMemberRequest request) {
+        memberFacade.withdraw(request);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }
