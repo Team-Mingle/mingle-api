@@ -83,5 +83,10 @@ public class MemberController {
         return new ResponseEntity<>(myPageLikeResponse, HttpStatus.OK);
     }
 
-
+    @Operation(summary = "로그아웃 API")
+    @PostMapping(path = "/logout")
+    public ResponseEntity<Void> logout() {
+        memberFacade.logout();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
