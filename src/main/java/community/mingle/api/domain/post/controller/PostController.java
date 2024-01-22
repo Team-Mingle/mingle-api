@@ -9,6 +9,10 @@ import community.mingle.api.enums.BoardType;
 import community.mingle.api.enums.CategoryType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -79,7 +83,7 @@ public class PostController {
 
 
     @Operation(summary = "게시물 수정 API")
-    @PatchMapping(path ="/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(path = "/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UpdatePostResponse> updatePost(@Valid @ModelAttribute UpdatePostRequest updatePostRequest, @PathVariable Long postId) {
 
         UpdatePostResponse updatePostResponse = postFacade.updatePost(updatePostRequest, postId);
@@ -114,8 +118,23 @@ public class PostController {
 
     @Operation(summary = "게시물 좋아요/좋아요 취소 API")
     @PostMapping("/like/{postId}")
+    @ApiResponses({
+            @ApiResponse(responseCode = "404", description = "POST_NOT_EXIST: 게시물이 존재하지 않습니다.", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "LIKE_NOT_FOUND: 좋아요를 찾을 수 없습니다.", content = @Content(schema = @Schema(hidden = true))),
+    })
     public ResponseEntity<Void> updatePostLike(@PathVariable Long postId) {
         postFacade.updatePostLike(postId);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "게시물 스크랩/스크랩 취소 API")
+    @PostMapping("/scrap/{postId}")
+    @ApiResponses({
+            @ApiResponse(responseCode = "404", description = "POST_NOT_EXIST: 게시물이 존재하지 않습니다.", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "LIKE_NOT_FOUND: 좋아요를 찾을 수 없습니다.", content = @Content(schema = @Schema(hidden = true))),
+    })
+            public ResponseEntity<Void>updatePostScrap(@PathVariable Long postId) {
+        postFacade.updatePostScrap(postId);
         return ResponseEntity.ok().build();
     }
 

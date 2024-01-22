@@ -2,6 +2,7 @@ package community.mingle.api.domain.post.facade;
 
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.comment.service.CommentService;
+import community.mingle.api.domain.item.entity.Item;
 import community.mingle.api.domain.like.entity.PostLike;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
@@ -12,6 +13,7 @@ import community.mingle.api.domain.post.controller.response.*;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.service.PostImageService;
 import community.mingle.api.domain.post.service.PostLikeService;
+import community.mingle.api.domain.post.service.PostScrapService;
 import community.mingle.api.domain.post.service.PostService;
 import community.mingle.api.dto.post.PostPreviewDto;
 import community.mingle.api.dto.post.PostStatusDto;
@@ -40,6 +42,7 @@ public class PostFacade {
     private final PostService postService;
     private final PostImageService postImageService;
     private final PostLikeService postLikeService;
+    private final PostScrapService postScrapService;
     private final TokenService tokenService;
     private final CommentService commentService;
     private final ApplicationEventPublisher applicationEventPublisher;
@@ -155,6 +158,19 @@ public class PostFacade {
             if (postLike.getPost().getPostLikeList().size() == POPULAR_NOTIFICATION_LIKE_SIZE) {
                 applicationEventPublisher.publishEvent(new PopularPostNotificationEvent(this, postId, memberId));
             }
+        }
+    }
+
+    @Transactional
+    public void updatePostScrap(Long postId) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+        Post post = postService.getPost(postId);
+
+        if (postScrapService.isPostScraped(postId, memberId)) {
+            postScrapService.deletePostScrap(post, member);
+        } else {
+            postScrapService.createPostScrap(post, member);
         }
     }
 

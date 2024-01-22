@@ -4,7 +4,7 @@ import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.entitybase.AuditLoggingBase;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@Builder
+@RequiredArgsConstructor
 @Where(clause = "deleted_at IS NULL")
 @SQLDelete(sql = "UPDATE post_scrap SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Table(name = "post_scrap")
