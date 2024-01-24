@@ -1,13 +1,10 @@
 package community.mingle.api.domain.item.service;
 
-import community.mingle.api.domain.comment.entity.Comment;
 import community.mingle.api.domain.item.entity.Item;
 import community.mingle.api.domain.item.entity.ItemBlind;
 import community.mingle.api.domain.item.entity.ItemLike;
 import community.mingle.api.domain.item.repository.*;
-import community.mingle.api.domain.like.entity.CommentLike;
 import community.mingle.api.domain.member.entity.Member;
-import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.domain.report.entity.ItemReport;
 import community.mingle.api.domain.report.entity.Report;
 import community.mingle.api.dto.item.ItemStatusDto;
@@ -194,5 +191,13 @@ public class ItemService {
 
     public List<Item> searchItemWithKeyword(String keyword, Member member, PageRequest pageRequest) {
         return itemQueryRepository.findSearchItems(keyword, member, pageRequest).toList();
+    }
+
+    public List<Item> pageItemPostsByMember(Member member, PageRequest pageRequest) {
+        return itemRepository.findAllByMember(member.getId(), pageRequest).toList();
+    }
+
+    public List<Item> pageItemLikePostsByMember(Member member, PageRequest pageRequest) {
+        return itemRepository.findAllLikedItemsByMember(member.getId(), pageRequest).toList();
     }
 }

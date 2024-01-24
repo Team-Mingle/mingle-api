@@ -297,4 +297,30 @@ public class ItemFacade {
                 .toList();
         return new ItemListResponse(itemPreviewDtoList);
     }
+
+    public ItemListResponse getMyPageItemList(PageRequest pageRequest) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+
+        List<Item> itemList = itemService.pageItemPostsByMember(member, pageRequest);
+        if (itemList.isEmpty()) return new ItemListResponse(List.of());
+
+        List<ItemPreviewDto> itemPreviewDtoList = itemList.stream()
+                .map(item -> mapToItemPreviewDto(item, memberId))
+                .collect(Collectors.toList());
+        return new ItemListResponse(itemPreviewDtoList);
+    }
+
+    public ItemListResponse getMyPageItemLikeList(PageRequest pageRequest) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+
+        List<Item> itemList = itemService.pageItemLikePostsByMember(member, pageRequest);
+        if (itemList.isEmpty()) return new ItemListResponse(List.of());
+
+        List<ItemPreviewDto> itemPreviewDtoList = itemList.stream()
+                .map(item -> mapToItemPreviewDto(item, memberId))
+                .collect(Collectors.toList());
+        return new ItemListResponse(itemPreviewDtoList);
+    }
 }
