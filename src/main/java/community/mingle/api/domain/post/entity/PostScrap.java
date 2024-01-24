@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @Builder
-@RequiredArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Where(clause = "deleted_at IS NULL")
 @SQLDelete(sql = "UPDATE post_scrap SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Table(name = "post_scrap")
