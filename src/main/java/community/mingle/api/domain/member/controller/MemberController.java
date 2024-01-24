@@ -1,5 +1,7 @@
 package community.mingle.api.domain.member.controller;
 
+import community.mingle.api.domain.item.controller.response.ItemListResponse;
+import community.mingle.api.domain.item.facade.ItemFacade;
 import community.mingle.api.domain.member.controller.request.WithdrawMemberRequest;
 import community.mingle.api.domain.member.facade.MemberFacade;
 import community.mingle.api.domain.post.controller.response.PostListResponse;
@@ -38,6 +40,7 @@ public class MemberController {
 
     private final PostFacade postFacade;
     private final MemberFacade memberFacade;
+    private final ItemFacade itemFacade;
 
 
     @Operation(summary = "닉네임 수정 API")
@@ -84,6 +87,23 @@ public class MemberController {
         PostListResponse myPageLikeResponse = postFacade.getMyPageLikePostList(boardType, pageRequest);
         return new ResponseEntity<>(myPageLikeResponse, HttpStatus.OK);
     }
+
+    @Operation(summary = "내가 쓴 장터 게시물 조회 API")
+    @GetMapping(path = "/{boardType}/items")
+    public ResponseEntity<ItemListResponse> getMyPageItemList(@PathVariable BoardType boardType, @Parameter Pageable pageable) {
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
+        ItemListResponse myPageItemResponse = itemFacade.getMyPageItemList(pageRequest);
+        return new ResponseEntity<>(myPageItemResponse, HttpStatus.OK);
+    }
+
+    @Operation(summary = "내가 찜한 장터 게시물 조회 API")
+    @GetMapping(path = "/{boardType}/item-likes")
+    public ResponseEntity<ItemListResponse> getMyPageItemLikeList(@PathVariable BoardType boardType, @Parameter Pageable pageable) {
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
+        ItemListResponse myPageItemLikeResponse = itemFacade.getMyPageItemLikeList(pageRequest);
+        return new ResponseEntity<>(myPageItemLikeResponse, HttpStatus.OK);
+    }
+
 
     @Operation(summary = "로그아웃 API")
     @PostMapping(path = "/logout")
