@@ -2,7 +2,6 @@ package community.mingle.api.domain.post.facade;
 
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.comment.service.CommentService;
-import community.mingle.api.domain.item.entity.Item;
 import community.mingle.api.domain.like.entity.PostLike;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
@@ -20,7 +19,6 @@ import community.mingle.api.dto.post.PostStatusDto;
 import community.mingle.api.enums.BoardType;
 import community.mingle.api.enums.CategoryType;
 import community.mingle.api.enums.MemberRole;
-import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.global.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -32,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static community.mingle.api.global.exception.ErrorCode.EMPTY_MYPOST_LIST;
 import static community.mingle.api.global.utils.DateTimeConverter.convertToDateAndTime;
 
 @RequiredArgsConstructor
@@ -270,7 +267,7 @@ public class PostFacade {
         Member member = memberService.getById(memberId);
 
         List<Post> postList = postService.pagePostsByBoardTypeAndMember(boardType, member, pageRequest);
-        if (postList.isEmpty()) throw new CustomException(EMPTY_MYPOST_LIST);
+        if (postList.isEmpty()) return new PostListResponse(List.of());
 
         List<PostPreviewDto> postPreviewDtoList = postList.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))
@@ -284,7 +281,7 @@ public class PostFacade {
         Member member = memberService.getById(memberId);
 
         List<Post> postList = postService.pageCommentPostsByBoardTypeAndMember(boardType, member, pageRequest);
-        if (postList.isEmpty()) throw new CustomException(EMPTY_MYPOST_LIST);
+        if (postList.isEmpty()) return new PostListResponse(List.of());
 
         List<PostPreviewDto> postPreviewDtoList = postList.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))
@@ -297,7 +294,7 @@ public class PostFacade {
         Member member = memberService.getById(memberId);
 
         List<Post> postList = postService.pageScrapPostsByBoardTypeAndMember(boardType, member, pageRequest);
-        if (postList.isEmpty()) throw new CustomException(EMPTY_MYPOST_LIST);
+        if (postList.isEmpty()) return new PostListResponse(List.of());
 
         List<PostPreviewDto> postPreviewDtoList = postList.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))
@@ -310,7 +307,7 @@ public class PostFacade {
         Member member = memberService.getById(memberId);
 
         List<Post> postList = postService.pageLikePostsByBoardTypeAndMember(boardType, member, pageRequest);
-        if (postList.isEmpty()) throw new CustomException(EMPTY_MYPOST_LIST);
+        if (postList.isEmpty()) return new PostListResponse(List.of());
 
         List<PostPreviewDto> postPreviewDtoList = postList.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))
