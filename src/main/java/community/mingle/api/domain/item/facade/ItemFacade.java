@@ -16,10 +16,12 @@ import community.mingle.api.domain.item.service.ItemService;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.domain.post.controller.response.PostDetailCommentResponse;
+import community.mingle.api.domain.post.controller.response.PostListResponse;
 import community.mingle.api.dto.comment.CoCommentDto;
 import community.mingle.api.dto.comment.CommentDto;
 import community.mingle.api.dto.item.ItemPreviewDto;
 import community.mingle.api.dto.item.ItemStatusDto;
+import community.mingle.api.enums.BoardType;
 import community.mingle.api.enums.ItemStatusType;
 import community.mingle.api.enums.MemberRole;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static community.mingle.api.enums.ContentStatusType.INACTIVE;
 import static community.mingle.api.enums.ContentStatusType.REPORTED;
@@ -61,7 +64,8 @@ public class ItemFacade {
 
     public ItemListResponse getItemPostList(PageRequest pageRequest) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
-        List<Item> itemList = itemService.getPageItemPostList(pageRequest);
+        Member member = memberService.getById(memberId);
+        List<Item> itemList = itemService.getPageItemPostList(member, pageRequest);
 
         List<ItemPreviewDto> itemPreviewDtoList = itemList.stream()
                 .map(item -> mapToItemPreviewDto(item, memberId))

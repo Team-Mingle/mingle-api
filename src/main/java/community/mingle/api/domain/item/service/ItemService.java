@@ -44,8 +44,8 @@ public class ItemService {
     }
 
 
-    public List<Item> getPageItemPostList(PageRequest pageRequest) {
-        return itemRepository.findAll(pageRequest).toList();
+    public List<Item> getPageItemPostList(Member member, PageRequest pageRequest) {
+        return itemRepository.findAllByMemberCountry(member.getUniversity().getCountry(), pageRequest).toList();
     }
 
     public ItemStatusDto getItemStatus(Item item, Long memberId) {
