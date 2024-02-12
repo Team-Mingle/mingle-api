@@ -17,7 +17,6 @@ public class FcmService {
     private static final int BATCH_SIZE = 500;
     private final FirebaseApp firebaseApp;
 
-
     public void sendAllMessage(String title, String body, Long contentId, ContentType contentType, List<String> allTokens) {
         int total = allTokens.size();
         int count = 0;
