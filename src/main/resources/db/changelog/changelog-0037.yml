@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: add report notification table
+      author: Hyeonwoo Jung
+      changes:
+        - createTable:
+            tableName: report_notification
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: report_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            constraintName: report_notification_report_id_fk
+            baseTableName: report_notification
+            baseColumnNames: report_id
+            referencedTableName: report
+            referencedColumnNames: id
+
+
+
