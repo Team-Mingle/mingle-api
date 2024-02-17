@@ -24,7 +24,6 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -104,7 +103,7 @@ public class AuthService {
         String domain = extractDomain(email);
         LocalDateTime now = LocalDateTime.now();
 
-        AuthenticationCode authenticationCode = getAuthenticationCode(email);
+        AuthenticationCode authenticationCode = getAuthenticationCodeWithPureEmail(email);
         checkCodeMatch(code, authenticationCode.getAuthToken());
 
         if (domain.equals(FRESHMAN_EMAIL_DOMAIN)) {
@@ -116,7 +115,7 @@ public class AuthService {
     }
 
     public void verifyCodeForChangePassword(String email, String code) {
-        AuthenticationCode authenticationCode = getAuthenticationCode(email);
+        AuthenticationCode authenticationCode = getAuthenticationCodeByHashedEmail(email);
         checkCodeMatch(code, authenticationCode.getAuthToken());
     }
 
@@ -143,9 +142,14 @@ public class AuthService {
     }
 
 
-    private AuthenticationCode getAuthenticationCode(String email) {
+    private AuthenticationCode getAuthenticationCodeWithPureEmail(String email) {
         String hashedEmail = EmailHasher.hashEmail(email);
         return authenticationCodeRepository.findFirstByEmailOrderByCreatedAtDesc(hashedEmail)
+                .orElseThrow(() -> new CustomException(CODE_FOUND_FAILED));
+    }
+
+    private AuthenticationCode getAuthenticationCodeByHashedEmail(String email) {
+        return authenticationCodeRepository.findFirstByEmailOrderByCreatedAtDesc(email)
                 .orElseThrow(() -> new CustomException(CODE_FOUND_FAILED));
     }
 
