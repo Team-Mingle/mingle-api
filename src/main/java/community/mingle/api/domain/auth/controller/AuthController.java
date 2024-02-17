@@ -166,7 +166,7 @@ public class AuthController {
             "- TOKEN_EXPIRED: 토큰이 만료되었습니다. \n" +
             "- TOKEN_NOT_FOUND: 일치하는 토큰을 찾지 못하였습니다.",
             content = @Content(schema = @Schema(hidden = true)))
-    @PostMapping("refresh-token")
+    @PostMapping("/refresh-token")
     public ResponseEntity<TokenResponse> reissueAccessToken(
             @Parameter(in = ParameterIn.HEADER, description = "X-Refresh-Token", required = true)
             @RequestHeader(value = "X-Refresh-Token") String refreshToken,
@@ -174,6 +174,17 @@ public class AuthController {
     ) {
         TokenResponse tokenResponse = authFacade.reissueAccessToken(refreshToken, reissueTokenRequest.getEncryptedEmail());
         return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
+    }
+
+    @Operation(summary = "1.13 유저 로그인 인증 여부 api")
+    @ApiResponse(responseCode = "401", description = "Unauthorized\n" +
+            "- TOKEN_EXPIRED: 토큰이 만료되었습니다.",
+            content = @Content(schema = @Schema(hidden = true)))
+    @GetMapping("/verify-login-status")
+    public ResponseEntity<VerifyLoggedInMemberResponse> verifyLoggedInMember(
+    ) {
+        VerifyLoggedInMemberResponse verifyLoggedInMemberResponse = authFacade.getVerifiedMemberInfo();
+        return new ResponseEntity<>(verifyLoggedInMemberResponse, HttpStatus.OK);
     }
 }
 
