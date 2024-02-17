@@ -2,6 +2,7 @@ package community.mingle.api.domain.member.controller;
 
 import community.mingle.api.domain.item.controller.response.ItemListResponse;
 import community.mingle.api.domain.item.facade.ItemFacade;
+import community.mingle.api.domain.member.controller.request.ChangeNicknameRequest;
 import community.mingle.api.domain.member.controller.request.WithdrawMemberRequest;
 import community.mingle.api.domain.member.facade.MemberFacade;
 import community.mingle.api.domain.post.controller.response.PostListResponse;
@@ -48,8 +49,8 @@ public class MemberController {
     @ApiResponses({
             @ApiResponse(responseCode = "2017", description = "중복된 닉네임입니다.", content = @Content(schema = @Schema(hidden = true))),
     })
-    public ResponseEntity<Void> updateNickname(@Parameter String nickname) {
-        memberFacade.updateNickname(nickname);
+    public ResponseEntity<Void> updateNickname(@RequestBody ChangeNicknameRequest request) {
+        memberFacade.updateNickname(request.newNickname());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
