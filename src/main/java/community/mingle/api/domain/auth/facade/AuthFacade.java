@@ -127,6 +127,16 @@ public class AuthFacade {
     public PolicyResponse getPolicy(PolicyType policyType) {
         Policy policy = authService.getPolicy(policyType);
         return new PolicyResponse(policy.getContent());
+    }
 
+    public VerifyLoggedInMemberResponse getVerifiedMemberInfo() {
+        Long memberIdByJwt = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberIdByJwt);
+        return new VerifyLoggedInMemberResponse(
+                member.getId(),
+                member.getEmail(),
+                member.getNickname(),
+                member.getUniversity().getName()
+        );
     }
 }
