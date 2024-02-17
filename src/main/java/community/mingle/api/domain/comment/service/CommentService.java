@@ -120,18 +120,18 @@ public class CommentService {
     }
 
     public String getDisplayName(Comment comment, Long postAuthorId) {
-        String displayName;
+        String displayName = "";
         boolean isAnonymous = comment.getAnonymous();
         Long commentWriterId = comment.getMember().getId();
         Long anonymousId = comment.getAnonymousId();
 
         if (!isAnonymous && !Objects.equals(commentWriterId, postAuthorId)) {
             displayName = comment.getMember().getNickname();
-        } else if (isAnonymous && anonymousId != null && anonymousId != 0L) {
+        } else if (isAnonymous && anonymousId != null && anonymousId != 0L && !Objects.equals(commentWriterId, postAuthorId)) {
             displayName = "익명 " + anonymousId;
-        } else if (!isAnonymous) {
+        } else if (!isAnonymous && Objects.equals(commentWriterId, postAuthorId)) {
             displayName = comment.getMember().getNickname() + "(글쓴이)";
-        } else {
+        } else if (isAnonymous && Objects.equals(commentWriterId, postAuthorId)){
             displayName = "익명(글쓴이)";
         }
         if (comment.getStatusType() == REPORTED || comment.getStatusType() == DELETED) {
