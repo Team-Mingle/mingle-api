@@ -113,7 +113,7 @@ public class AuthFacade {
     @Transactional
     public UpdatePasswordResponse updatePassword(UpdatePasswordRequest updatePasswordRequest) {
         Member member = memberService.getByEmail(updatePasswordRequest.getEmail());
-        authService.checkPassword(updatePasswordRequest.getCurrentPassword(), member.getPassword());
+        authService.verifyCodeForChangePassword(member.getEmail(), updatePasswordRequest.getVerificationCode());
         memberService.updatePassword(member, updatePasswordRequest.getUpdatePassword());
         return new UpdatePasswordResponse(true);
     }

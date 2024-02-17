@@ -115,6 +115,11 @@ public class AuthService {
         return true;
     }
 
+    public void verifyCodeForChangePassword(String email, String code) {
+        AuthenticationCode authenticationCode = getAuthenticationCode(email);
+        checkCodeMatch(code, authenticationCode.getAuthToken());
+    }
+
     public String extractDomain(String email) {
         return email.split("@")[1];
     }
