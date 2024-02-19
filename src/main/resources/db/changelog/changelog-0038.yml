@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: add member post view count session
+      author: Hyeonwoo Jung
+      changes:
+        - createTable:
+            tableName: post_view_count_session
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                  autoIncrement: true
+              - column:
+                  name: member_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: post_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_view_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: post_view_count_session
+            baseColumnNames: member_id
+            referencedTableName: member
+            referencedColumnNames: id
+            constraintName: post_view_count_session_member_id_fk
+        - addForeignKeyConstraint:
+            baseTableName: post_view_count_session
+            baseColumnNames: post_id
+            referencedTableName: post
+            referencedColumnNames: id
+            constraintName: post_view_count_session_post_id_fk

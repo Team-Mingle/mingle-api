@@ -10,6 +10,7 @@ import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
 import community.mingle.api.domain.post.controller.response.*;
 import community.mingle.api.domain.post.entity.Post;
+import community.mingle.api.domain.post.event.ReadPostEvent;
 import community.mingle.api.domain.post.service.PostImageService;
 import community.mingle.api.domain.post.service.PostLikeService;
 import community.mingle.api.domain.post.service.PostScrapService;
@@ -190,7 +191,9 @@ public class PostFacade {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Post post = postService.getPost(postId);
 
-        postService.updateView(post);
+        applicationEventPublisher.publishEvent(
+                new ReadPostEvent(this, postId, memberId)
+        );
 
         return mapToPostDetailResponse(post, memberId);
     }
