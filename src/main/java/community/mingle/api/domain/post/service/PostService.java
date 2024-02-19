@@ -5,6 +5,7 @@ import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.entity.PostImage;
+import community.mingle.api.domain.post.entity.PostViewCountSession;
 import community.mingle.api.domain.post.repository.*;
 import community.mingle.api.domain.report.entity.PostReport;
 import community.mingle.api.domain.report.entity.Report;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,6 +38,7 @@ public class PostService {
     private final PostScrapRepository postScrapRepository;
     private final PostReportRepository postReportRepository;
     private final PostQueryRepository postQueryRepository;
+    private final PostViewCountSessionRepository postViewCountSessionRepository;
 
     @Transactional
     public Post createPost(
@@ -227,10 +230,31 @@ public class PostService {
         return post;
     }
 
-
     public List<Post> getPostByKeyword(String keyword, Long viewerMemberId, PageRequest pageRequest) {
         Member viewerMember = memberRepository.findById(viewerMemberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
         return postQueryRepository.findSearchPosts(keyword, viewerMember, pageRequest).toList();
+    }
+
+    public Optional<PostViewCountSession> getPostViewCountSessionByMemberIdAndPostId(
+            Long memberId,
+            Long postId
+    ) {
+        return postViewCountSessionRepository.findByMemberIdAndPostId(memberId, postId);
+    }
+
+    public void createPostViewCountSession(
+            Long memberId,
+            Long postId
+    ) {
+        Member member = memberRepository.findById(memberId).orElseThrow();
+        Post post = postRepository.findById(postId).orElseThrow();
+        PostViewCountSession postViewCountSession = PostViewCountSession.builder()
+                .member(member)
+                .post(post)
+                .createdAt(LocalDateTime.now())
+                .lastViewAt(LocalDateTime.now())
+                .build();
+        postViewCountSessionRepository.save(postViewCountSession);
     }
 
 }
