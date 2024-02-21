@@ -176,7 +176,7 @@ public class CommentService {
         }
 
         Optional<Comment> resultComment = commentList.stream()
-                .filter(comment -> comment.getMember().equals(member) && comment.getAnonymous())
+                .filter(comment -> Objects.equals(comment.getMember().getId(), member.getId()) && comment.getAnonymous())
                 .findFirst();
 
         //해당 게시글에 유저가 익명으로 댓글을 쓴 적이 있을 경우
