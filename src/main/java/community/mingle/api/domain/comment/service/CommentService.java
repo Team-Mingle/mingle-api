@@ -187,7 +187,7 @@ public class CommentService {
         else return commentList.stream()
                 .map(Comment::getAnonymousId)
                 .max(Long::compareTo)
-                .orElse(1L);
+                .orElse(1L) + 1L;
     }
 
 
