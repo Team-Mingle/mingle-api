@@ -1,13 +1,11 @@
 package community.mingle.api.domain.item.service;
 
-import community.mingle.api.domain.comment.entity.Comment;
 import community.mingle.api.domain.item.entity.Item;
 import community.mingle.api.domain.item.entity.ItemComment;
 import community.mingle.api.domain.item.repository.ItemCommentQueryRepository;
 import community.mingle.api.domain.item.repository.ItemCommentRepository;
 import community.mingle.api.domain.item.repository.ItemRepository;
 import community.mingle.api.domain.member.entity.Member;
-import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +16,6 @@ import java.util.stream.Collectors;
 
 import static community.mingle.api.enums.ContentStatusType.*;
 import static community.mingle.api.global.exception.ErrorCode.*;
-import static community.mingle.api.global.exception.ErrorCode.FAIL_TO_CREATE_COMMENT;
 
 @Service
 @Transactional(readOnly = true)
@@ -156,8 +153,6 @@ public class ItemCommentService {
     }
 
     private Long calculateAnonymousId(Item item, Member member) {
-
-
         List<ItemComment> commentList = itemCommentRepository.findAllByItemId(item.getId());
 
         //해당 게시글에 댓글이 없을 경우
@@ -166,7 +161,7 @@ public class ItemCommentService {
         }
 
         Optional<ItemComment> resultComment = commentList.stream()
-                .filter(comment -> comment.getMember().equals(member) && comment.getAnonymous())
+                .filter(comment -> Objects.equals(comment.getMember().getId(), member.getId()) && comment.getAnonymous())
                 .findFirst();
 
         //해당 게시글에 유저가 익명으로 댓글을 쓴 적이 있을 경우
@@ -177,7 +172,7 @@ public class ItemCommentService {
         else return commentList.stream()
                 .map(ItemComment::getAnonymousId)
                 .max(Long::compareTo)
-                .orElse(1L);
+                .orElse(1L) + 1L;
     }
 
 
