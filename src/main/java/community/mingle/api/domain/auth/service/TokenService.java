@@ -54,7 +54,7 @@ public class TokenService {
      */
     public void validateRefreshToken(String token, String encryptedEmail) {
         Optional<RefreshToken> refreshTokenOptional = findToken(token, encryptedEmail);
-
+        System.out.println("중요!!!!! 인크립티드이메일: " + encryptedEmail + "토큰!!!!: " + token + "time: " + LocalDateTime.now().toString());
         refreshTokenOptional.ifPresentOrElse(
                 refreshToken -> {
                     if (LocalDateTime.now().isAfter(refreshToken.getExpiry())) {
