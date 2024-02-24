@@ -74,8 +74,10 @@ public enum ErrorCode {
     EMPTY_MYPOST_LIST(404, "EMPTY_MYPOST_LIST", "게시글이 없어요."),
 
     //Internal server error
+    INTERNAL_SERVER_ERROR(500, "500", "INTERNAL SERVER ERROR"),
 
-    INTERNAL_SERVER_ERROR(500, "500", "INTERNAL SERVER ERROR");
+    //Item
+    INVALID_ITEM_STATUS_REQUEST(400, "400", "INVALID_ITEM_STATUS_REQUEST");
 
     @Getter
     private final int status;

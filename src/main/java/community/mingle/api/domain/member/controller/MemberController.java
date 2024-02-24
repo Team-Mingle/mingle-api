@@ -8,6 +8,8 @@ import community.mingle.api.domain.member.facade.MemberFacade;
 import community.mingle.api.domain.post.controller.response.PostListResponse;
 import community.mingle.api.domain.post.facade.PostFacade;
 import community.mingle.api.enums.BoardType;
+import community.mingle.api.enums.ItemStatusType;
+import community.mingle.api.global.exception.CustomException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,6 +25,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static community.mingle.api.global.exception.ErrorCode.INVALID_ITEM_STATUS_REQUEST;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Tag(name = "MemberController", description = "회원 관련 API")
@@ -90,10 +94,17 @@ public class MemberController {
     }
 
     @Operation(summary = "내가 쓴 장터 게시물 조회 API")
-    @GetMapping(path = "/{boardType}/items")
-    public ResponseEntity<ItemListResponse> getMyPageItemList(@PathVariable BoardType boardType, @Parameter Pageable pageable) {
+    @GetMapping(path = "/items/{itemStatus}")
+    public ResponseEntity<ItemListResponse> getMyPageItemList(
+            @PathVariable
+            @Schema(allowableValues = {"SELLING", "RESERVED", "SOLDOUT"})
+            ItemStatusType itemStatus,
+            @Parameter Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
-        ItemListResponse myPageItemResponse = itemFacade.getMyPageItemList(pageRequest);
+        if (itemStatus != ItemStatusType.SELLING && itemStatus != ItemStatusType.RESERVED && itemStatus != ItemStatusType.SOLDOUT) {
+            throw new CustomException(INVALID_ITEM_STATUS_REQUEST);
+        }
+        ItemListResponse myPageItemResponse = itemFacade.getMyPageItemList(pageRequest, itemStatus);
         return new ResponseEntity<>(myPageItemResponse, HttpStatus.OK);
     }
 
