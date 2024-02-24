@@ -57,12 +57,16 @@ public class TokenService {
         System.out.println("중요!!!!! 인크립티드이메일: " + encryptedEmail + "토큰!!!!: " + token + "time: " + LocalDateTime.now().toString());
         refreshTokenOptional.ifPresentOrElse(
                 refreshToken -> {
+                    System.out.println("예외 발생하지 않음!!!!!!!!!");
                     if (LocalDateTime.now().isAfter(refreshToken.getExpiry())) {
                         throw new CustomException(TOKEN_EXPIRED);
                     }
 //                    refreshTokenRepository.delete(refreshToken);
                 },
-                () -> {throw new CustomException(TOKEN_NOT_FOUND);}
+                () -> {
+                    System.out.println("익셉션 발생!!!!!!!");
+                    throw new CustomException(TOKEN_NOT_FOUND);
+                }
         );
     }
     public Optional<RefreshToken> findToken(String token, String encryptedEmail) {
