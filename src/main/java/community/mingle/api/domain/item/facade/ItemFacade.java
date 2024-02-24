@@ -312,7 +312,7 @@ public class ItemFacade {
         return new ItemListResponse(itemPreviewDtoList);
     }
 
-    public ItemListResponse getMyPageItemLikeList(PageRequest pageRequest) {
+    public ItemListResponse getMyPageItemLikeList(PageRequest pageRequest, ItemStatusType itemStatusType) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
 
@@ -320,6 +320,7 @@ public class ItemFacade {
         if (itemList.isEmpty()) return new ItemListResponse(List.of());
 
         List<ItemPreviewDto> itemPreviewDtoList = itemList.stream()
+                .filter(item -> item.getStatus() == itemStatusType)
                 .map(item -> mapToItemPreviewDto(item, memberId))
                 .collect(Collectors.toList());
         return new ItemListResponse(itemPreviewDtoList);

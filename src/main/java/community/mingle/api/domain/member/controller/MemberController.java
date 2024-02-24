@@ -26,7 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static community.mingle.api.global.exception.ErrorCode.INVALID_ITEM_STATUS_REQUEST;
+import static community.mingle.api.global.exception.ErrorCode.INVALID_STATUS_REQUEST;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Tag(name = "MemberController", description = "회원 관련 API")
@@ -61,7 +61,11 @@ public class MemberController {
     //TODO 중복 제거
     @Operation(summary = "내가 쓴 글 조회 API")
     @GetMapping(path = "/{boardType}/posts")
-    public ResponseEntity<PostListResponse> getMyPagePostList(@PathVariable BoardType boardType, @Parameter Pageable pageable) {
+    public ResponseEntity<PostListResponse> getMyPagePostList(
+            @PathVariable
+            @Schema(allowableValues = {"TOTAL", "UNIV"})
+            BoardType boardType,
+            @Parameter Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
         PostListResponse myPagePostResponse = postFacade.getMyPagePostList(boardType, pageRequest);
         return new ResponseEntity<>(myPagePostResponse, HttpStatus.OK);
@@ -70,7 +74,11 @@ public class MemberController {
 
     @Operation(summary = "내가 댓글 쓴 글 조회 API")
     @GetMapping(path = "/{boardType}/comments")
-    public ResponseEntity<PostListResponse> getMyPageCommentList(@PathVariable BoardType boardType, @Parameter Pageable pageable) {
+    public ResponseEntity<PostListResponse> getMyPageCommentList(
+            @PathVariable
+            @Schema(allowableValues = {"TOTAL", "UNIV"})
+            BoardType boardType,
+            @Parameter Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
         PostListResponse myPageCommentResponse = postFacade.getMyPageCommentList(boardType, pageRequest);
         return new ResponseEntity<>(myPageCommentResponse, HttpStatus.OK);
@@ -79,7 +87,11 @@ public class MemberController {
 
     @Operation(summary = "내가 스크랩한 글 조회 API")
     @GetMapping(path = "/{boardType}/scraps")
-    public ResponseEntity<PostListResponse> getMyPageScrapList(@PathVariable BoardType boardType, @Parameter Pageable pageable) {
+    public ResponseEntity<PostListResponse> getMyPageScrapList(
+            @PathVariable
+            @Schema(allowableValues = {"TOTAL", "UNIV"})
+            BoardType boardType,
+            @Parameter Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
         PostListResponse myPageScrapResponse = postFacade.getMyPageScrapList(boardType, pageRequest);
         return new ResponseEntity<>(myPageScrapResponse, HttpStatus.OK);
@@ -87,7 +99,11 @@ public class MemberController {
 
     @Operation(summary = "내가 좋아요한 글 조회 API")
     @GetMapping(path = "/{boardType}/likes")
-    public ResponseEntity<PostListResponse> getMyPageLikeList(@PathVariable BoardType boardType, @Parameter Pageable pageable) {
+    public ResponseEntity<PostListResponse> getMyPageLikeList(
+            @PathVariable
+            @Schema(allowableValues = {"TOTAL", "UNIV"})
+            BoardType boardType,
+            @Parameter Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
         PostListResponse myPageLikeResponse = postFacade.getMyPageLikePostList(boardType, pageRequest);
         return new ResponseEntity<>(myPageLikeResponse, HttpStatus.OK);
@@ -102,17 +118,24 @@ public class MemberController {
             @Parameter Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
         if (itemStatus != ItemStatusType.SELLING && itemStatus != ItemStatusType.RESERVED && itemStatus != ItemStatusType.SOLDOUT) {
-            throw new CustomException(INVALID_ITEM_STATUS_REQUEST);
+            throw new CustomException(INVALID_STATUS_REQUEST);
         }
         ItemListResponse myPageItemResponse = itemFacade.getMyPageItemList(pageRequest, itemStatus);
         return new ResponseEntity<>(myPageItemResponse, HttpStatus.OK);
     }
 
     @Operation(summary = "내가 찜한 장터 게시물 조회 API")
-    @GetMapping(path = "/{boardType}/item-likes")
-    public ResponseEntity<ItemListResponse> getMyPageItemLikeList(@PathVariable BoardType boardType, @Parameter Pageable pageable) {
+    @GetMapping(path = "/item-likes/{itemStatus}")
+    public ResponseEntity<ItemListResponse> getMyPageItemLikeList(
+            @PathVariable
+            @Schema(allowableValues = {"SELLING", "RESERVED", "SOLDOUT"})
+            ItemStatusType itemStatus,
+            @Parameter Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
-        ItemListResponse myPageItemLikeResponse = itemFacade.getMyPageItemLikeList(pageRequest);
+        if (itemStatus != ItemStatusType.SELLING && itemStatus != ItemStatusType.RESERVED && itemStatus != ItemStatusType.SOLDOUT) {
+            throw new CustomException(INVALID_STATUS_REQUEST);
+        }
+        ItemListResponse myPageItemLikeResponse = itemFacade.getMyPageItemLikeList(pageRequest, itemStatus);
         return new ResponseEntity<>(myPageItemLikeResponse, HttpStatus.OK);
     }
 

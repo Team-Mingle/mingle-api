@@ -77,7 +77,7 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(500, "500", "INTERNAL SERVER ERROR"),
 
     //Item
-    INVALID_ITEM_STATUS_REQUEST(400, "400", "INVALID_ITEM_STATUS_REQUEST");
+    INVALID_STATUS_REQUEST(400, "400", "INVALID_ITEM_STATUS_REQUEST");
 
     @Getter
     private final int status;
