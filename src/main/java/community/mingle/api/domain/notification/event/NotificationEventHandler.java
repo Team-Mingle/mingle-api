@@ -51,6 +51,7 @@ public class NotificationEventHandler {
 
     @EventListener(ManualNotificationEvent.class)
     @Async
+    @Transactional
     public void handleManualNotificationEvent(ManualNotificationEvent event) {
         Post post = postService.getPost(event.getContentId());
         List<Member> targetMembers = notificationService.getTargetTokenMembersByBoardType(event.getBoardType(), post);
@@ -94,6 +95,7 @@ public class NotificationEventHandler {
 
     @EventListener(ItemCommentNotificationEvent.class)
     @Async
+    @Transactional
     public void handleItemCommentNotificationEvent(ItemCommentNotificationEvent event) { //DONE
         String title = ITEM_COMMENT_NOTIFICATION_TITLE; //manual 푸시와 다르게 title, content를 event 정보로 생성
         String body = COMMENT_NOTIFICATION_BODY + event.getContent();
@@ -119,6 +121,7 @@ public class NotificationEventHandler {
 
     @EventListener(PopularPostNotificationEvent.class)
     @Async
+    @Transactional
     public void handlePopularPostNotificationEvent(PopularPostNotificationEvent event) {
         Post post = postService.getPost(event.getPostId());
 

@@ -1,8 +1,5 @@
 package community.mingle.api.domain.notification.event;
 
-import community.mingle.api.domain.item.entity.Item;
-import community.mingle.api.domain.item.entity.ItemComment;
-import community.mingle.api.domain.member.entity.Member;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
