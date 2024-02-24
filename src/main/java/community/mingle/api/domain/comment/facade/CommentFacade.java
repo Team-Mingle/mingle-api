@@ -2,16 +2,13 @@ package community.mingle.api.domain.comment.facade;
 
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.comment.controller.request.CreateCommentRequest;
-import community.mingle.api.domain.comment.controller.response.CreateCommentLikeResponse;
 import community.mingle.api.domain.comment.controller.response.CreateCommentResponse;
-import community.mingle.api.domain.comment.controller.response.DeleteCommentLikeResponse;
 import community.mingle.api.domain.comment.controller.response.DeleteCommentResponse;
 import community.mingle.api.domain.comment.entity.Comment;
-import community.mingle.api.domain.notification.event.CommentNotificationEvent;
 import community.mingle.api.domain.comment.service.CommentLikeService;
 import community.mingle.api.domain.comment.service.CommentService;
-import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
+import community.mingle.api.domain.notification.event.CommentNotificationEvent;
 import community.mingle.api.domain.post.controller.response.PostDetailCommentResponse;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.service.PostService;
@@ -23,7 +20,10 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static community.mingle.api.enums.ContentStatusType.INACTIVE;
 import static community.mingle.api.enums.ContentStatusType.REPORTED;
@@ -76,11 +76,9 @@ public class CommentFacade {
                 request.content(),
                 request.isAnonymous()
         );
-        Post post = postService.getPost(request.postId());
-        Member member = memberService.getById(memberId);
         // 푸시알림 이벤트 발행
         applicationEventPublisher.publishEvent(
-                new CommentNotificationEvent(this, post, comment, member, request.parentCommentId(), request.mentionId(), request.content())
+                new CommentNotificationEvent(this, request.postId(), comment.getId(), memberId, request.parentCommentId(), request.mentionId(), request.content())
         );
         return new CreateCommentResponse(comment.getId());
     }

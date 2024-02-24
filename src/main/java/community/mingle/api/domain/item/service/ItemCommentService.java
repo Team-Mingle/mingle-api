@@ -44,6 +44,11 @@ public class ItemCommentService {
 
     }
 
+    public ItemComment getById(Long itemCommentId) {
+        return itemCommentRepository.findById(itemCommentId)
+                .orElseThrow(() -> new CustomException(ITEM_COMMENT_NOT_FOUND));
+    }
+
     public List<ItemComment> findComments(Long itemId, Long memberId) {
         return itemCommentQueryRepository.findComments(itemId, memberId, false);
     }
