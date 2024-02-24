@@ -21,7 +21,7 @@ public class UniversityService {
     public List<UniversityResponse> getUniversityList(String countryName) {
         List<University> universityList = universityRepository.findAllByCountryName(countryName);
         return universityList.stream()
-                .map(university -> new UniversityResponse(university.getId() ,university.getEmailDomain()))
+                .map(university -> new UniversityResponse(university.getId(), university.getName(), university.getEmailDomain()))
                 .collect(Collectors.toList());
 
     }
