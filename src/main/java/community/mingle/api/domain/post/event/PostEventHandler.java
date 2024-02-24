@@ -23,7 +23,7 @@ public class PostEventHandler {
 
     @EventListener(ReadPostEvent.class)
     @Async
-    @Transactional
+    @Transactional(readOnly = true)
     public void handleReadPostEvent(ReadPostEvent event) {
         Optional<PostViewCountSession> postViewCountSession = postService.getPostViewCountSessionByMemberIdAndPostId(
                 event.getMemberId(), event.getPostId()

@@ -1,8 +1,5 @@
 package community.mingle.api.domain.notification.event;
 
-import community.mingle.api.domain.comment.entity.Comment;
-import community.mingle.api.domain.member.entity.Member;
-import community.mingle.api.domain.post.entity.Post;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
@@ -13,18 +10,18 @@ import org.springframework.context.ApplicationEvent;
 @Getter
 public class CommentNotificationEvent extends ApplicationEvent {
 
-    private final Post post;
-    private final Comment comment;
-    private final Member member;
+    private final Long postId;
+    private final Long commentId;
+    private final Long memberId;
     private final Long parentCommentId;
     private final Long mentionId;
     private final String content;
 
-    public CommentNotificationEvent(Object source, Post post, Comment comment, Member member, Long parentCommentId, Long mentionId, String content) {
+    public CommentNotificationEvent(Object source, Long postId, Long commentId, Long memberId, Long parentCommentId, Long mentionId, String content) {
         super(source);
-        this.post = post;
-        this.member = member;
-        this.comment = comment;
+        this.postId = postId;
+        this.memberId = memberId;
+        this.commentId = commentId;
         this.parentCommentId = parentCommentId;
         this.mentionId = mentionId;
         this.content = content;

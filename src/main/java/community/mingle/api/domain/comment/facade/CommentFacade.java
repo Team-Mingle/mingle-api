@@ -76,11 +76,9 @@ public class CommentFacade {
                 request.content(),
                 request.isAnonymous()
         );
-        Post post = postService.getPost(request.postId());
-        Member member = memberService.getById(memberId);
         // 푸시알림 이벤트 발행
         applicationEventPublisher.publishEvent(
-                new CommentNotificationEvent(this, post, comment, member, request.parentCommentId(), request.mentionId(), request.content())
+                new CommentNotificationEvent(this, request.postId(), comment.getId(), memberId, request.parentCommentId(), request.mentionId(), request.content())
         );
         return new CreateCommentResponse(comment.getId());
     }

@@ -47,9 +47,9 @@ public class ItemCommentFacade {
 
         applicationEventPublisher.publishEvent(
                 new ItemCommentNotificationEvent(this,
-                        item,
-                        itemComment,
-                        member,
+                        item.getId(),
+                        itemComment.getId(),
+                        member.getId(),
                         request.parentCommentId(),
                         request.mentionId(),
                         request.content())
