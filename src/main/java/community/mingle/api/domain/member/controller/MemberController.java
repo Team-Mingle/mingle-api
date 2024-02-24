@@ -65,7 +65,11 @@ public class MemberController {
             @PathVariable
             @Schema(allowableValues = {"TOTAL", "UNIV"})
             BoardType boardType,
-            @Parameter Pageable pageable) {
+            @Parameter Pageable pageable
+    ) {
+        if (boardType != BoardType.TOTAL && boardType != BoardType.UNIV) {
+            throw new CustomException(INVALID_STATUS_REQUEST);
+        }
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
         PostListResponse myPagePostResponse = postFacade.getMyPagePostList(boardType, pageRequest);
         return new ResponseEntity<>(myPagePostResponse, HttpStatus.OK);
@@ -78,7 +82,11 @@ public class MemberController {
             @PathVariable
             @Schema(allowableValues = {"TOTAL", "UNIV"})
             BoardType boardType,
-            @Parameter Pageable pageable) {
+            @Parameter Pageable pageable
+    ) {
+        if (boardType != BoardType.TOTAL && boardType != BoardType.UNIV) {
+            throw new CustomException(INVALID_STATUS_REQUEST);
+        }
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
         PostListResponse myPageCommentResponse = postFacade.getMyPageCommentList(boardType, pageRequest);
         return new ResponseEntity<>(myPageCommentResponse, HttpStatus.OK);
@@ -91,7 +99,11 @@ public class MemberController {
             @PathVariable
             @Schema(allowableValues = {"TOTAL", "UNIV"})
             BoardType boardType,
-            @Parameter Pageable pageable) {
+            @Parameter Pageable pageable
+    ) {
+        if (boardType != BoardType.TOTAL && boardType != BoardType.UNIV) {
+            throw new CustomException(INVALID_STATUS_REQUEST);
+        }
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
         PostListResponse myPageScrapResponse = postFacade.getMyPageScrapList(boardType, pageRequest);
         return new ResponseEntity<>(myPageScrapResponse, HttpStatus.OK);
@@ -103,8 +115,13 @@ public class MemberController {
             @PathVariable
             @Schema(allowableValues = {"TOTAL", "UNIV"})
             BoardType boardType,
-            @Parameter Pageable pageable) {
+            @Parameter Pageable pageable
+    ) {
+        if (boardType != BoardType.TOTAL && boardType != BoardType.UNIV) {
+            throw new CustomException(INVALID_STATUS_REQUEST);
+        }
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
+
         PostListResponse myPageLikeResponse = postFacade.getMyPageLikePostList(boardType, pageRequest);
         return new ResponseEntity<>(myPageLikeResponse, HttpStatus.OK);
     }
