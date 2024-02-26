@@ -14,6 +14,7 @@ public class LoginMemberResponse {
     private String hashedEmail;
     private String nickName;
     private String univName;
+    private String country;
     private String accessToken;
     private String refreshToken;
 }

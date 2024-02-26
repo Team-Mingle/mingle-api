@@ -91,6 +91,7 @@ public class AuthFacade {
                 .hashedEmail(member.getEmail())
                 .nickName(member.getNickname())
                 .univName(member.getUniversity().getName())
+                .country(member.getUniversity().getCountry().getName())
                 .accessToken(tokens.getAccessToken())
                 .refreshToken(tokens.getRefreshToken())
                 .build();
