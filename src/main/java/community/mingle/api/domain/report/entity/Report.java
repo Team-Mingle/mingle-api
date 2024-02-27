@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @Entity
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Where(clause = "deleted_at IS NULL")
+//@Where(clause = "deleted_at IS NULL")
 @SQLDelete(sql = "UPDATE report SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "report")
@@ -42,15 +42,12 @@ public class Report extends AuditLoggingBase {
     @JoinColumn(name = "reported_member_id", nullable = false)
     private Member reportedMember;
 
-    @Column(name = "content_id", nullable = false) //TODO missing column
-    private Long contentId;
-
     @Size(max = 200)
     @Column(name = "reason", length = 200)
     private String reason;
 
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
+//    @Column(name = "deleted_at")
+//    private LocalDateTime deletedAt;
 
     @NotNull
     @Column(name = "content_type", nullable = false)
@@ -68,7 +65,6 @@ public class Report extends AuditLoggingBase {
                 .reporterMember(reporterMember)
                 .reportedMember(post.getMember())
                 .contentType(ContentType.POST)
-                .contentId(post.getId())
                 .reportType(reportType)
                 .post(post)
                 .build();
@@ -79,7 +75,6 @@ public class Report extends AuditLoggingBase {
                 .reporterMember(reporterMember)
                 .reportedMember(comment.getMember())
                 .contentType(ContentType.COMMENT)
-                .contentId(comment.getId())
                 .reportType(reportType)
                 .comment(comment)
                 .build();

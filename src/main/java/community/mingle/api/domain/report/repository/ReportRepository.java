@@ -9,14 +9,4 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReportRepository extends JpaRepository<Report, Long> {
-
-    List<Report> findAllByContentIdAndContentType(Long contentId, ContentType contentType);
-
-    Optional<Report> findByReporterMemberAndContentTypeAndContentId(Member reporterMember, ContentType contentType, Long contentId);
-
-
-    Long countByContentTypeAndContentId(ContentType contentType, Long contentId);
-
-
-
 }

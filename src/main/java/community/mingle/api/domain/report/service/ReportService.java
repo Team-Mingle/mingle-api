@@ -5,10 +5,10 @@ import community.mingle.api.domain.report.entity.CommentReport;
 import community.mingle.api.domain.report.repository.CommentReportRepository;
 import community.mingle.api.domain.report.repository.PostReportRepository;
 import community.mingle.api.domain.report.entity.PostReport;
-import community.mingle.api.domain.report.entity.Report;
 import community.mingle.api.domain.report.repository.ReportRepository;
 import community.mingle.api.enums.ContentType;
 import community.mingle.api.global.exception.CustomException;
+import community.mingle.api.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,13 +35,28 @@ public class ReportService {
     }
 
     public void checkReportDuplicated(Member reporterMember, ContentType contentType, Long contentId) {
-        reportRepository.findByReporterMemberAndContentTypeAndContentId(reporterMember, contentType, contentId)
-                .ifPresent(report -> {
-                    throw new CustomException(ALREADY_REPORTED);
-                });
+        switch (contentType) {
+            case POST -> {
+                postReportRepository.findByReporterMemberAndPostId(reporterMember, contentId)
+                        .ifPresent(report -> {
+                            throw new CustomException(ALREADY_REPORTED);
+                        });
+            }
+            case COMMENT -> {
+                commentReportRepository.findByReporterMemberAndCommentId(reporterMember, contentId)
+                        .ifPresent(report -> {
+                            throw new CustomException(ALREADY_REPORTED);
+                        });
+            }
+            default -> throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        };
     }
 
     public Integer getReportCount(ContentType contentType, Long contentId) {
-        return reportRepository.countByContentTypeAndContentId(contentType, contentId).intValue();
+        return switch (contentType) {
+            case POST -> postReportRepository.countByPostId(contentId).intValue();
+            case COMMENT -> commentReportRepository.countByCommentId(contentId).intValue();
+            default -> throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        };
     }
 }
