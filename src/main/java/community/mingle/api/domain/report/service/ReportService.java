@@ -55,7 +55,6 @@ public class ReportService {
                             throw new CustomException(ALREADY_REPORTED);
                         });
             }
-            default -> throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         };
     }
 
@@ -64,7 +63,6 @@ public class ReportService {
             case POST -> postReportRepository.countByPostId(contentId).intValue();
             case COMMENT -> commentReportRepository.countByCommentId(contentId).intValue();
             case ITEM -> itemReportRepository.countByItemId(contentId).intValue();
-            default -> throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         };
     }
 }
