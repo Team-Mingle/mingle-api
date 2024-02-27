@@ -115,7 +115,8 @@ public class PostFacade {
 
     public PostListResponse getAllPostList(BoardType boardType, PageRequest pageRequest) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
-        List<Post> postList = postService.pagePostsByBoardType(boardType, pageRequest);
+        Member member = memberService.getById(memberId);
+        List<Post> postList = postService.pagePostsByBoardType(boardType, pageRequest, member.getUniversity().getId());
 
         List<PostPreviewDto> postPreviewDtoList = postList.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))
@@ -126,7 +127,8 @@ public class PostFacade {
 
     public PostListResponse getPostList(BoardType boardType, CategoryType categoryType, PageRequest pageRequest) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
-        List<Post> postList = postService.pagePostsByBoardTypeAndCategory(boardType, categoryType, pageRequest);
+        Member member = memberService.getById(memberId);
+        List<Post> postList = postService.pagePostsByBoardTypeAndCategory(boardType, categoryType, pageRequest, member.getUniversity().getId());
 
         List<PostPreviewDto> postPreviewDtoList = postList.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))

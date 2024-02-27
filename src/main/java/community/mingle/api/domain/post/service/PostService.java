@@ -25,8 +25,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static community.mingle.api.enums.ContentStatusType.REPORTED;
-import static community.mingle.api.global.exception.ErrorCode.MEMBER_NOT_FOUND;
-import static community.mingle.api.global.exception.ErrorCode.POST_NOT_EXIST;
+import static community.mingle.api.global.exception.ErrorCode.*;
 
 
 @Service
@@ -71,11 +70,13 @@ public class PostService {
                 .orElseThrow(() -> new CustomException(POST_NOT_EXIST));
     }
 
+    //TODO 광장, 잔디밭 구분해서 잔디밭일 경우 학교별로 필터링하는 로직 팩토리 메소드로 구현하기
     public Page<Post> getBestPostList(Long viewerMemberId, PageRequest pageRequest) {
         Member viewerMember = memberRepository.findById(viewerMemberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
         return postQueryRepository.pageBestPosts(viewerMember, pageRequest);
     }
 
+    //TODO 광장, 잔디밭 구분해서 잔디밭일 경우 학교별로 필터링하는 로직 팩토리 메소드로 구현하기
     public List<Post> getRecentPostList(BoardType boardType, Long memberId) {
         Member viewMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
@@ -96,13 +97,29 @@ public class PostService {
     }
 
 
-    public List<Post> pagePostsByBoardType(BoardType boardType, PageRequest pageRequest) {
-        Page<Post> pagePosts = postRepository.findAllByBoardType(boardType, pageRequest);
+    //TODO 광장, 잔디밭 구분해서 잔디밭일 경우 학교별로 필터링하는 로직 팩토리 메소드로 구현하기
+    public List<Post> pagePostsByBoardType(BoardType boardType, PageRequest pageRequest, int universityId) {
+        Page<Post> pagePosts;
+        switch (boardType) {
+            case TOTAL -> pagePosts = postRepository.findAllByBoardType(boardType, pageRequest);
+            case UNIV ->
+                    pagePosts = postRepository.findAllByBoardTypeAndMemberUniversityId(boardType, pageRequest, universityId);
+            default -> throw new CustomException(INTERNAL_SERVER_ERROR);
+        }
+
         return pagePosts.toList();
     }
 
-    public List<Post> pagePostsByBoardTypeAndCategory(BoardType boardType, CategoryType categoryType, PageRequest pageRequest) {
-        Page<Post> pagePosts = postRepository.findAllByBoardTypeAndCategoryType(boardType, categoryType, pageRequest);
+    //TODO 광장, 잔디밭 구분해서 잔디밭일 경우 학교별로 필터링하는 로직 팩토리 메소드로 구현하기
+    public List<Post> pagePostsByBoardTypeAndCategory(BoardType boardType, CategoryType categoryType, PageRequest pageRequest, int universityId) {
+        Page<Post> pagePosts;
+        switch (boardType) {
+            case TOTAL -> pagePosts = postRepository.findAllByBoardTypeAndCategoryType(boardType, categoryType, pageRequest);
+            case UNIV ->
+                    pagePosts = postRepository.findAllByBoardTypeAndCategoryTypeAndMemberUniversityId(boardType, categoryType, pageRequest, universityId);
+            default -> throw new CustomException(INTERNAL_SERVER_ERROR);
+        }
+
         return pagePosts.toList();
     }
 

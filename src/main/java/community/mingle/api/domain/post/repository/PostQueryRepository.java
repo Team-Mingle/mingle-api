@@ -44,6 +44,7 @@ public class PostQueryRepository {
                                 .or(
                                         postLikeCountGreaterThanOrEqual(BEST_UNIV_POST_LIKE_COUNT)
                                                 .and(post.boardType.eq(BoardType.UNIV))
+                                                .and(post.member.university.id.eq(viewerMember.getUniversity().getId()))
                                 ),
                         viewablePostCondition(post, viewerMember)
                 )
@@ -75,7 +76,11 @@ public class PostQueryRepository {
                 .from(post)
                 .join(post.member, member)
                 .where(
-                        post.boardType.eq(boardType),
+                        post.boardType.eq(boardType)
+                                .and(
+                                        post.boardType.ne(BoardType.UNIV)
+                                                .or(post.member.university.id.eq(viewMember.getUniversity().getId()))
+                                ),
                         viewablePostCondition(post, viewMember)
 
                 )
