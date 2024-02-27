@@ -10,7 +10,7 @@ import community.mingle.api.enums.MemberStatus;
 import community.mingle.api.enums.PolicyType;
 import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.global.exception.ErrorCode;
-import community.mingle.api.global.utils.EmailHasher;
+import community.mingle.api.global.utils.AuthHasher;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
@@ -47,7 +47,7 @@ public class AuthService {
 
     public void verifyEmail(String email) {
 
-        String hashedEmail = EmailHasher.hashEmail(email);
+        String hashedEmail = AuthHasher.hashString(email);
 
         Optional<Member> member = memberRepository.findByEmail(hashedEmail);
         if (member.isPresent()) {
@@ -64,7 +64,7 @@ public class AuthService {
 
     @Transactional
     public void registerAuthEmail(String email, String code) {
-        String hashedEmail = EmailHasher.hashEmail(email);
+        String hashedEmail = AuthHasher.hashString(email);
         AuthenticationCode authenticationCode = AuthenticationCode.builder()
                 .email(hashedEmail)
                 .authToken(code)
@@ -124,7 +124,7 @@ public class AuthService {
     }
 
     public void checkPassword(String rawPassword, String storedPasswordHash) {
-        if (!passwordEncoder.matches(rawPassword, storedPasswordHash))
+        if (!AuthHasher.hashString(rawPassword).equals(storedPasswordHash))
             throw new CustomException(FAILED_TO_LOGIN);
     }
 
@@ -143,7 +143,7 @@ public class AuthService {
 
 
     private AuthenticationCode getAuthenticationCodeWithPureEmail(String email) {
-        String hashedEmail = EmailHasher.hashEmail(email);
+        String hashedEmail = AuthHasher.hashString(email);
         return authenticationCodeRepository.findFirstByEmailOrderByCreatedAtDesc(hashedEmail)
                 .orElseThrow(() -> new CustomException(CODE_FOUND_FAILED));
     }

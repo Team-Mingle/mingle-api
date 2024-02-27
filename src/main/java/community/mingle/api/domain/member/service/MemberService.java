@@ -8,9 +8,8 @@ import community.mingle.api.domain.member.repository.UniversityRepository;
 import community.mingle.api.enums.MemberRole;
 import community.mingle.api.enums.MemberStatus;
 import community.mingle.api.global.exception.CustomException;
-import community.mingle.api.global.utils.EmailHasher;
+import community.mingle.api.global.utils.AuthHasher;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +24,6 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final UniversityRepository universityRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final PasswordEncoder passwordEncoder;
 
     public Member getByHashedEmail(String hashedEmail) {
         return memberRepository.findByEmail(hashedEmail)
@@ -33,7 +31,7 @@ public class MemberService {
     }
 
     public Member getByEmail(String email) {
-        String hashedEmail = EmailHasher.hashEmail(email);
+        String hashedEmail = AuthHasher.hashString(email);
         return getByHashedEmail(hashedEmail);
     }
 
@@ -43,7 +41,7 @@ public class MemberService {
     }
 
     public Boolean existsByEmail(String email) {
-        String hashedEmail = EmailHasher.hashEmail(email);
+        String hashedEmail = AuthHasher.hashString(email);
         return memberRepository.existsByEmail(hashedEmail);
     }
 
@@ -53,8 +51,8 @@ public class MemberService {
 
     @Transactional
     public Member create(int universityId, String nickname, String email, String password) {
-        String hashedEmail = EmailHasher.hashEmail(email);
-        String encodedPassword = passwordEncoder.encode(password);
+        String hashedEmail = AuthHasher.hashString(email);
+        String encodedPassword = AuthHasher.hashString(password);;
 
         University university = universityRepository.findById(universityId).orElseThrow(() -> new CustomException(UNIVERSITY_NOT_FOUND));
 
@@ -78,7 +76,7 @@ public class MemberService {
 
     @Transactional
     public void updatePassword(Member member, String password) {
-        String encodedPassword = passwordEncoder.encode(password);
+        String encodedPassword = AuthHasher.hashString(password);;
         member.updatePassword(encodedPassword);
     }
 
