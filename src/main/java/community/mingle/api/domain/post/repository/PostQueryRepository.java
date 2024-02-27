@@ -47,6 +47,7 @@ public class PostQueryRepository {
                                 ),
                         viewablePostCondition(post, viewerMember)
                 )
+                .orderBy(post.createdAt.desc())
                 .offset(pageRequest.getOffset())
                 .limit(pageRequest.getPageSize())
                 .fetch();
