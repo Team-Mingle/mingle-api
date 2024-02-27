@@ -14,8 +14,13 @@ databaseChangeLog:
             sql: INSERT INTO university (email_domain, country, name) VALUES
               ('connect.hku.hk', 'HONGKONG', 'HKU'),
               ('connect.ust.hk', 'HONGKONG', 'HKUST'),
+              ('link.cuhk.edu.hk', 'HONGKONG', 'CUHK'),
+              ('my.cityu.edu.hk', 'HONGKONG', 'CITYU'),
+              ('connect.polyu.hk', 'HONGKONG', 'POLYU'),
+              ('freshman.mingle.com', 'HONGKONG', 'FRESHMAN'),
               ('u.nus.edu', 'SINGAPORE', 'NUS'),
-              ('e.ntu.edu.sg', 'SINGAPORE', 'NTU')
+              ('e.ntu.edu.sg', 'SINGAPORE', 'NTU'),
+              ('smu.edu.sg', 'SINGAPORE', 'SMU')
 
   - changeSet:
       id: add_seed_data_member

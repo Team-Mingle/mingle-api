@@ -1442,7 +1442,7 @@ databaseChangeLog:
       author: Hyeonwoo Jung
       changes:
         - sql:
-            sql: INSERT INTO member_role_type (type) VALUES ('USER'), ('ADMIN'), ('KSA')
+            sql: INSERT INTO member_role_type (type) VALUES ('USER'), ('ADMIN'), ('KSA'), ('FRESHMAN')
   - changeSet:
       id: add default values for member_status_type
       author: Hyeonwoo Jung
