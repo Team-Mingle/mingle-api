@@ -84,7 +84,7 @@ public class PostService {
     }
 
     public ReportType getReportedPostReason(Long postId) {
-        List<PostReport> postReportList = postReportRepository.findAllByContentId(postId);
+        List<PostReport> postReportList = postReportRepository.findAllByPostId(postId);
 
         if (postReportList == null || postReportList.isEmpty()) return null;
 
