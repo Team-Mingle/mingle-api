@@ -137,7 +137,8 @@ public class AuthFacade {
                 member.getId(),
                 member.getEmail(),
                 member.getNickname(),
-                member.getUniversity().getName()
+                member.getUniversity().getName(),
+                member.getUniversity().getCountry().getName()
         );
     }
 }
