@@ -19,6 +19,7 @@ import community.mingle.api.dto.post.PostPreviewDto;
 import community.mingle.api.dto.post.PostStatusDto;
 import community.mingle.api.enums.BoardType;
 import community.mingle.api.enums.CategoryType;
+import community.mingle.api.enums.ContentStatusType;
 import community.mingle.api.enums.MemberRole;
 import community.mingle.api.global.s3.S3Service;
 import lombok.RequiredArgsConstructor;
@@ -236,6 +237,7 @@ public class PostFacade {
                 .isMyPost(postStatusDto.isMyPost())
                 .isLiked(postStatusDto.isLiked())
                 .isScraped(postStatusDto.isScraped())
+                .isReported(post.getStatusType() == ContentStatusType.REPORTED)
                 .postImgUrl(imageUrls)
                 .build();
     }
