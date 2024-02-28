@@ -6,8 +6,7 @@ import org.springframework.context.annotation.Profile;
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 
-import static community.mingle.api.configuration.ProjectBaseConfiguration.Profile.DEV;
-import static community.mingle.api.configuration.ProjectBaseConfiguration.Profile.LOCAL;
+import static community.mingle.api.configuration.ProjectBaseConfiguration.Profile.*;
 import static software.amazon.awssdk.regions.Region.AP_NORTHEAST_2;
 
 
@@ -17,7 +16,7 @@ public class AmazonSecretManagerConfig {
     public static final String SECRET_MANAGER_CLIENT = "secretManagerClient";
 
     @Bean(SECRET_MANAGER_CLIENT)
-    @Profile(DEV)
+    @Profile({DEV, PROD})
     public SecretsManagerClient secretsManagerDevClient() {
         EnvironmentVariableCredentialsProvider environmentVariableCredentialsProvider = EnvironmentVariableCredentialsProvider.create();
         return SecretsManagerClient.builder()
