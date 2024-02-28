@@ -19,7 +19,7 @@ jobs:
         with:
           token: ${{ secrets.CLOUDTYPE_TOKEN }}
           project: mingle-space/mingle-api
-          stage: dev
+          stage: prod
           yaml: |
             name: mingle-api
             app: java@17
