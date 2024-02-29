@@ -38,14 +38,16 @@ public class PostQueryRepository {
         List<Post> result = jpaQueryFactory
                 .selectFrom(post)
                 .leftJoin(post.postLikeList, postLike).fetchJoin()
+                .leftJoin(post.member, member).fetchJoin()
+                .leftJoin(member.university, university).fetchJoin()
                 .where(
                         postLikeCountGreaterThanOrEqual(BEST_TOTAL_POST_LIKE_COUNT)
                                 .and(post.boardType.eq(BoardType.TOTAL)
-                                        .and((post.member.university.country.name).eq(viewerMember.getUniversity().getCountry().getName())))
+                                        .and((university.country.name).eq(viewerMember.getUniversity().getCountry().getName())))
                                 .or(
                                         postLikeCountGreaterThanOrEqual(BEST_UNIV_POST_LIKE_COUNT)
                                                 .and(post.boardType.eq(BoardType.UNIV))
-                                                .and(post.member.university.id.eq(viewerMember.getUniversity().getId()))
+                                                .and(university.id.eq(viewerMember.getUniversity().getId()))
                                 ),
                         viewablePostCondition(post, viewerMember)
                 )
@@ -75,13 +77,14 @@ public class PostQueryRepository {
         return jpaQueryFactory
                 .select(post)
                 .from(post)
-                .join(post.member, member)
+                .leftJoin(post.member, member)
+                .leftJoin(member.university, university)
                 .where(
                         post.boardType.eq(boardType)
                                 .and(
                                         post.boardType.ne(BoardType.UNIV)
-                                                .and((post.member.university.country.name).eq(viewMember.getUniversity().getCountry().getName()))
-                                                .or(post.member.university.id.eq(viewMember.getUniversity().getId()))
+                                                .and((university.country.name).eq(viewMember.getUniversity().getCountry().getName()))
+                                                .or(university.id.eq(viewMember.getUniversity().getId()))
                                 ),
                         viewablePostCondition(post, viewMember)
 
