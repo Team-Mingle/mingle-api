@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    public Page<Post> findAllByBoardTypeAndCategoryType(BoardType boardType, CategoryType categoryType, PageRequest pageRequest);
+    public Page<Post> findAllByBoardTypeAndCategoryTypeAndMemberUniversityCountryName(BoardType boardType, CategoryType categoryType, PageRequest pageRequest, String countryName);
 
     public Page<Post> findAllByBoardTypeAndCategoryTypeAndMemberUniversityId(BoardType boardType, CategoryType categoryType, PageRequest pageRequest, int memberId);
 
@@ -28,7 +28,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("select p from PostLike pl join pl.member m join pl.post p where m.id = :memberId and p.boardType = :boardType")
     Page<Post> findAllByLikeMemberIdAndBoardType(Long memberId, BoardType boardType, PageRequest pageRequest);
 
-    Page<Post> findAllByBoardType(BoardType boardType, PageRequest pageRequest);
+    Page<Post> findAllByBoardTypeAndMemberUniversityCountryName(BoardType boardType, PageRequest pageRequest, String countryName);
 
     Page<Post> findAllByBoardTypeAndMemberUniversityId(BoardType boardType, PageRequest pageRequest, int universityId);
 }

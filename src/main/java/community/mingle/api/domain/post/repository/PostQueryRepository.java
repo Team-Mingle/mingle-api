@@ -40,7 +40,8 @@ public class PostQueryRepository {
                 .leftJoin(post.postLikeList, postLike).fetchJoin()
                 .where(
                         postLikeCountGreaterThanOrEqual(BEST_TOTAL_POST_LIKE_COUNT)
-                                .and(post.boardType.eq(BoardType.TOTAL))
+                                .and(post.boardType.eq(BoardType.TOTAL)
+                                        .and((post.member.university.country.name).eq(viewerMember.getUniversity().getCountry().getName())))
                                 .or(
                                         postLikeCountGreaterThanOrEqual(BEST_UNIV_POST_LIKE_COUNT)
                                                 .and(post.boardType.eq(BoardType.UNIV))
@@ -79,6 +80,7 @@ public class PostQueryRepository {
                         post.boardType.eq(boardType)
                                 .and(
                                         post.boardType.ne(BoardType.UNIV)
+                                                .and((post.member.university.country.name).eq(viewMember.getUniversity().getCountry().getName()))
                                                 .or(post.member.university.id.eq(viewMember.getUniversity().getId()))
                                 ),
                         viewablePostCondition(post, viewMember)
