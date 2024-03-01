@@ -256,6 +256,7 @@ public class PostFacade {
                 .viewCount(post.getViewCount())
                 .createdAt(convertToDateAndTime(post.getCreatedAt()))
                 .boardType(post.getBoardType())
+                .status(post.getStatusType())
                 .memberRole(post.getMember().getRole())
                 .categoryType(post.getCategoryType())
                 .likeCount(post.getPostLikeList().size())

@@ -65,7 +65,8 @@ public class PostQueryRepository {
                                 .or(
                                         postLikeCountGreaterThanOrEqual(BEST_UNIV_POST_LIKE_COUNT)
                                                 .and(post.boardType.eq(BoardType.UNIV))
-                                )
+                                ),
+                        post.statusType.ne(ContentStatusType.REPORTED)
                 )
                 .stream().count();
 
@@ -86,7 +87,8 @@ public class PostQueryRepository {
                                                 .and((university.country.name).eq(viewMember.getUniversity().getCountry().getName()))
                                                 .or(university.id.eq(viewMember.getUniversity().getId()))
                                 ),
-                        viewablePostCondition(post, viewMember)
+                        viewablePostCondition(post, viewMember),
+                        post.statusType.ne(ContentStatusType.REPORTED)
 
                 )
                 .orderBy(post.createdAt.desc())
