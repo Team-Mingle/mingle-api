@@ -113,13 +113,13 @@ public class CommentService {
         };
     }
 
-    public String getMentionDisplayName(Long mentionId, Long postAuthorId) {
+    public String getMentionDisplayName(Long mentionId, Long postAuthorId, Long memberId) {
         Comment comment = commentRepository.findById(mentionId)
                 .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
-        return getDisplayName(comment, postAuthorId);
+        return getDisplayName(comment, postAuthorId, memberId);
     }
 
-    public String getDisplayName(Comment comment, Long postAuthorId) {
+    public String getDisplayName(Comment comment, Long postAuthorId, Long memberId) {
         String displayName = "";
         boolean isAnonymous = comment.getAnonymous();
         Long commentWriterId = comment.getMember().getId();
@@ -133,6 +133,9 @@ public class CommentService {
             displayName = comment.getMember().getNickname() + "(글쓴이)";
         } else if (isAnonymous && Objects.equals(commentWriterId, postAuthorId)){
             displayName = "익명(글쓴이)";
+        }
+        if (comment.getMember().getId().equals(memberId)) {
+            displayName = displayName + "(나)";
         }
         if (comment.getStatusType() == REPORTED || comment.getStatusType() == DELETED) {
             displayName = "(비공개됨)";

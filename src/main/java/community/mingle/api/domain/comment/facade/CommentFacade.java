@@ -123,7 +123,7 @@ public class CommentFacade {
         //TODO isAdmin -> role, isDeleted/isReported -> status 변경가능?
         return CommentDto.builder()
                 .commentId(comment.getId())
-                .nickname(commentService.getDisplayName(comment, postAuthorId))
+                .nickname(commentService.getDisplayName(comment, postAuthorId, memberId))
                 .content(commentService.getContentByStatus(comment))
                 .likeCount(comment.getCommentLikes().size())
                 .isLiked(commentService.isCommentLikedByMember(comment, memberId))
@@ -141,8 +141,8 @@ public class CommentFacade {
         return CoCommentDto.builder()
                 .commentId(coComment.getId())
                 .parentCommentId(coComment.getParentCommentId()) //
-                .mention(commentService.getMentionDisplayName(coComment.getMentionId(), postAuthorId)) //
-                .nickname(commentService.getDisplayName(coComment, postAuthorId))
+                .mention(commentService.getMentionDisplayName(coComment.getMentionId(), postAuthorId, memberId)) //
+                .nickname(commentService.getDisplayName(coComment, postAuthorId, memberId))
                 .content(commentService.getContentByStatus(coComment))
                 .likeCount(coComment.getCommentLikes().size())
                 .isLiked(commentService.isCommentLikedByMember(coComment, memberId))
