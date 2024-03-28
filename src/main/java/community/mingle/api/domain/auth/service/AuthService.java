@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
@@ -41,6 +42,7 @@ public class AuthService {
 
 
     public static final String VERIFICATION_CODE_EMAIL_SUBJECT = "Mingle의 이메일 인증번호를 확인하세요";
+    public static final String TEMP_SIGNUP_EMAIL_SUBJECT = "Mingle 회원가입 인증 요청이 완료되었습니다";
     public static final String FRESHMAN_EMAIL_DOMAIN = "freshman.mingle.com";
     private final PolicyRepository policyRepository;
 
@@ -96,6 +98,29 @@ public class AuthService {
         }
     }
 
+    @Async
+    public void sendTempSignUpCompletionEmail(String emailTo) {
+
+        Context context = new Context();
+        String html = springTemplateEngine.process("tempSignUp", context);
+
+        try {
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "utf-8");
+
+            messageHelper.setFrom("admin@mingle.community");
+            messageHelper.setTo(emailTo);
+            messageHelper.setSubject(TEMP_SIGNUP_EMAIL_SUBJECT);
+            messageHelper.setText(html, true);
+            messageHelper.addInline("image", new ClassPathResource("templates/images/image-1.jpeg"));
+
+            javaMailSender.send(mimeMessage);
+
+        } catch (MessagingException e) {
+            throw new CustomException(ErrorCode.EMAIL_SEND_FAILED);
+        }
+    }
+
 
 
     public Boolean verifyCode(String email, String code) {
@@ -131,6 +156,9 @@ public class AuthService {
     public void checkMemberStatusActive(Member member) {
         if (member.getStatus().equals(MemberStatus.INACTIVE)) {
             throw new CustomException(MEMBER_DELETED_ERROR);
+        }
+        if (member.getStatus().equals(MemberStatus.WAITING) || member.getStatus().equals(MemberStatus.REJECTED)) {
+            throw new CustomException(MEMBER_UNAUTHENTICATED_ERROR);
         }
         if (member.getStatus().equals(MemberStatus.REPORTED)) {
             throw new CustomException(MEMBER_REPORTED_ERROR);
