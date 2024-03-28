@@ -107,6 +107,11 @@ public class Member extends AuditLoggingBase {
         this.nickname = nickname;
     }
 
+    public void authenticateTempMember() {
+        this.status = MemberStatus.ACTIVE;
+        this.rowEmail = null;
+    }
+
     public void withDraw() {
         this.status = MemberStatus.INACTIVE;
         this.deletedAt = LocalDateTime.now();
