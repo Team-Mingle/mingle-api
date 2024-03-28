@@ -64,7 +64,7 @@ public class AuthFacade {
 
     @Transactional
     public SignUpResponse tempSignUp(TempSignUpRequest request) {
-        if (memberService.existsByEmail(request.email()) || memberService.existsByStudentId(request.studentId())) {
+        if (memberService.existsByEmail(request.email()) || memberService.existsByStudentId(request.studentId(), request.univId())) {
             throw new CustomException(MEMBER_ALREADY_EXIST);
         }
         if (memberService.existsByNickname(request.nickname())) {
@@ -140,6 +140,16 @@ public class AuthFacade {
     public PolicyResponse getPolicy(PolicyType policyType) {
         Policy policy = authService.getPolicy(policyType);
         return new PolicyResponse(policy.getContent());
+    }
+
+    @Transactional
+    public void authenticateTempMember(Long memberId) {
+        if (!tokenService.getTokenInfo().getMemberRole().equals(MemberRole.ADMIN)) {
+            throw new CustomException(MODIFY_NOT_AUTHORIZED);
+        }
+
+        Member member = memberService.getById(memberId);
+        member.authenticateTempMember();
     }
 
     public VerifyLoggedInMemberResponse getVerifiedMemberInfo() {

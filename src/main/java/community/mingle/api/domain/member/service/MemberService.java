@@ -45,8 +45,8 @@ public class MemberService {
         return memberRepository.existsByEmail(hashedEmail);
     }
 
-    public Boolean existsByStudentId(String studentId) {
-        return memberRepository.existsByStudentId(studentId);
+    public Boolean existsByStudentId(String studentId, int universityId) {
+        return memberRepository.existsByStudentIdAndUniversityId(studentId, universityId);
     }
 
     public Boolean existsByNickname(String nickname) {
