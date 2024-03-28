@@ -186,5 +186,13 @@ public class AuthController {
         VerifyLoggedInMemberResponse verifyLoggedInMemberResponse = authFacade.getVerifiedMemberInfo();
         return new ResponseEntity<>(verifyLoggedInMemberResponse, HttpStatus.OK);
     }
+
+    @Operation(summary = "1.14 임시 회원가입 api")
+    @PostMapping("/temporary-sign-up")
+    public ResponseEntity<SignUpResponse> tempSignUp(
+            @Valid @RequestBody TempSignUpRequest request
+    ) {
+        return new ResponseEntity<>(authFacade.tempSignUp(request), HttpStatus.OK);
+    }
 }
 

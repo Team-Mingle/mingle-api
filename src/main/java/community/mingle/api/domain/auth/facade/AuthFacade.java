@@ -60,9 +60,21 @@ public class AuthFacade {
 
         Member member = memberService.create(request.univId(), request.nickname(), request.email(), request.password());
         return new SignUpResponse(member.getId());
+    }
 
+    @Transactional
+    public SignUpResponse tempSignUp(TempSignUpRequest request) {
+        if (memberService.existsByEmail(request.email()) || memberService.existsByStudentId(request.studentId())) {
+            throw new CustomException(MEMBER_ALREADY_EXIST);
+        }
+        if (memberService.existsByNickname(request.nickname())) {
+            throw new CustomException(NICKNAME_DUPLICATED);
+        }
 
+        Member member = memberService.tempCreate(request.univId(), request.nickname(), request.email(), request.password(), request.fcmToken(), request.studentId());
+        authService.sendTempSignUpCompletionEmail(request.email());
 
+        return new SignUpResponse(member.getId());
     }
 
     @Transactional

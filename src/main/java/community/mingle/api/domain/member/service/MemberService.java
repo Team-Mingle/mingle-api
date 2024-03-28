@@ -45,6 +45,10 @@ public class MemberService {
         return memberRepository.existsByEmail(hashedEmail);
     }
 
+    public Boolean existsByStudentId(String studentId) {
+        return memberRepository.existsByStudentId(studentId);
+    }
+
     public Boolean existsByNickname(String nickname) {
         return memberRepository.existsByNickname(nickname);
     }
@@ -52,7 +56,7 @@ public class MemberService {
     @Transactional
     public Member create(int universityId, String nickname, String email, String password) {
         String hashedEmail = AuthHasher.hashString(email);
-        String encodedPassword = AuthHasher.hashString(password);;
+        String encodedPassword = AuthHasher.hashString(password);
 
         University university = universityRepository.findById(universityId).orElseThrow(() -> new CustomException(UNIVERSITY_NOT_FOUND));
 
@@ -69,6 +73,28 @@ public class MemberService {
     }
 
     @Transactional
+    public Member tempCreate(int universityId, String nickname, String email, String password, String fcmToken, String studentId) {
+        String hashedEmail = AuthHasher.hashString(email);
+        String encodedPassword = AuthHasher.hashString(password);
+
+        University university = universityRepository.findById(universityId).orElseThrow(() -> new CustomException(UNIVERSITY_NOT_FOUND));
+
+        Member member = Member.builder()
+                .university(university)
+                .nickname(nickname)
+                .email(hashedEmail)
+                .password(encodedPassword)
+                .agreedAt(LocalDateTime.now())
+                .status(MemberStatus.WAITING)
+                .role(MemberRole.USER)
+                .fcmToken(fcmToken)
+                .studentId(studentId)
+                .rowEmail(email)
+                .build();
+        return memberRepository.save(member);
+    }
+
+    @Transactional
     public void setFcmToken(Member member, String fcmToken) {
         member.setFcmToken(fcmToken);
     }
@@ -76,7 +102,7 @@ public class MemberService {
 
     @Transactional
     public void updatePassword(Member member, String password) {
-        String encodedPassword = AuthHasher.hashString(password);;
+        String encodedPassword = AuthHasher.hashString(password);
         member.updatePassword(encodedPassword);
     }
 

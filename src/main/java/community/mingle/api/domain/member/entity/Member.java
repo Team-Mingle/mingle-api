@@ -3,6 +3,7 @@ package community.mingle.api.domain.member.entity;
 import community.mingle.api.domain.friend.entity.Friend;
 import community.mingle.api.domain.notification.entity.Notification;
 import community.mingle.api.entitybase.AuditLoggingBase;
+import community.mingle.api.enums.MemberAuthenticatedStatusType;
 import community.mingle.api.enums.MemberRole;
 import community.mingle.api.enums.MemberStatus;
 import jakarta.persistence.*;
@@ -70,6 +71,12 @@ public class Member extends AuditLoggingBase {
 
     @Column(name = "fcm_token")
     private String fcmToken;
+
+    @Column(name = "student_id")
+    private String studentId;
+
+    @Column(name = "row_email")
+    private String rowEmail;
 
     @OneToMany(mappedBy = "blockedMember")
     private List<BlockMember> blockedMember= new ArrayList<>();
