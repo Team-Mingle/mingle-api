@@ -54,8 +54,8 @@ public class NotificationEventHandler {
     @Transactional
     public void handleManualNotificationEvent(ManualNotificationEvent event) {
         Post post = postService.getPost(event.getContentId());
-        List<Member> targetMembers = notificationService.getTargetTokenMembersByBoardType(event.getBoardType(), post);
-        fcmService.sendAllMessage(
+        List<Member> targetMembers = notificationService.getTargetTokenMembersByBoardType(event.getBoardType(), post); //TODO 테스트 필요
+        Integer successCount = fcmService.sendAllMessage(
                 event.getTitle(), //title, body를 Manual 푸시는 밖에서 받아옴
                 event.getBody(),
                 event.getContentId(),
@@ -75,7 +75,7 @@ public class NotificationEventHandler {
         Post post = postService.getPost(event.getPostId());
         Member member = memberService.getById(event.getMemberId());
         Comment comment = commentService.getComment(event.getCommentId());
-        String title =post.getBoardType().getBoardName(); //manual 푸시와 다르게 title, content를 event 정보로 생성
+        String title = post.getBoardType().getBoardName(); //manual 푸시와 다르게 title, content를 event 정보로 생성
         String body = COMMENT_NOTIFICATION_BODY + event.getContent();
 
         List<Member> targetMembers = notificationService.getTargetUserTokenMembersForComment(event.getParentCommentId(), event.getMentionId(), member, post);
