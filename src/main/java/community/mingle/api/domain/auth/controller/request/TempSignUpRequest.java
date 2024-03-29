@@ -3,6 +3,9 @@ package community.mingle.api.domain.auth.controller.request;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public record TempSignUpRequest(
         int univId,
@@ -15,6 +18,7 @@ public record TempSignUpRequest(
         @NotBlank(message = "학번 또는 지원번호를 입력해주세요.")
         String studentId,
         @NotBlank(message = "FCM 토큰을 입력해주세요.")
-        String fcmToken
+        String fcmToken,
+        List<MultipartFile> multipartFile
 ) {
 }

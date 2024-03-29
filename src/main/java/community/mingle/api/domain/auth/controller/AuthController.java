@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -188,9 +189,9 @@ public class AuthController {
     }
 
     @Operation(summary = "1.14 임시 회원가입 api")
-    @PostMapping("/temporary-sign-up")
+    @PostMapping(path = "/temporary-sign-up", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SignUpResponse> tempSignUp(
-            @Valid @RequestBody TempSignUpRequest request
+            @Valid @ModelAttribute TempSignUpRequest request
     ) {
         return new ResponseEntity<>(authFacade.tempSignUp(request), HttpStatus.OK);
     }

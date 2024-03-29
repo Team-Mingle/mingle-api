@@ -3,7 +3,6 @@ package community.mingle.api.domain.member.entity;
 import community.mingle.api.domain.friend.entity.Friend;
 import community.mingle.api.domain.notification.entity.Notification;
 import community.mingle.api.entitybase.AuditLoggingBase;
-import community.mingle.api.enums.MemberAuthenticatedStatusType;
 import community.mingle.api.enums.MemberRole;
 import community.mingle.api.enums.MemberStatus;
 import jakarta.persistence.*;
