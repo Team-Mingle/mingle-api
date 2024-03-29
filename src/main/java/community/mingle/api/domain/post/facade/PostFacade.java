@@ -19,8 +19,10 @@ import community.mingle.api.dto.post.PostPreviewDto;
 import community.mingle.api.dto.post.PostStatusDto;
 import community.mingle.api.enums.BoardType;
 import community.mingle.api.enums.CategoryType;
+import community.mingle.api.enums.ContentStatusType;
 import community.mingle.api.enums.MemberRole;
 import community.mingle.api.global.s3.S3Service;
+import community.mingle.api.infra.AmplitudeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -46,6 +48,7 @@ public class PostFacade {
     private final ApplicationEventPublisher applicationEventPublisher;
     private final S3Service s3Service;
     private final MemberService memberService;
+    private final AmplitudeService amplitudeService;
     private static final int POPULAR_NOTIFICATION_LIKE_SIZE = 5;
 
 
@@ -121,6 +124,7 @@ public class PostFacade {
         List<PostPreviewDto> postPreviewDtoList = postList.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))
                 .collect(Collectors.toList());
+        amplitudeService.logEventAsync("getAllPostList", memberId);
         return new PostListResponse(postPreviewDtoList);
     }
 
@@ -236,6 +240,7 @@ public class PostFacade {
                 .isMyPost(postStatusDto.isMyPost())
                 .isLiked(postStatusDto.isLiked())
                 .isScraped(postStatusDto.isScraped())
+                .isReported(post.getStatusType() == ContentStatusType.REPORTED)
                 .postImgUrl(imageUrls)
                 .build();
     }
@@ -254,6 +259,7 @@ public class PostFacade {
                 .viewCount(post.getViewCount())
                 .createdAt(convertToDateAndTime(post.getCreatedAt()))
                 .boardType(post.getBoardType())
+                .status(post.getStatusType())
                 .memberRole(post.getMember().getRole())
                 .categoryType(post.getCategoryType())
                 .likeCount(post.getPostLikeList().size())

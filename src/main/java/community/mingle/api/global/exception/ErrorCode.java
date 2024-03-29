@@ -24,7 +24,8 @@ public enum ErrorCode {
     FAILED_TO_CREATEJWT(500, "2006", "토큰 발급에 실패하였습니다." ), //1.9
 
     MEMBER_DELETED_ERROR(404, "MEMBER_DELETED_ERROR","탈퇴한 사용자입니다."), //1.9
-    MEMBER_REPORTED_ERROR(404, "MEMBER_REPORTED_ERROR", "신고된 사용자입니다."), //1.9
+    MEMBER_UNAUTHENTICATED_ERROR(404, "MEMBER_UNAUTHENTICATED_ERROR","사용자 인증이 완료되지 않았습니다.\n 인증이 완료되면 이메일과 앱 푸시를 통해 안내드리겠습니다."), //1.9
+    MEMBER_REPORTED_ERROR(404, "MEMBER_REPORTED_ERROR", "신고로 인해 계정 사용이 중지되었습니다."), //1.9
     TOKEN_EXPIRED( 401, "TOKEN_EXPIRED", "토큰이 만료되었습니다."), //1.12
     TOKEN_NOT_FOUND(401, "TOKEN_NOT_FOUND", "일치하는 토큰을 찾지 못하였습니다."), //1.12
     AUTHENTICATION_FAILED(401, "2001", "잘못된 인증 정보입니다."), //1.12

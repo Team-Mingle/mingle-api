@@ -4,6 +4,7 @@ public record VerifyLoggedInMemberResponse(
         Long memberId,
         String hashedEmail,
         String nickName,
-        String univName
+        String univName,
+        String country
 ) {
 }

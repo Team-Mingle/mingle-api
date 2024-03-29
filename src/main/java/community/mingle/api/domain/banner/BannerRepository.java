@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface BannerRepository extends JpaRepository<Banner, Integer> {
 
-    List<Banner> findByMemberUniversity(University university);
+    List<Banner> findByUniversityId(int universityId);
 }

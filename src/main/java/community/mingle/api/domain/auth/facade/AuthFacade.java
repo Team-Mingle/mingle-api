@@ -4,17 +4,21 @@ import community.mingle.api.domain.auth.controller.request.*;
 import community.mingle.api.domain.auth.controller.response.*;
 import community.mingle.api.domain.auth.entity.Policy;
 import community.mingle.api.domain.auth.service.AuthService;
-import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.domain.member.service.MemberAuthPhotoService;
+import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.dto.security.CreatedTokenDto;
 import community.mingle.api.dto.security.TokenDto;
 import community.mingle.api.enums.MemberRole;
 import community.mingle.api.enums.PolicyType;
 import community.mingle.api.global.exception.CustomException;
+import community.mingle.api.global.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static community.mingle.api.domain.auth.service.AuthService.FRESHMAN_EMAIL_DOMAIN;
 import static community.mingle.api.global.exception.ErrorCode.*;
@@ -25,6 +29,8 @@ public class AuthFacade {
     private final MemberService memberService;
     private final AuthService authService;
     private final TokenService tokenService;
+    private final S3Service s3Service;
+    private final MemberAuthPhotoService memberAuthPhotoService;
 
     public VerifyEmailResponse verifyEmail(EmailRequest emailRequest) {
         authService.verifyEmail(emailRequest.getEmail());
@@ -60,9 +66,26 @@ public class AuthFacade {
 
         Member member = memberService.create(request.univId(), request.nickname(), request.email(), request.password());
         return new SignUpResponse(member.getId());
+    }
 
+    @Transactional
+    public SignUpResponse tempSignUp(TempSignUpRequest request) {
+        if (memberService.existsByEmail(request.email()) || memberService.existsByStudentId(request.studentId(), request.univId())) {
+            throw new CustomException(MEMBER_ALREADY_EXIST);
+        }
+        if (memberService.existsByNickname(request.nickname())) {
+            throw new CustomException(NICKNAME_DUPLICATED);
+        }
 
+        Member member = memberService.tempCreate(request.univId(), request.nickname(), request.email(), request.password(), request.fcmToken(), request.studentId());
 
+        List<String> imgUrls = s3Service.uploadFile(request.multipartFile(), "temp_auth");
+        imgUrls.forEach(imgUrl ->
+                        memberAuthPhotoService.create(member.getId(), imgUrl)
+                );
+        authService.sendTempSignUpCompletionEmail(request.email());
+
+        return new SignUpResponse(member.getId());
     }
 
     @Transactional
@@ -130,6 +153,16 @@ public class AuthFacade {
         return new PolicyResponse(policy.getContent());
     }
 
+    @Transactional
+    public void authenticateTempMember(Long memberId) {
+        if (!tokenService.getTokenInfo().getMemberRole().equals(MemberRole.ADMIN)) {
+            throw new CustomException(MODIFY_NOT_AUTHORIZED);
+        }
+
+        Member member = memberService.getById(memberId);
+        member.authenticateTempMember();
+    }
+
     public VerifyLoggedInMemberResponse getVerifiedMemberInfo() {
         Long memberIdByJwt = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberIdByJwt);
@@ -137,7 +170,8 @@ public class AuthFacade {
                 member.getId(),
                 member.getEmail(),
                 member.getNickname(),
-                member.getUniversity().getName()
+                member.getUniversity().getName(),
+                member.getUniversity().getCountry().getName()
         );
     }
 }

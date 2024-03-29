@@ -71,6 +71,12 @@ public class Member extends AuditLoggingBase {
     @Column(name = "fcm_token")
     private String fcmToken;
 
+    @Column(name = "student_id")
+    private String studentId;
+
+    @Column(name = "row_email")
+    private String rowEmail;
+
     @OneToMany(mappedBy = "blockedMember")
     private List<BlockMember> blockedMember= new ArrayList<>();
 
@@ -98,6 +104,11 @@ public class Member extends AuditLoggingBase {
 
     public void updateNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void authenticateTempMember() {
+        this.status = MemberStatus.ACTIVE;
+        this.rowEmail = null;
     }
 
     public void withDraw() {

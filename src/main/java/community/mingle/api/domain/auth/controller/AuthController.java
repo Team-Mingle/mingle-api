@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -185,6 +186,14 @@ public class AuthController {
     ) {
         VerifyLoggedInMemberResponse verifyLoggedInMemberResponse = authFacade.getVerifiedMemberInfo();
         return new ResponseEntity<>(verifyLoggedInMemberResponse, HttpStatus.OK);
+    }
+
+    @Operation(summary = "1.14 임시 회원가입 api")
+    @PostMapping(path = "/temporary-sign-up", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SignUpResponse> tempSignUp(
+            @Valid @ModelAttribute TempSignUpRequest request
+    ) {
+        return new ResponseEntity<>(authFacade.tempSignUp(request), HttpStatus.OK);
     }
 }
 

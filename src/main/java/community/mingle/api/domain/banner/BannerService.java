@@ -15,7 +15,7 @@ public class BannerService {
     private final BannerRepository bannerRepository;
 
     public List<Banner> findBanner(University university) {
-        return bannerRepository.findByMemberUniversity(university);
+        return bannerRepository.findByUniversityId(university.getId());
     }
 
     @Transactional

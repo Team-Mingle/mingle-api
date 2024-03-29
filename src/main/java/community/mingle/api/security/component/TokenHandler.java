@@ -26,8 +26,8 @@ public class TokenHandler {
                     .withClaim("memberId", memberId)
                     .withClaim("memberRole", memberRole.toString())
                     .withExpiresAt(
-                            //TODO: refresh test를 위해 임시로 짧은 TTL로 설정해둠
-                            new Date(now.getTime() + 30 * 1000L)
+                            //TODO: accessToken을 4년으로 둠
+                            new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000L)
                     )
                     .sign(Algorithm.HMAC256(jwtSecretKey));
         } catch (Exception e) {

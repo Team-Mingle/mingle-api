@@ -31,6 +31,7 @@ public class PostDetailResponse {
     private final boolean isMyPost;
     private final boolean isLiked;
     private final boolean isScraped;
+    private final boolean isReported;
     private final List<String> postImgUrl;
 
 }

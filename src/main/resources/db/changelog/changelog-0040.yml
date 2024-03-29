@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: add member_auth_photo table
+      author: Hyeonwoo Jung
+      changes:
+        - createTable:
+            tableName: member_auth_photo
+            columns:
+              - column:
+                  name: member_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: image_url
+                  type: text
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: member_auth_photo
+            baseColumnNames: member_id
+            referencedTableName: member
+            referencedColumnNames: id
+            constraintName: member_auth_photo_member_id_fk

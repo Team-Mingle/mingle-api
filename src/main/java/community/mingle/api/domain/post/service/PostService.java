@@ -2,7 +2,9 @@ package community.mingle.api.domain.post.service;
 
 import community.mingle.api.domain.comment.entity.Comment;
 import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.domain.member.entity.University;
 import community.mingle.api.domain.member.repository.MemberRepository;
+import community.mingle.api.domain.member.repository.UniversityRepository;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.entity.PostImage;
 import community.mingle.api.domain.post.entity.PostViewCountSession;
@@ -38,6 +40,7 @@ public class PostService {
     private final PostReportRepository postReportRepository;
     private final PostQueryRepository postQueryRepository;
     private final PostViewCountSessionRepository postViewCountSessionRepository;
+    private final UniversityRepository universityRepository;
 
     @Transactional
     public Post createPost(
@@ -101,7 +104,10 @@ public class PostService {
     public List<Post> pagePostsByBoardType(BoardType boardType, PageRequest pageRequest, int universityId) {
         Page<Post> pagePosts;
         switch (boardType) {
-            case TOTAL -> pagePosts = postRepository.findAllByBoardType(boardType, pageRequest);
+            case TOTAL -> {
+                University university = universityRepository.findById(universityId).orElseThrow(()-> new CustomException(UNIVERSITY_NOT_FOUND));
+                pagePosts = postRepository.findAllByBoardTypeAndMemberUniversityCountryName(boardType, pageRequest, university.getCountry().getName());
+            }
             case UNIV ->
                     pagePosts = postRepository.findAllByBoardTypeAndMemberUniversityId(boardType, pageRequest, universityId);
             default -> throw new CustomException(INTERNAL_SERVER_ERROR);
@@ -114,7 +120,10 @@ public class PostService {
     public List<Post> pagePostsByBoardTypeAndCategory(BoardType boardType, CategoryType categoryType, PageRequest pageRequest, int universityId) {
         Page<Post> pagePosts;
         switch (boardType) {
-            case TOTAL -> pagePosts = postRepository.findAllByBoardTypeAndCategoryType(boardType, categoryType, pageRequest);
+            case TOTAL -> {
+                University university = universityRepository.findById(universityId).orElseThrow(()-> new CustomException(UNIVERSITY_NOT_FOUND));
+                pagePosts = postRepository.findAllByBoardTypeAndCategoryTypeAndMemberUniversityCountryName(boardType, categoryType, pageRequest, university.getCountry().getName());
+            }
             case UNIV ->
                     pagePosts = postRepository.findAllByBoardTypeAndCategoryTypeAndMemberUniversityId(boardType, categoryType, pageRequest, universityId);
             default -> throw new CustomException(INTERNAL_SERVER_ERROR);

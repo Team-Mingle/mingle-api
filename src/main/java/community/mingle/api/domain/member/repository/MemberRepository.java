@@ -17,6 +17,8 @@ public interface MemberRepository extends JpaRepository <Member, Long> {
 
     Boolean existsByNickname(String nickname);
 
+    Boolean existsByStudentIdAndUniversityId(String studentId, int universityId);
+
     List<Member> findAllByUniversityCountry(Country country);
 
     List<Member> findAllByUniversity(University university);

@@ -8,8 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import static com.amazonaws.regions.Regions.AP_NORTHEAST_2;
-import static community.mingle.api.configuration.ProjectBaseConfiguration.Profile.DEV;
-import static community.mingle.api.configuration.ProjectBaseConfiguration.Profile.LOCAL;
+import static community.mingle.api.configuration.ProjectBaseConfiguration.Profile.*;
 
 @Configuration
 public class AmazonS3Config {
@@ -25,7 +24,7 @@ public class AmazonS3Config {
     }
 
     @Bean(S3_CLIENT)
-    @Profile(DEV)
+    @Profile({DEV, PROD})
     public AmazonS3Client amazonS3DevClient() {
         return (AmazonS3Client) AmazonS3ClientBuilder.standard()
                 .withCredentials(new EnvironmentVariableCredentialsProvider())

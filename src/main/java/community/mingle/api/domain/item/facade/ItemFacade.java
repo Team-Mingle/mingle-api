@@ -22,6 +22,7 @@ import community.mingle.api.dto.item.ItemPreviewDto;
 import community.mingle.api.dto.item.ItemStatusDto;
 import community.mingle.api.enums.ItemStatusType;
 import community.mingle.api.enums.MemberRole;
+import community.mingle.api.infra.AmplitudeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,7 @@ public class ItemFacade {
     private final TokenService tokenService;
     private final MemberService memberService;
     private final ItemCommentService itemCommentService;
-
+    private final AmplitudeService amplitudeService;
 
     @Transactional
     public CreateItemResponse createItemPost(CreateItemRequest request) {
@@ -56,6 +57,8 @@ public class ItemFacade {
         Item item = Item.createItem(request, member);
         itemService.saveItem(item);
         itemImageService.createItemImage(item, request.multipartFile());
+
+        amplitudeService.logEventAsync("createItemPost", memberId);
 
         return new CreateItemResponse(item.getId());
     }
