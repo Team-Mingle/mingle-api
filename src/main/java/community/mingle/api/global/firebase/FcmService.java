@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.MulticastMessage;
-import com.google.firebase.messaging.Notification;
+import com.google.firebase.messaging.*;
 import community.mingle.api.enums.ContentType;
+import community.mingle.api.global.exception.CustomException;
+import community.mingle.api.global.exception.ErrorCode;
 import community.mingle.api.infra.SecretsManagerService;
 import lombok.RequiredArgsConstructor;
 import okhttp3.*;
@@ -16,7 +16,10 @@ import org.springframework.stereotype.Component;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
+
+import static community.mingle.api.global.exception.ErrorCode.FIREBASE_MESSAGING_ERROR;
 
 @Component
 @RequiredArgsConstructor
@@ -29,15 +32,24 @@ public class FcmService {
     private final String profile;
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/mingle-new/messages:send"; //dev
 
-    public void sendAllMessage(String title, String body, Long contentId, ContentType contentType, List<String> allTokens) {
+    public Integer sendAllMessage(String title, String body, Long contentId, ContentType contentType, List<String> allTokens)  {
+        int successCount = 0;
         int total = allTokens.size();
         int count = 0;
         while (count < total) {
             List<String> tokenSubList = allTokens.subList(count, Math.min(count + BATCH_SIZE, total));
             MulticastMessage messages = buildMessage(title, body, contentId, contentType, tokenSubList);
-            FirebaseMessaging.getInstance(firebaseApp).sendMulticastAsync(messages);
+            BatchResponse batchResponse = null;
+            try {
+                batchResponse = FirebaseMessaging.getInstance(firebaseApp).sendMulticast(messages);
+            } catch (FirebaseMessagingException e) {
+                e.printStackTrace();
+                throw new CustomException(FIREBASE_MESSAGING_ERROR);
+            }
+            successCount += batchResponse.getSuccessCount();
             count += BATCH_SIZE;
         }
+        return successCount;
     }
 
     public void sendMessage(String title, String body, Long contentId, ContentType contentType, List<String> allTokens) throws IOException {

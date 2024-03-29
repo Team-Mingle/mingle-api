@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -53,10 +54,10 @@ public class NotificationEventHandler {
     @EventListener(ManualNotificationEvent.class)
     @Async
     @Transactional
-    public void handleManualNotificationEvent(ManualNotificationEvent event) { //TODO 원복 + async 필요
+    public void handleManualNotificationEvent(ManualNotificationEvent event) {
         Post post = postService.getPost(event.getContentId());
-        List<Member> targetMembers = notificationService.getTargetTokenMembersByBoardType(event.getBoardType(), post);
-        fcmService.sendAllMessage(
+        List<Member> targetMembers = notificationService.getTargetTokenMembersByBoardType(event.getBoardType(), post); //TODO 테스트 필요
+        Integer successCount = fcmService.sendAllMessage(
                 event.getTitle(), //title, body를 Manual 푸시는 밖에서 받아옴
                 event.getBody(),
                 event.getContentId(),
