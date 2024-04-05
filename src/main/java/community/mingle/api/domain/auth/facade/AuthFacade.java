@@ -12,6 +12,7 @@ import community.mingle.api.dto.security.CreatedTokenDto;
 import community.mingle.api.dto.security.TokenDto;
 import community.mingle.api.enums.MemberRole;
 import community.mingle.api.enums.PolicyType;
+import community.mingle.api.enums.TempSignUpStatusType;
 import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.global.s3.S3Service;
 import lombok.RequiredArgsConstructor;
@@ -83,7 +84,7 @@ public class AuthFacade {
         imgUrls.forEach(imgUrl ->
                         memberAuthPhotoService.create(member.getId(), imgUrl)
                 );
-        authService.sendTempSignUpCompletionEmail(request.email());
+        authService.sendTempSignUpEmail(request.email(), TempSignUpStatusType.PROCESSING);
 
         return new SignUpResponse(member.getId());
     }
@@ -154,13 +155,27 @@ public class AuthFacade {
     }
 
     @Transactional
-    public void authenticateTempMember(Long memberId) {
+    public void authenticateTempSignUp(Long memberId) {
         if (!tokenService.getTokenInfo().getMemberRole().equals(MemberRole.ADMIN)) {
             throw new CustomException(MODIFY_NOT_AUTHORIZED);
         }
 
         Member member = memberService.getById(memberId);
         member.authenticateTempMember();
+        authService.sendTempSignUpEmail(member.getRowEmail(), TempSignUpStatusType.APPROVED);
+        authService.sendTempSignUpNotification(member, TempSignUpStatusType.APPROVED);
+    }
+
+    @Transactional
+    public String rejectTempSignUp(Long memberId) {
+        if (!tokenService.getTokenInfo().getMemberRole().equals(MemberRole.ADMIN)) {
+            throw new CustomException(MODIFY_NOT_AUTHORIZED);
+        }
+        Member member = memberService.getById(memberId);
+        member.rejectTempSignUp();
+        authService.sendTempSignUpEmail(member.getRowEmail(), TempSignUpStatusType.REJECTED);
+        authService.sendTempSignUpNotification(member, TempSignUpStatusType.REJECTED);
+        return "success";
     }
 
     public VerifyLoggedInMemberResponse getVerifiedMemberInfo() {
