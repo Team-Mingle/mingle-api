@@ -108,6 +108,7 @@ public class Member extends AuditLoggingBase {
 
     public void authenticateTempMember() {
         this.status = MemberStatus.ACTIVE;
+        this.rowEmail = null;
     }
 
     public void withDraw() {
@@ -116,7 +117,4 @@ public class Member extends AuditLoggingBase {
         this.fcmToken = null;
     }
 
-    public void rejectTempSignUp() {
-        this.status = MemberStatus.REJECTED;
-    }
 }

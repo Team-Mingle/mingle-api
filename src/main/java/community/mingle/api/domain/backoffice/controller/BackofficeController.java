@@ -40,8 +40,9 @@ public class BackofficeController {
 
     @Operation(summary = "임시 회원가입 인증 불허가 api")
     @PostMapping("/reject-temp-sign-up")
-    public ResponseEntity<String> RejectTempSignUp(@RequestParam Long memberId) {
-        return new ResponseEntity<>(authFacade.rejectTempSignUp(memberId), HttpStatus.OK);
+    public ResponseEntity<Void> RejectTempSignUp(@RequestParam Long memberId) {
+        authFacade.rejectTempSignUp(memberId);
+        return ResponseEntity.ok().build();
     }
 
 
