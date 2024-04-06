@@ -107,6 +107,7 @@ public class AuthService {
     }
 
     @Async
+    //Transactional 안됨
     public void sendTempSignUpEmail(String emailTo, TempSignUpStatusType emailType) {
         Context context = new Context();
         String html = null;
@@ -219,7 +220,7 @@ public class AuthService {
         }
     }
 
-    public void sendTempSignUpNotification(Member member, TempSignUpStatusType tempSignUpStatusType) {
+    public void sendTempSignUpNotification(String fcmToken, TempSignUpStatusType tempSignUpStatusType) {
         String title = switch (tempSignUpStatusType) {
             case PROCESSING -> TEMP_SIGNUP_PROCESSING_EMAIL_SUBJECT;
             case APPROVED -> TEMP_SIGNUP_APPROVED_EMAIL_SUBJECT;
@@ -228,7 +229,7 @@ public class AuthService {
         };
         String content = TEMP_SIGNUP_NOTIFICATION_CONTENT;
         applicationEventPublisher.publishEvent(
-                new TempSignUpNotificationEvent(this, member.getFcmToken() , title, content)
+                new TempSignUpNotificationEvent(this, fcmToken , title, content)
         );
     }
 }
