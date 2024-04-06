@@ -56,8 +56,8 @@ public class NotificationEventHandler {
         fcmService.sendAllMessage(
                 event.getTitle(),
                 event.getBody(),
-                null,
-                null,
+                0L,
+                ContentType.COMMENT,
                 List.of(event.getFcmToken())
         );
     }
