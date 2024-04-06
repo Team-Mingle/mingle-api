@@ -76,10 +76,11 @@ public class AuthFacade {
                 !(memberService.getByEmail(request.email()).getStatus().equals(MemberStatus.REJECTED))) { //인증 거절 후 재가입할 경우
             throw new CustomException(MEMBER_ALREADY_EXIST);
         }
-        if (memberService.existsByNickname(request.nickname())) {
+        if (memberService.existsByNickname(request.nickname()) &&
+                !(memberService.getByEmail(request.email()).getStatus().equals(MemberStatus.REJECTED))) {
             throw new CustomException(NICKNAME_DUPLICATED);
         }
-
+        //TODO REJECTED status 삭제
         Member member = memberService.tempCreate(request.univId(), request.nickname(), request.email(), request.password(), request.fcmToken(), request.studentId());
 
         List<String> imgUrls = s3Service.uploadFile(request.multipartFile(), "temp_auth");
