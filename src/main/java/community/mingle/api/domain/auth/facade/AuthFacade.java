@@ -11,6 +11,7 @@ import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.dto.security.CreatedTokenDto;
 import community.mingle.api.dto.security.TokenDto;
 import community.mingle.api.enums.MemberRole;
+import community.mingle.api.enums.MemberStatus;
 import community.mingle.api.enums.PolicyType;
 import community.mingle.api.enums.TempSignUpStatusType;
 import community.mingle.api.global.exception.CustomException;
@@ -71,13 +72,15 @@ public class AuthFacade {
 
     @Transactional
     public SignUpResponse tempSignUp(TempSignUpRequest request) {
-        if (memberService.existsByEmail(request.email()) || memberService.existsByStudentId(request.studentId(), request.univId())) {
+        if (memberService.existsByEmail(request.email()) &&
+                !(memberService.getByEmail(request.email()).getStatus().equals(MemberStatus.REJECTED))) { //인증 거절 후 재가입할 경우
             throw new CustomException(MEMBER_ALREADY_EXIST);
         }
-        if (memberService.existsByNickname(request.nickname())) {
+        if (memberService.existsByNickname(request.nickname()) &&
+                !(memberService.getByEmail(request.email()).getStatus().equals(MemberStatus.REJECTED))) {
             throw new CustomException(NICKNAME_DUPLICATED);
         }
-
+        //TODO REJECTED status 삭제
         Member member = memberService.tempCreate(request.univId(), request.nickname(), request.email(), request.password(), request.fcmToken(), request.studentId());
 
         List<String> imgUrls = s3Service.uploadFile(request.multipartFile(), "temp_auth");
@@ -85,6 +88,7 @@ public class AuthFacade {
                         memberAuthPhotoService.create(member.getId(), imgUrl)
                 );
         authService.sendTempSignUpEmail(request.email(), TempSignUpStatusType.PROCESSING);
+        authService.sendTempSignUpEmail(request.email(), TempSignUpStatusType.ADMIN);
 
         return new SignUpResponse(member.getId());
     }

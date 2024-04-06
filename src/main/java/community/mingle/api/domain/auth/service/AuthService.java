@@ -49,6 +49,8 @@ public class AuthService {
     public static final String TEMP_SIGNUP_APPROVED_EMAIL_SUBJECT = "Mingle 회원가입이 완료되었습니다";
     public static final String TEMP_SIGNUP_REJECTED_EMAIL_SUBJECT = "Mingle 회원가입을 다시 한 번 확인해주세요.";
     public static final String TEMP_SIGNUP_NOTIFICATION_CONTENT = "자세한 내용은 이메일을 확인해 주세요!";
+    public static final String TEMP_SIGNUP_TO_ADMIN_EMAIL_SUBJECT = "임시 회원가입 요청! 백오피스를 확인해주세요.";
+
     public static final String FRESHMAN_EMAIL_DOMAIN = "freshman.mingle.com";
     private final PolicyRepository policyRepository;
 
@@ -121,6 +123,10 @@ public class AuthService {
             case REJECTED:
                 subject = TEMP_SIGNUP_REJECTED_EMAIL_SUBJECT;
                 html = springTemplateEngine.process("tempSignUpRejected", context);
+                break;
+            case ADMIN:
+                subject = TEMP_SIGNUP_TO_ADMIN_EMAIL_SUBJECT;
+                html = springTemplateEngine.process("tempSignUpToAdmin", context);
         }
 
         try {
@@ -218,6 +224,7 @@ public class AuthService {
             case PROCESSING -> TEMP_SIGNUP_PROCESSING_EMAIL_SUBJECT;
             case APPROVED -> TEMP_SIGNUP_APPROVED_EMAIL_SUBJECT;
             case REJECTED -> TEMP_SIGNUP_REJECTED_EMAIL_SUBJECT;
+            case ADMIN -> null;
         };
         String content = TEMP_SIGNUP_NOTIFICATION_CONTENT;
         applicationEventPublisher.publishEvent(
