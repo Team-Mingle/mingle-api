@@ -11,7 +11,9 @@ import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.dto.security.CreatedTokenDto;
 import community.mingle.api.dto.security.TokenDto;
 import community.mingle.api.enums.MemberRole;
+import community.mingle.api.enums.MemberStatus;
 import community.mingle.api.enums.PolicyType;
+import community.mingle.api.enums.TempSignUpStatusType;
 import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.global.s3.S3Service;
 import lombok.RequiredArgsConstructor;
@@ -70,20 +72,23 @@ public class AuthFacade {
 
     @Transactional
     public SignUpResponse tempSignUp(TempSignUpRequest request) {
-        if (memberService.existsByEmail(request.email()) || memberService.existsByStudentId(request.studentId(), request.univId())) {
+        if (memberService.existsByEmail(request.email()) &&
+                !(memberService.getByEmail(request.email()).getStatus().equals(MemberStatus.REJECTED))) { //인증 거절 후 재가입할 경우
             throw new CustomException(MEMBER_ALREADY_EXIST);
         }
-        if (memberService.existsByNickname(request.nickname())) {
+        if (memberService.existsByNickname(request.nickname()) &&
+                !(memberService.getByEmail(request.email()).getStatus().equals(MemberStatus.REJECTED))) {
             throw new CustomException(NICKNAME_DUPLICATED);
         }
-
+        //TODO REJECTED status 삭제
         Member member = memberService.tempCreate(request.univId(), request.nickname(), request.email(), request.password(), request.fcmToken(), request.studentId());
 
         List<String> imgUrls = s3Service.uploadFile(request.multipartFile(), "temp_auth");
         imgUrls.forEach(imgUrl ->
                         memberAuthPhotoService.create(member.getId(), imgUrl)
                 );
-        authService.sendTempSignUpCompletionEmail(request.email());
+        authService.sendTempSignUpEmail(request.email(), TempSignUpStatusType.PROCESSING);
+        authService.sendTempSignUpEmail(request.email(), TempSignUpStatusType.ADMIN);
 
         return new SignUpResponse(member.getId());
     }
@@ -154,13 +159,27 @@ public class AuthFacade {
     }
 
     @Transactional
-    public void authenticateTempMember(Long memberId) {
+    public void authenticateTempSignUp(Long memberId) {
         if (!tokenService.getTokenInfo().getMemberRole().equals(MemberRole.ADMIN)) {
             throw new CustomException(MODIFY_NOT_AUTHORIZED);
         }
 
         Member member = memberService.getById(memberId);
         member.authenticateTempMember();
+        authService.sendTempSignUpEmail(member.getRowEmail(), TempSignUpStatusType.APPROVED);
+        authService.sendTempSignUpNotification(member, TempSignUpStatusType.APPROVED);
+    }
+
+    @Transactional
+    public String rejectTempSignUp(Long memberId) {
+        if (!tokenService.getTokenInfo().getMemberRole().equals(MemberRole.ADMIN)) {
+            throw new CustomException(MODIFY_NOT_AUTHORIZED);
+        }
+        Member member = memberService.getById(memberId);
+        member.rejectTempSignUp();
+        authService.sendTempSignUpEmail(member.getRowEmail(), TempSignUpStatusType.REJECTED);
+        authService.sendTempSignUpNotification(member, TempSignUpStatusType.REJECTED);
+        return "success";
     }
 
     public VerifyLoggedInMemberResponse getVerifiedMemberInfo() {
