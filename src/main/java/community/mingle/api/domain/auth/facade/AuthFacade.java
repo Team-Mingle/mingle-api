@@ -11,7 +11,6 @@ import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.dto.security.CreatedTokenDto;
 import community.mingle.api.dto.security.TokenDto;
 import community.mingle.api.enums.MemberRole;
-import community.mingle.api.enums.MemberStatus;
 import community.mingle.api.enums.PolicyType;
 import community.mingle.api.enums.TempSignUpStatusType;
 import community.mingle.api.global.exception.CustomException;
@@ -162,9 +161,9 @@ public class AuthFacade {
         }
 
         Member member = memberService.getById(memberId);
-        member.authenticateTempMember();
-        authService.sendTempSignUpEmail(member.getRowEmail(), TempSignUpStatusType.APPROVED);
+        authService.sendTempSignUpEmail(member.getRawEmail(), TempSignUpStatusType.APPROVED);
         authService.sendTempSignUpNotification(member.getFcmToken(), TempSignUpStatusType.APPROVED);
+        member.authenticateTempMember();
     }
 
     @Transactional
@@ -174,9 +173,9 @@ public class AuthFacade {
         }
         Member member = memberService.getById(memberId);
         String memberFcmToken = member.getFcmToken();
-        member.withDraw();
-        authService.sendTempSignUpEmail(member.getRowEmail(), TempSignUpStatusType.REJECTED);
+        authService.sendTempSignUpEmail(member.getRawEmail(), TempSignUpStatusType.REJECTED);
         authService.sendTempSignUpNotification(memberFcmToken, TempSignUpStatusType.REJECTED);
+        member.withDraw();
     }
 
     public VerifyLoggedInMemberResponse getVerifiedMemberInfo() {

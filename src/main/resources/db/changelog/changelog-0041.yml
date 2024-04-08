@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: university email nullable
+      author: Hyeonwoo Jung
+      changes:
+        - dropNotNullConstraint:
+            tableName: university
+            columnName: email_domain
+            columnDataType: varchar(100)
+        - addColumn:
+            tableName: member
+            columns:
+              - column:
+                  name: raw_email
+                  type: text
+                  constraints:
+                    nullable: true
+        - dropColumn:
+            tableName: member
+            columnName: row_email
