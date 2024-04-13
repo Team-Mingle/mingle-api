@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: add column to member table for temp signup
+      author: Hyeonwoo Jung
+      changes:
+        - addColumn:
+            tableName: member
+            columns:
+              - column:
+                  name: student_id
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: row_email
+                  type: text
+                  constraints:
+                    nullable: true
+        - sql:
+            sql: INSERT INTO member_status_type (type) VALUES ('WAITING'), ('REJECTED')

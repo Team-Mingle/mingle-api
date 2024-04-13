@@ -34,6 +34,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'software.amazon.awssdk:secretsmanager:2.20.16'
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE' //s3
+    implementation 'com.amplitude:java-sdk:1.+'
+    implementation 'org.json:json:20201115'
+
 
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"

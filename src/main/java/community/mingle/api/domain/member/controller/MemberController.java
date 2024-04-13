@@ -55,6 +55,7 @@ public class MemberController {
     })
     public ResponseEntity<Void> updateNickname(@RequestBody ChangeNicknameRequest request) {
         memberFacade.updateNickname(request.newNickname());
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

@@ -22,6 +22,7 @@ import community.mingle.api.enums.CategoryType;
 import community.mingle.api.enums.ContentStatusType;
 import community.mingle.api.enums.MemberRole;
 import community.mingle.api.global.s3.S3Service;
+import community.mingle.api.infra.AmplitudeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -47,6 +48,7 @@ public class PostFacade {
     private final ApplicationEventPublisher applicationEventPublisher;
     private final S3Service s3Service;
     private final MemberService memberService;
+    private final AmplitudeService amplitudeService;
     private static final int POPULAR_NOTIFICATION_LIKE_SIZE = 5;
 
 
@@ -122,6 +124,7 @@ public class PostFacade {
         List<PostPreviewDto> postPreviewDtoList = postList.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))
                 .collect(Collectors.toList());
+        amplitudeService.logEventAsync("getAllPostList", memberId);
         return new PostListResponse(postPreviewDtoList);
     }
 

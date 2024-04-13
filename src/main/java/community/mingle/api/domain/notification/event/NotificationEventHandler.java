@@ -49,6 +49,20 @@ public class NotificationEventHandler {
 
     //TODO 코드 중복 제거
 
+    @EventListener(TempSignUpNotificationEvent.class)
+    @Async
+    @Transactional
+    public void handleTempSignUpNotificationEvent(TempSignUpNotificationEvent event) {
+        fcmService.sendAllMessage(
+                event.getTitle(),
+                event.getBody(),
+                0L,
+                ContentType.COMMENT,
+                List.of(event.getFcmToken())
+        );
+    }
+
+
     @EventListener(ManualNotificationEvent.class)
     @Async
     @Transactional
