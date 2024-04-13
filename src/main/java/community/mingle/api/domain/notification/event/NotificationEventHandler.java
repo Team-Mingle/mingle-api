@@ -25,6 +25,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -66,7 +67,7 @@ public class NotificationEventHandler {
     @EventListener(ManualNotificationEvent.class)
     @Async
     @Transactional
-    public void handleManualNotificationEvent(ManualNotificationEvent event) {
+    public void handleManualNotificationEvent(ManualNotificationEvent event) { //TODO 원복 + async 필요
         Post post = postService.getPost(event.getContentId());
         List<Member> targetMembers = notificationService.getTargetTokenMembersByBoardType(event.getBoardType(), post);
         fcmService.sendAllMessage(
@@ -85,7 +86,7 @@ public class NotificationEventHandler {
     @EventListener(CommentNotificationEvent.class)
     @Async
     @Transactional
-    public void handleCommentNotificationEvent(CommentNotificationEvent event) { //DONE
+    public void handleCommentNotificationEvent(CommentNotificationEvent event) throws IOException { // 푸시알림 로직 원복
         Post post = postService.getPost(event.getPostId());
         Member member = memberService.getById(event.getMemberId());
         Comment comment = commentService.getComment(event.getCommentId());
@@ -93,7 +94,7 @@ public class NotificationEventHandler {
         String body = COMMENT_NOTIFICATION_BODY + event.getContent();
 
         List<Member> targetMembers = notificationService.getTargetUserTokenMembersForComment(event.getParentCommentId(), event.getMentionId(), member, post);
-        fcmService.sendAllMessage(
+        fcmService.sendMessage(
                 title,
                 body,
                 post.getId(),
@@ -110,7 +111,7 @@ public class NotificationEventHandler {
     @EventListener(ItemCommentNotificationEvent.class)
     @Async
     @Transactional
-    public void handleItemCommentNotificationEvent(ItemCommentNotificationEvent event) { //DONE
+    public void handleItemCommentNotificationEvent(ItemCommentNotificationEvent event) throws IOException { //DONE
         String title = ITEM_COMMENT_NOTIFICATION_TITLE; //manual 푸시와 다르게 title, content를 event 정보로 생성
         String body = COMMENT_NOTIFICATION_BODY + event.getContent();
         Member member = memberService.getById(event.getMemberId());
@@ -119,7 +120,7 @@ public class NotificationEventHandler {
 
 
         List<Member> targetMembers = notificationService.getTargetUserTokenMembersForItemComment(event.getParentCommentId(), event.getMentionId(), member, item);
-        fcmService.sendAllMessage(
+        fcmService.sendMessage(
                 title,
                 body,
                 item.getId(),
@@ -136,14 +137,14 @@ public class NotificationEventHandler {
     @EventListener(PopularPostNotificationEvent.class)
     @Async
     @Transactional
-    public void handlePopularPostNotificationEvent(PopularPostNotificationEvent event) {
+    public void handlePopularPostNotificationEvent(PopularPostNotificationEvent event) throws IOException {
         Post post = postService.getPost(event.getPostId());
 
         String title = post.getBoardType().name();
         String body = POPULAR_NOTIFICATION_BODY;
 
         List<Member> targetMembers = List.of(post.getMember());
-        fcmService.sendAllMessage(
+        fcmService.sendMessage(
                 title,
                 body,
                 event.getPostId(),
