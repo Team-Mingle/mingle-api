@@ -22,7 +22,7 @@ import community.mingle.api.dto.item.ItemPreviewDto;
 import community.mingle.api.dto.item.ItemStatusDto;
 import community.mingle.api.enums.ItemStatusType;
 import community.mingle.api.enums.MemberRole;
-import community.mingle.api.infra.AmplitudeService;
+import community.mingle.api.global.amplitude.AmplitudeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -58,8 +58,8 @@ public class ItemFacade {
         itemService.saveItem(item);
         itemImageService.createItemImage(item, request.multipartFile());
 
-        amplitudeService.logEventAsync("createItemPost", memberId);
 
+        amplitudeService.log(memberId, "createItemPost", Map.of("itemId", item.getId().toString(), "itemTitle", item.getTitle()));
         return new CreateItemResponse(item.getId());
     }
 
@@ -71,6 +71,8 @@ public class ItemFacade {
         List<ItemPreviewDto> itemPreviewDtoList = itemList.stream()
                 .map(item -> mapToItemPreviewDto(item, memberId))
                 .toList();
+
+        amplitudeService.log(memberId, "getItemPostList", null);
         return new ItemListResponse(itemPreviewDtoList);
     }
 
@@ -105,6 +107,7 @@ public class ItemFacade {
 
         itemService.updateView(item);
 
+        amplitudeService.log(memberId, "getItemPostDetail", Map.of("itemId", item.getId().toString(), "itemTitle", item.getTitle()));
         return mapToItemDetailResponse(item, memberId);
     }
 

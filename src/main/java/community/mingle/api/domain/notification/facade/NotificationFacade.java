@@ -10,6 +10,7 @@ import community.mingle.api.domain.notification.event.ManualNotificationEvent;
 import community.mingle.api.domain.notification.service.NotificationService;
 import community.mingle.api.dto.notification.NotificationResponse;
 import community.mingle.api.enums.BoardType;
+import community.mingle.api.global.amplitude.AmplitudeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class NotificationFacade {
     private final MemberService memberService;
     private final TokenService tokenService;
     private final NotificationService notificationService;
+    private final AmplitudeService amplitudeService;
 
     public void sendPushNotification(BoardType boardType, SendPushNotificationRequest request) {
         applicationEventPublisher.publishEvent(
@@ -40,6 +42,8 @@ public class NotificationFacade {
         Long memberId = tokenService.getTokenInfo().getMemberId(); //TODO 이 2줄 사용처 모두 메서드 하나로 합치기
         Member member = memberService.getById(memberId);
         List<Notification> notifications = notificationService.getNotifications(member.getId());
+
+        amplitudeService.log(memberId, "getNotifications", null);
 
         return notifications.stream()
                 .filter(NotificationContentProvider.class::isInstance)

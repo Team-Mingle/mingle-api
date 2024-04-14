@@ -6,8 +6,8 @@ public final class MingleApi {
 
     public static final class Profile {
         public static final String LOCAL = "local";
-        public static final String DEVELOP = "develop";
-        public static final String PRODUCTION = "production";
+        public static final String DEVELOP = "dev";
+        public static final String PRODUCTION = "prod";
 
         private Profile() {}
     }

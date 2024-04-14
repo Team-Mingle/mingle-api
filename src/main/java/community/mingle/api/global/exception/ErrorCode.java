@@ -34,6 +34,7 @@ public enum ErrorCode {
     COURSE_TIME_CONFLICT(409, "COURSE_TIME_CONFLICT", "강의 시간이 겹치지 않게 설정해 주세요."),
     TIMETABLE_CONFLICT(409, "TIMETABLE_CONFLICT", "시간표가 겹칩니다."),
     COURSE_NOT_FOUND(404, "COURSE_NOT_FOUND", "존재하지 않는 강의입니다."),
+    COURSE_FORBIDDEN(409, "COURSE_FORBIDDEN", "접근할 수 없는 강의입니다."),
     SEMESTER_NOT_FOUND(404, "SEMESTER_NOT_FOUND", "존재하지 않는 학기입니다."),
     TIMETABLE_NOT_FOUND(404, "TIMETABLE_NOT_FOUND", "존재하지 않는 시간표입니다."),
     COUPON_TYPE_NOT_FOUND(404, "COUPON_TYPE_NOT_FOUND", "존재하지 않는 쿠폰 타입입니다."),

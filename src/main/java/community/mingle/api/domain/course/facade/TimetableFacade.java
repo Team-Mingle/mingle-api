@@ -18,6 +18,7 @@ import community.mingle.api.dto.course.CoursePreviewDto;
 import community.mingle.api.dto.course.CourseTimeDto;
 import community.mingle.api.enums.CourseType;
 import community.mingle.api.enums.Semester;
+import community.mingle.api.global.amplitude.AmplitudeService;
 import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,7 @@ public class TimetableFacade {
     private final TokenService tokenService;
     private final MemberService memberService;
     private final FriendService friendService;
+    private final AmplitudeService amplitudeService;
 
     @Transactional
     public CreateTimetableResponse createTimetable(CreateTimetableRequest request) {
@@ -49,6 +51,7 @@ public class TimetableFacade {
         Member member = memberService.getById(memberId);
         Timetable timetable = timetableService.createTimetable(member, request.year(), request.semester());
 
+        amplitudeService.log(memberId, "createTimetable", Map.of("timetableId", timetable.getId().toString(), "timetableName", timetable.getName()));
         return new CreateTimetableResponse(
             timetable.getId(),
             timetable.getName(),
@@ -70,6 +73,8 @@ public class TimetableFacade {
         timetableService.deleteConflictCoursesByOverrideValidation(timetable, courseTimeDtoList, request.overrideValidation());
 
         timetableService.addCourse(timetable, course);
+
+        amplitudeService.log(memberId, "updateTimetableCourse", Map.of("timetableId", timetable.getId().toString(), "timetableName", timetable.getName(), "courseId", course.getId().toString(), "courseName", course.getName()));
         return new UpdateTimetableCourseResponse(true);
     }
 
@@ -85,6 +90,8 @@ public class TimetableFacade {
         if(course.getType() == CourseType.PERSONAL) {
             courseService.deletePersonalCourse(courseId, memberId);
         }
+
+        amplitudeService.log(memberId, "deleteTimetableCourse", Map.of("timetableId", timetable.getId().toString(), "timetableName", timetable.getName(), "courseId", course.getId().toString(), "courseName", course.getName()));
     }
 
     @Transactional
@@ -93,6 +100,8 @@ public class TimetableFacade {
         Member member = memberService.getById(memberId);
         Timetable timetable = timetableService.getById(timetableId, member);
         timetableService.deleteTimetable(timetable, member);
+
+        amplitudeService.log(memberId, "deleteTimetable", Map.of("timetableId", timetable.getId().toString(), "timetableName", timetable.getName()));
     }
 
     @Transactional
@@ -101,6 +110,8 @@ public class TimetableFacade {
         Member member = memberService.getById(memberId);
         Timetable timetable = timetableService.getById(timetableId, member);
         timetableService.updateTimetableName(timetable, member, request.name());
+
+        amplitudeService.log(memberId, "updateTimetableCourse", Map.of("timetableId", timetable.getId().toString(), "timetableName", timetable.getName()));
     }
 
     @Transactional
@@ -109,6 +120,8 @@ public class TimetableFacade {
         Member member = memberService.getById(memberId);
         Timetable timetable = timetableService.getById(timetableId, member);
         timetableService.changePinnedTimetable(timetable, member);
+
+        amplitudeService.log(memberId, "changePinnedTimetable", Map.of("timetableId", timetable.getId().toString(), "timetableName", timetable.getName()));
     }
 
     public TimetableListResponse getTimetableList() {
@@ -138,6 +151,8 @@ public class TimetableFacade {
                         )
                 );
 
+        amplitudeService.log(memberId, "getTimetableList", null);
+
         return new TimetableListResponse(semesterListMap);
     }
 
@@ -146,6 +161,8 @@ public class TimetableFacade {
         Member member = memberService.getById(memberId);
 
         Timetable timetable = timetableService.getById(timetableId, member);
+
+        amplitudeService.log(memberId, "getTimetableDetail", Map.of("timetableId", timetable.getId().toString(), "timetableName", timetable.getName()));
         return getTimetableDetailResponse(timetable);
     }
 
@@ -161,6 +178,8 @@ public class TimetableFacade {
         List<Timetable> pinnedTimetableList = timetableService.listByIdAndIsPinnedTrue(friend);
         List<TimetableDetailResponse> timetableDetailResponseList = pinnedTimetableList.stream()
                 .map(this::getTimetableDetailResponse).toList();
+
+        amplitudeService.log(memberId, "getFriendTimetableList", Map.of("friendId", friendId.toString()));
 
         return new FriendTimetableDetailResponse(timetableDetailResponseList);
     }

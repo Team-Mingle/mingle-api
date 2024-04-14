@@ -68,6 +68,10 @@ public class SecretsManagerService {
         return getSecretValueString(projectName + "/" + profile + "/fcm-token");
     }
 
+    public String getAmplitudeApiKey() {
+        return getSecretValueString("mingle-api/amplitude-key");
+    }
+
     private String getSecretValueString(String name) {
         String arn = getArns().get(name);
         if (arn == null) {
