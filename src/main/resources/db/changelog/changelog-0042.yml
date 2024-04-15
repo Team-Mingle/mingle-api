@@ -1,6 +1,7 @@
 databaseChangeLog:
   - changeSet:
-      id: 0
-      author: admin
+      id: add POST type to notification_type table
+      author: taehyun
       changes:
-        -
+        - sql:
+            sql: INSERT INTO notification_type (type) VALUES ('POST');
