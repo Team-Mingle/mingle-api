@@ -49,6 +49,22 @@ public class NotificationEventHandler {
 
     //TODO 코드 중복 제거
 
+    @EventListener(NoRedirectionManualNotificationEvent.class)
+    @Async
+    @Transactional
+    public void handleNoRedirectionManualNotificationEvent(NoRedirectionManualNotificationEvent event) {
+        List<Member> targetMembers = notificationService.getTargetTokenMembersByCountry(event.getCountryType()); //TODO 태현 timezone 에러로 테스트 불가
+        System.out.println("targetMembers = " + targetMembers.size());
+        //TODO targetMember 나라별로 가져오는 로직 확인 후 주석 해제하고 알림 보내기
+        Integer successCount = fcmService.sendAllMessage(
+                event.getTitle(), //title, body를 Manual 푸시는 밖에서 받아옴
+                event.getBody(),
+                0L,
+                ContentType.ITEM,
+                targetMembers.stream().map(Member::getFcmToken).toList()
+        );
+    }
+
     @EventListener(TempSignUpNotificationEvent.class)
     @Async
     @Transactional
@@ -68,8 +84,8 @@ public class NotificationEventHandler {
     @Transactional
     public void handleManualNotificationEvent(ManualNotificationEvent event) {
         Post post = postService.getPost(event.getContentId());
-        List<Member> targetMembers = notificationService.getTargetTokenMembersByBoardType(event.getBoardType(), post);
-        fcmService.sendAllMessage(
+        List<Member> targetMembers = notificationService.getTargetTokenMembersByBoardType(event.getBoardType(), post); //TODO 테스트 필요
+        Integer successCount = fcmService.sendAllMessage(
                 event.getTitle(), //title, body를 Manual 푸시는 밖에서 받아옴
                 event.getBody(),
                 event.getContentId(),
@@ -89,7 +105,7 @@ public class NotificationEventHandler {
         Post post = postService.getPost(event.getPostId());
         Member member = memberService.getById(event.getMemberId());
         Comment comment = commentService.getComment(event.getCommentId());
-        String title =post.getBoardType().getBoardName(); //manual 푸시와 다르게 title, content를 event 정보로 생성
+        String title = post.getBoardType().getBoardName(); //manual 푸시와 다르게 title, content를 event 정보로 생성
         String body = COMMENT_NOTIFICATION_BODY + event.getContent();
 
         List<Member> targetMembers = notificationService.getTargetUserTokenMembersForComment(event.getParentCommentId(), event.getMentionId(), member, post);

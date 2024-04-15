@@ -3,7 +3,9 @@ package community.mingle.api.domain.notification.service;
 import community.mingle.api.domain.comment.repository.CommentRepository;
 import community.mingle.api.domain.item.entity.Item;
 import community.mingle.api.domain.item.repository.ItemCommentRepository;
+import community.mingle.api.domain.member.entity.Country;
 import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.domain.member.repository.CountryRepository;
 import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.domain.notification.entity.CommentNotification;
 import community.mingle.api.domain.notification.entity.ItemCommentNotification;
@@ -15,6 +17,7 @@ import community.mingle.api.domain.notification.repository.NotificationRepositor
 import community.mingle.api.domain.notification.repository.PostNotificationRepository;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.enums.BoardType;
+import community.mingle.api.enums.CountryType;
 import community.mingle.api.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,8 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static community.mingle.api.enums.BoardType.TOTAL;
-import static community.mingle.api.enums.BoardType.UNIV;
+import static community.mingle.api.enums.BoardType.*;
+import static community.mingle.api.global.exception.ErrorCode.COUNTRY_NOT_FOUND;
 import static community.mingle.api.global.exception.ErrorCode.NOTIFICATION_NOT_FOUND;
 
 @Service
@@ -38,6 +41,7 @@ public class NotificationService {
     private final PostNotificationRepository postNotificationRepository;
     private final NotificationRepository notificationRepository;
     private final ItemCommentRepository itemCommentRepository;
+    private final CountryRepository countryRepository;
 
 
 
@@ -69,6 +73,15 @@ public class NotificationService {
         if (boardType.equals(TOTAL))
             tokenMembers = memberRepository.findAllByUniversityCountry(post.getMember().getUniversity().getCountry());
         return tokenMembers.stream()
+                .filter(member -> member.getFcmToken() != null)
+                .collect(Collectors.toList());
+    }
+
+    public List<Member> getTargetTokenMembersByCountry(CountryType countryType) {
+        Country country = countryRepository.findById(countryType.name())
+                .orElseThrow(() -> new CustomException(COUNTRY_NOT_FOUND));
+        return memberRepository.findAllByUniversityCountry(country)
+                .stream()
                 .filter(member -> member.getFcmToken() != null)
                 .collect(Collectors.toList());
     }

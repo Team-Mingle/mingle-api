@@ -4,6 +4,7 @@ import community.mingle.api.domain.notification.controller.request.SendPushNotif
 import community.mingle.api.domain.notification.facade.NotificationFacade;
 import community.mingle.api.dto.notification.NotificationResponse;
 import community.mingle.api.enums.BoardType;
+import community.mingle.api.enums.CountryType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
