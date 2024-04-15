@@ -33,6 +33,7 @@ public class FcmService {
                 throw new CustomException(FIREBASE_MESSAGING_ERROR);
             }
             successCount += batchResponse.getSuccessCount();
+            System.out.println("successCount = " + successCount);
             count += BATCH_SIZE;
         }
         return successCount;

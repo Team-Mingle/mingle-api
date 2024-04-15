@@ -1,6 +1,7 @@
 package community.mingle.api.domain.notification.controller.request;
 
 import community.mingle.api.enums.ContentType;
+import community.mingle.api.enums.CountryType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -14,4 +15,5 @@ public class SendPushNotificationRequest {
     private String body; //알림 내용
     @NotNull
     private ContentType contentType; //POST, COMMENT, ITEM
+    private CountryType countryType;
 }

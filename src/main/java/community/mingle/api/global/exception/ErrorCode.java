@@ -82,7 +82,8 @@ public enum ErrorCode {
 
     //Item
     INVALID_STATUS_REQUEST(400, "INVALID_ITEM_STATUS_REQUEST", "유효하지 않은 상태 요청 값 입니다."),
-    ITEM_COMMENT_NOT_FOUND(404, "ITEM_COMMENT_NOT_FOUND", "장터 게시물 댓글을 찾을 수 없습니다.");
+    ITEM_COMMENT_NOT_FOUND(404, "ITEM_COMMENT_NOT_FOUND", "장터 게시물 댓글을 찾을 수 없습니다."),
+    COUNTRY_NOT_FOUND(404, "COUNTRY_NOT_FOUND", "유효하지 않은 국가입니다.");
 
     @Getter
     private final int status;

@@ -74,7 +74,7 @@ public class Member extends AuditLoggingBase {
     @Column(name = "student_id")
     private String studentId;
 
-    @Column(name = "row_email")
+    @Column(name = "raw_email")
     private String rowEmail;
 
     @OneToMany(mappedBy = "blockedMember")

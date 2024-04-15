@@ -7,15 +7,18 @@ import community.mingle.api.domain.notification.controller.request.SendPushNotif
 import community.mingle.api.domain.notification.entity.Notification;
 import community.mingle.api.domain.notification.entity.NotificationContentProvider;
 import community.mingle.api.domain.notification.event.ManualNotificationEvent;
+import community.mingle.api.domain.notification.event.NoRedirectionManualNotificationEvent;
 import community.mingle.api.domain.notification.service.NotificationService;
 import community.mingle.api.dto.notification.NotificationResponse;
 import community.mingle.api.enums.BoardType;
+import community.mingle.api.enums.CountryType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static community.mingle.api.global.utils.DateTimeConverter.convertToDateAndTime;
@@ -30,9 +33,14 @@ public class NotificationFacade {
     private final NotificationService notificationService;
 
     public void sendPushNotification(BoardType boardType, SendPushNotificationRequest request) {
-        applicationEventPublisher.publishEvent(
-                new ManualNotificationEvent(this, boardType, request.getTitle(), request.getBody(), request.getContentId(), request.getContentType())
-        );
+        if (request.getCountryType() == null) {
+            applicationEventPublisher.publishEvent(
+                    new ManualNotificationEvent(this, boardType, request.getTitle(), request.getBody(), request.getContentId(), request.getContentType())
+            );
+        } else {
+            applicationEventPublisher.publishEvent(
+                    new NoRedirectionManualNotificationEvent(this, boardType, request.getTitle(), request.getBody(), request.getCountryType()));
+        }
     }
 
 
