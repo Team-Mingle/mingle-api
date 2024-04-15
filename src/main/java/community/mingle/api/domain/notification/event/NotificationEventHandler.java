@@ -56,14 +56,28 @@ public class NotificationEventHandler {
         List<Member> targetMembers = notificationService.getTargetTokenMembersByCountry(event.getCountryType()); //TODO 태현 timezone 에러로 테스트 불가
         System.out.println("targetMembers = " + targetMembers.size());
         //TODO targetMember 나라별로 가져오는 로직 확인 후 주석 해제하고 알림 보내기
-//        Integer successCount = fcmService.sendAllMessage(
-//                event.getTitle(), //title, body를 Manual 푸시는 밖에서 받아옴
-//                event.getBody(),
-//                0L,
-//                ContentType.ITEM,
-//                targetMembers.stream().map(Member::getFcmToken).toList()
-//        );
+        Integer successCount = fcmService.sendAllMessage(
+                event.getTitle(), //title, body를 Manual 푸시는 밖에서 받아옴
+                event.getBody(),
+                0L,
+                ContentType.ITEM,
+                targetMembers.stream().map(Member::getFcmToken).toList()
+        );
     }
+
+    @EventListener(TempSignUpNotificationEvent.class)
+    @Async
+    @Transactional
+    public void handleTempSignUpNotificationEvent(TempSignUpNotificationEvent event) {
+        fcmService.sendAllMessage(
+                event.getTitle(),
+                event.getBody(),
+                0L,
+                ContentType.COMMENT,
+                List.of(event.getFcmToken())
+        );
+    }
+
 
     @EventListener(ManualNotificationEvent.class)
     @Async

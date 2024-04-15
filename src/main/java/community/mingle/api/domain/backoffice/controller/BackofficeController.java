@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +34,16 @@ public class BackofficeController {
     public ResponseEntity<Void> authenticateTempSignUp(
             @RequestParam Long memberId
     ) {
-        authFacade.authenticateTempMember(memberId);
+        authFacade.authenticateTempSignUp(memberId);
         return ResponseEntity.ok().build();
     }
+
+    @Operation(summary = "임시 회원가입 인증 불허가 api")
+    @PostMapping("/reject-temp-sign-up")
+    public ResponseEntity<Void> RejectTempSignUp(@RequestParam Long memberId) {
+        authFacade.rejectTempSignUp(memberId);
+        return ResponseEntity.ok().build();
+    }
+
+
 }

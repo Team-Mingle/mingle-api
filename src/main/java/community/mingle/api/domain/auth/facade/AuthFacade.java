@@ -12,6 +12,7 @@ import community.mingle.api.dto.security.CreatedTokenDto;
 import community.mingle.api.dto.security.TokenDto;
 import community.mingle.api.enums.MemberRole;
 import community.mingle.api.enums.PolicyType;
+import community.mingle.api.enums.TempSignUpStatusType;
 import community.mingle.api.global.exception.CustomException;
 import community.mingle.api.global.s3.S3Service;
 import lombok.RequiredArgsConstructor;
@@ -70,20 +71,20 @@ public class AuthFacade {
 
     @Transactional
     public SignUpResponse tempSignUp(TempSignUpRequest request) {
-        if (memberService.existsByEmail(request.email()) || memberService.existsByStudentId(request.studentId(), request.univId())) {
+        if (memberService.existsByEmail(request.email())) {
             throw new CustomException(MEMBER_ALREADY_EXIST);
         }
         if (memberService.existsByNickname(request.nickname())) {
             throw new CustomException(NICKNAME_DUPLICATED);
         }
-
         Member member = memberService.tempCreate(request.univId(), request.nickname(), request.email(), request.password(), request.fcmToken(), request.studentId());
 
         List<String> imgUrls = s3Service.uploadFile(request.multipartFile(), "temp_auth");
         imgUrls.forEach(imgUrl ->
                         memberAuthPhotoService.create(member.getId(), imgUrl)
                 );
-        authService.sendTempSignUpCompletionEmail(request.email());
+        authService.sendTempSignUpEmail(request.email(), TempSignUpStatusType.PROCESSING);
+        authService.sendTempSignUpEmail("team.mingle.aos@gmail.com", TempSignUpStatusType.ADMIN);
 
         return new SignUpResponse(member.getId());
     }
@@ -154,13 +155,27 @@ public class AuthFacade {
     }
 
     @Transactional
-    public void authenticateTempMember(Long memberId) {
+    public void authenticateTempSignUp(Long memberId) {
         if (!tokenService.getTokenInfo().getMemberRole().equals(MemberRole.ADMIN)) {
             throw new CustomException(MODIFY_NOT_AUTHORIZED);
         }
 
         Member member = memberService.getById(memberId);
+        authService.sendTempSignUpEmail(member.getRawEmail(), TempSignUpStatusType.APPROVED);
+        authService.sendTempSignUpNotification(member.getFcmToken(), TempSignUpStatusType.APPROVED);
         member.authenticateTempMember();
+    }
+
+    @Transactional
+    public void rejectTempSignUp(Long memberId) {
+        if (!tokenService.getTokenInfo().getMemberRole().equals(MemberRole.ADMIN)) {
+            throw new CustomException(MODIFY_NOT_AUTHORIZED);
+        }
+        Member member = memberService.getById(memberId);
+        String memberFcmToken = member.getFcmToken();
+        authService.sendTempSignUpEmail(member.getRawEmail(), TempSignUpStatusType.REJECTED);
+        authService.sendTempSignUpNotification(memberFcmToken, TempSignUpStatusType.REJECTED);
+        member.withDraw();
     }
 
     public VerifyLoggedInMemberResponse getVerifiedMemberInfo() {

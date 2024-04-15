@@ -15,7 +15,6 @@ public class University {
     private int id;
 
     @Size(max = 100)
-    @NotNull
     @Column(name = "email_domain", nullable = false, length = 100)
     private String emailDomain;
 

@@ -89,7 +89,7 @@ public class MemberService {
                 .role(MemberRole.USER)
                 .fcmToken(fcmToken)
                 .studentId(studentId)
-                .rowEmail(email)
+                .rawEmail(email)
                 .build();
         return memberRepository.save(member);
     }

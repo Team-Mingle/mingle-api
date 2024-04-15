@@ -1,7 +1,20 @@
 databaseChangeLog:
   - changeSet:
-      id: add POST type to notification_type table
-      author: taehyun
+      id: university email nullable
+      author: Hyeonwoo Jung
       changes:
-        - sql:
-            sql: INSERT INTO notification_type (type) VALUES ('POST');
+        - dropNotNullConstraint:
+            tableName: university
+            columnName: email_domain
+            columnDataType: varchar(100)
+        - addColumn:
+            tableName: member
+            columns:
+              - column:
+                  name: raw_email
+                  type: text
+                  constraints:
+                    nullable: true
+        - dropColumn:
+            tableName: member
+            columnName: row_email
