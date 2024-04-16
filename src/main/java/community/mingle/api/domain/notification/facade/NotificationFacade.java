@@ -6,10 +6,12 @@ import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.domain.notification.controller.request.SendPushNotificationRequest;
 import community.mingle.api.domain.notification.entity.Notification;
 import community.mingle.api.domain.notification.entity.NotificationContentProvider;
-import community.mingle.api.domain.notification.event.ManualNotificationEvent;
+import community.mingle.api.domain.notification.event.TempSignupNotificationEvent;
+import community.mingle.api.domain.notification.event.RedirectionByContentIdManualNotificationEvent;
+import community.mingle.api.domain.notification.event.RedirectionByBoardTypeManualNotificationEvent;
 import community.mingle.api.domain.notification.service.NotificationService;
 import community.mingle.api.dto.notification.NotificationResponse;
-import community.mingle.api.enums.BoardType;
+import community.mingle.api.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static community.mingle.api.global.exception.ErrorCode.NOTIFICATION_BAD_REQUEST;
 import static community.mingle.api.global.utils.DateTimeConverter.convertToDateAndTime;
 
 @Service
@@ -29,10 +32,15 @@ public class NotificationFacade {
     private final TokenService tokenService;
     private final NotificationService notificationService;
 
-    public void sendPushNotification(BoardType boardType, SendPushNotificationRequest request) {
-        applicationEventPublisher.publishEvent(
-                new ManualNotificationEvent(this, boardType, request.getTitle(), request.getBody(), request.getContentId(), request.getContentType())
-        );
+    public void sendPushNotification(SendPushNotificationRequest request) {
+
+        if (request.getContentId() != null && request.getContentType() != null) {
+            applicationEventPublisher.publishEvent(
+                    new RedirectionByContentIdManualNotificationEvent(this, request.getBoardType(), request.getTitle(), request.getBody(), request.getContentId(), request.getContentType()));
+        } else {
+            applicationEventPublisher.publishEvent(
+                    new RedirectionByBoardTypeManualNotificationEvent(this, request.getBoardType(), request.getTitle(), request.getBody(), request.getCountryType()));
+        }
     }
 
 

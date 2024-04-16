@@ -67,6 +67,7 @@ public enum ErrorCode {
 
     //notification
     NOTIFICATION_NOT_FOUND(404, "NOTIFICATION_NOT_FOUND", "존재하지 않는 알림입니다."),
+    NOTIFICATION_BAD_REQUEST(400, "NOTIFICATION_BAD_REQUEST", "알림 요청이 잘못되었습니다"),
 
 
     //Report
@@ -77,9 +78,13 @@ public enum ErrorCode {
     //Internal server error
     INTERNAL_SERVER_ERROR(500, "500", "INTERNAL SERVER ERROR"),
 
+    //fcm error
+    FIREBASE_MESSAGING_ERROR(500, "FIREBASE_MESSAGING_ERROR", "FCM 메시지 전송에 실패하였습니다."),
+
     //Item
     INVALID_STATUS_REQUEST(400, "INVALID_ITEM_STATUS_REQUEST", "유효하지 않은 상태 요청 값 입니다."),
-    ITEM_COMMENT_NOT_FOUND(404, "ITEM_COMMENT_NOT_FOUND", "장터 게시물 댓글을 찾을 수 없습니다.");
+    ITEM_COMMENT_NOT_FOUND(404, "ITEM_COMMENT_NOT_FOUND", "장터 게시물 댓글을 찾을 수 없습니다."),
+    COUNTRY_NOT_FOUND(404, "COUNTRY_NOT_FOUND", "유효하지 않은 국가입니다.");
 
     @Getter
     private final int status;
