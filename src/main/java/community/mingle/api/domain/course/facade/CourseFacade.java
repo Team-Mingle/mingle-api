@@ -61,10 +61,15 @@ public class CourseFacade {
         timetableService.addCourse(timetable, personalCourse);
 
         return new CreatePersonalCourseResponse(
-                request.name(),
-                request.courseTimeDtoList(),
-                request.courseCode(),
-                request.venue()
+                personalCourse.getId(),
+                personalCourse.getName(),
+                mapToCourseTimeDto(personalCourse.getCourseTimeList()),
+                personalCourse.getCourseCode(),
+                personalCourse.getVenue(),
+                personalCourse.getProfessor(),
+                personalCourse.getSubclass(),
+                //personalCourse는 하나의 timetable에 밖에 속하지 않으므로 리스트의 첫번째 timetable을 가져와도 무방
+                personalCourse.getCourseTimetableList().get(0).getRgb()
         );
     }
 
@@ -154,6 +159,7 @@ public class CourseFacade {
                             course.getProfessor(),
                             course.getSubclass(),
                             courseTimeDtoList,
+                            course.getVenue(),
                             //rgb 필드는 timetable view에서만 사용되므로 course list view에서는 아무 값을 default로 넣어준다.
                             CourseColourRgb.FBE9EF.getStringRgb()
                     );
@@ -183,5 +189,15 @@ public class CourseFacade {
                         !dto.startTime().equals(courseTime.getStartTime()) ||
                         !dto.endTime().equals(courseTime.getEndTime()))
         );
+    }
+
+    private List<CourseTimeDto> mapToCourseTimeDto(List<CourseTime> courseTimeList) {
+        return courseTimeList.stream().map(courseTime ->
+            new CourseTimeDto(
+                    courseTime.getDayOfWeek(),
+                    courseTime.getStartTime(),
+                    courseTime.getEndTime()
+            )
+        ).toList();
     }
 }

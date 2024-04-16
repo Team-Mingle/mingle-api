@@ -180,6 +180,7 @@ public class TimetableFacade {
                             course.getCourseTimeList().stream()
                                     .map(CourseTime::toDto)
                                     .toList(),
+                            course.getVenue(),
                             courseTimetable.getRgb()
                     );
                 })
