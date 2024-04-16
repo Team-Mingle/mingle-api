@@ -99,6 +99,7 @@ public class ItemFacade {
                 .build();
     }
 
+    @Transactional
     public ItemDetailResponse getItemPostDetail(Long itemId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Item item = itemService.getById(itemId);
