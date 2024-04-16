@@ -6,7 +6,7 @@ import community.mingle.api.domain.auth.repository.AuthenticationCodeRepository;
 import community.mingle.api.domain.auth.repository.PolicyRepository;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.repository.MemberRepository;
-import community.mingle.api.domain.notification.event.TempSignUpNotificationEvent;
+import community.mingle.api.domain.notification.event.TempSignupNotificationEvent;
 import community.mingle.api.enums.MemberStatus;
 import community.mingle.api.enums.PolicyType;
 import community.mingle.api.enums.TempSignUpStatusType;
@@ -229,7 +229,7 @@ public class AuthService {
         };
         String content = TEMP_SIGNUP_NOTIFICATION_CONTENT;
         applicationEventPublisher.publishEvent(
-                new TempSignUpNotificationEvent(this, fcmToken , title, content)
+                new TempSignupNotificationEvent(this, fcmToken , title, content)
         );
     }
 }

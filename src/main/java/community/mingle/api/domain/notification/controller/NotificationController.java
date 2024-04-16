@@ -25,9 +25,9 @@ public class NotificationController {
 
 
     @Operation(summary = "알림 보내기 API")
-    @PostMapping("/send-notification/{boardType}")
-    public ResponseEntity<Void> sendPushNotification(@PathVariable BoardType boardType, @RequestBody @Valid SendPushNotificationRequest request) {
-        notificationFacade.sendPushNotification(boardType, request);
+    @PostMapping("/send-notification")
+    public ResponseEntity<Void> sendPushNotification(@RequestBody @Valid SendPushNotificationRequest request) {
+        notificationFacade.sendPushNotification(request);
         return ResponseEntity.ok().build();
     }
 

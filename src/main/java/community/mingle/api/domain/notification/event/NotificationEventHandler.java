@@ -19,6 +19,7 @@ import community.mingle.api.enums.ContentType;
 import community.mingle.api.enums.NotificationType;
 import community.mingle.api.global.firebase.FcmService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -31,6 +32,7 @@ import java.util.List;
 @Component
 @AllArgsConstructor
 @EnableAsync
+@Slf4j
 public class NotificationEventHandler {
 
     private final NotificationService notificationService;
@@ -49,52 +51,54 @@ public class NotificationEventHandler {
 
     //TODO 코드 중복 제거
 
-    @EventListener(NoRedirectionManualNotificationEvent.class)
+    @EventListener(RedirectionByBoardTypeManualNotificationEvent.class)
     @Async
     @Transactional
-    public void handleNoRedirectionManualNotificationEvent(NoRedirectionManualNotificationEvent event) {
+    public void handleRedirectionByBoardTypeManualNotificationEvent(RedirectionByBoardTypeManualNotificationEvent event) {
         List<Member> targetMembers = notificationService.getTargetTokenMembersByCountry(event.getCountryType()); //TODO 태현 timezone 에러로 테스트 불가
         System.out.println("targetMembers = " + targetMembers.size());
         //TODO targetMember 나라별로 가져오는 로직 확인 후 주석 해제하고 알림 보내기
-        Integer successCount = fcmService.sendAllMessage(
+        fcmService.sendAllMessage(
                 event.getTitle(), //title, body를 Manual 푸시는 밖에서 받아옴
                 event.getBody(),
-                0L,
-                ContentType.ITEM,
+                null,
+                null,
+                event.getBoardType(),
                 targetMembers.stream().map(Member::getFcmToken).toList()
         );
     }
 
-    @EventListener(TempSignUpNotificationEvent.class)
+    @EventListener(TempSignupNotificationEvent.class)
     @Async
     @Transactional
-    public void handleTempSignUpNotificationEvent(TempSignUpNotificationEvent event) {
+    public void handleTempSignupNotificationEvent(TempSignupNotificationEvent event) {
         fcmService.sendAllMessage(
                 event.getTitle(),
                 event.getBody(),
-                0L,
-                ContentType.COMMENT,
+                null,
+                null,
+                null,
                 List.of(event.getFcmToken())
         );
     }
 
 
-    @EventListener(ManualNotificationEvent.class)
+    @EventListener(RedirectionByContentIdManualNotificationEvent.class)
     @Async
     @Transactional
-    public void handleManualNotificationEvent(ManualNotificationEvent event) {
-        Post post = postService.getPost(event.getContentId());
-        List<Member> targetMembers = notificationService.getTargetTokenMembersByBoardType(event.getBoardType(), post); //TODO 테스트 필요
-        Integer successCount = fcmService.sendAllMessage(
+    public void handleRedirectionByContentIdManualNotificationEvent(RedirectionByContentIdManualNotificationEvent event) {
+        List<Member> targetMembers = notificationService.getTargetTokenMembersByBoardType(event.getBoardType(), event.getContentId()); //TODO 테스트 필요
+
+        log.info("fcm message send target Member count: {}", targetMembers);
+
+        fcmService.sendAllMessage(
                 event.getTitle(), //title, body를 Manual 푸시는 밖에서 받아옴
                 event.getBody(),
                 event.getContentId(),
                 event.getContentType(),
+                event.getBoardType(),
                 targetMembers.stream().map(Member::getFcmToken).toList()
         );
-        List<PostNotification> postNotifications = targetMembers.stream()
-                .map(targetMember -> Notification.createPostNotification(post, NotificationType.POST, targetMember)).toList();
-        notificationService.saveAllManualPostNotification(postNotifications);
         //TODO: notificationService.cleanNotification(targetMember); manual push는 보내는 유저가 많은것을 고려해 clean은 생략 -> 한방 쿼리로 할 수 있는지 고려
     }
 
@@ -114,6 +118,7 @@ public class NotificationEventHandler {
                 body,
                 post.getId(),
                 ContentType.POST,
+                null,
                 targetMembers.stream().map(Member::getFcmToken).toList()
         );
         targetMembers.forEach(targetMember -> {
@@ -140,6 +145,7 @@ public class NotificationEventHandler {
                 body,
                 item.getId(),
                 ContentType.ITEM,
+                null,
                 targetMembers.stream().map(Member::getFcmToken).toList()
         );
         targetMembers.forEach(targetMember -> {
@@ -164,6 +170,7 @@ public class NotificationEventHandler {
                 body,
                 event.getPostId(),
                 ContentType.POST,
+                null,
                 targetMembers.stream().map(Member::getFcmToken).toList()
         );
         targetMembers.forEach(targetMember -> {

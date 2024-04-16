@@ -67,6 +67,7 @@ public enum ErrorCode {
 
     //notification
     NOTIFICATION_NOT_FOUND(404, "NOTIFICATION_NOT_FOUND", "존재하지 않는 알림입니다."),
+    NOTIFICATION_BAD_REQUEST(400, "NOTIFICATION_BAD_REQUEST", "알림 요청이 잘못되었습니다"),
 
 
     //Report
