@@ -37,33 +37,6 @@ public class FcmService {
         }
     }
 
-    public MulticastMessage buildRedirectByContentIdMessage(String title, String body, Long contentId, ContentType contentType, List<String> fcmTokens) {
-        Notification notification = new Notification(title, body);
-        return MulticastMessage.builder()
-                .addAllTokens(fcmTokens)
-                .setNotification(notification)
-                .putData("contentId", String.valueOf(contentId))
-                .putData("contentType", contentType.name())
-                .build();
-    }
-
-    public MulticastMessage buildRedirectByBoardTypeMessage(String title, String body, BoardType boardType, List<String> fcmTokens) {
-        Notification notification = new Notification(title, body);
-        return MulticastMessage.builder()
-                .addAllTokens(fcmTokens)
-                .setNotification(notification)
-                .putData("boardType", boardType.name())
-                .build();
-    }
-
-    public MulticastMessage buildNoRedirectTypeMessage(String title, String body, List<String> fcmTokens) {
-        Notification notification = new Notification(title, body);
-        return MulticastMessage.builder()
-                .addAllTokens(fcmTokens)
-                .setNotification(notification)
-                .build();
-    }
-
     public MulticastMessage buildMessage(String title, String body, Long contentId, ContentType contentType, BoardType boardType, List<String> tokens) {
         Notification notification = new Notification(title, body);
         MulticastMessage.Builder messageBuilder = MulticastMessage.builder()
