@@ -6,12 +6,11 @@ import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.domain.notification.controller.request.SendPushNotificationRequest;
 import community.mingle.api.domain.notification.entity.Notification;
 import community.mingle.api.domain.notification.entity.NotificationContentProvider;
-import community.mingle.api.domain.notification.event.TempSignupNotificationEvent;
-import community.mingle.api.domain.notification.event.RedirectionByContentIdManualNotificationEvent;
 import community.mingle.api.domain.notification.event.RedirectionByBoardTypeManualNotificationEvent;
+import community.mingle.api.domain.notification.event.RedirectionByContentIdManualNotificationEvent;
 import community.mingle.api.domain.notification.service.NotificationService;
 import community.mingle.api.dto.notification.NotificationResponse;
-import community.mingle.api.global.exception.CustomException;
+import community.mingle.api.global.amplitude.AmplitudeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static community.mingle.api.global.exception.ErrorCode.NOTIFICATION_BAD_REQUEST;
 import static community.mingle.api.global.utils.DateTimeConverter.convertToDateAndTime;
 
 @Service
@@ -31,6 +29,7 @@ public class NotificationFacade {
     private final MemberService memberService;
     private final TokenService tokenService;
     private final NotificationService notificationService;
+    private final AmplitudeService amplitudeService;
 
     public void sendPushNotification(SendPushNotificationRequest request) {
 
@@ -48,6 +47,8 @@ public class NotificationFacade {
         Long memberId = tokenService.getTokenInfo().getMemberId(); //TODO 이 2줄 사용처 모두 메서드 하나로 합치기
         Member member = memberService.getById(memberId);
         List<Notification> notifications = notificationService.getNotifications(member.getId());
+
+        amplitudeService.log(memberId, "getNotifications", null);
 
         return notifications.stream()
                 .filter(NotificationContentProvider.class::isInstance)

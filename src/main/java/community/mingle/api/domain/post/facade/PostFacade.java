@@ -21,8 +21,7 @@ import community.mingle.api.enums.BoardType;
 import community.mingle.api.enums.CategoryType;
 import community.mingle.api.enums.ContentStatusType;
 import community.mingle.api.enums.MemberRole;
-import community.mingle.api.global.s3.S3Service;
-import community.mingle.api.infra.AmplitudeService;
+import community.mingle.api.global.amplitude.AmplitudeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -31,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static community.mingle.api.global.utils.DateTimeConverter.convertToDateAndTime;
@@ -46,7 +46,6 @@ public class PostFacade {
     private final TokenService tokenService;
     private final CommentService commentService;
     private final ApplicationEventPublisher applicationEventPublisher;
-    private final S3Service s3Service;
     private final MemberService memberService;
     private final AmplitudeService amplitudeService;
     private static final int POPULAR_NOTIFICATION_LIKE_SIZE = 5;
@@ -54,7 +53,6 @@ public class PostFacade {
 
     public List<PostCategoryResponse> getPostCategory() {
         MemberRole memberRole = tokenService.getTokenInfo().getMemberRole();
-
         return postService.getCategoryListByMemberRole(memberRole).stream()
                 .map(PostCategoryResponse::new)
                 .toList();
@@ -65,6 +63,7 @@ public class PostFacade {
     public CreatePostResponse createPost(CreatePostRequest request, BoardType boardType) {
         boolean isFileAttached = (request.getMultipartFile() != null) && (!request.getMultipartFile().isEmpty());
         Long memberId = tokenService.getTokenInfo().getMemberId();
+
         Post post = postService.createPost(
                 memberId,
                 request.getTitle(),
@@ -77,6 +76,8 @@ public class PostFacade {
         if (isFileAttached) {
             postImageService.createPostImage(post, request.getMultipartFile());
         }
+
+        amplitudeService.log(memberId, "createPost", Map.of("PostId", post.getId().toString(), "PostTitle", post.getTitle()));
         return CreatePostResponse.builder()
                 .postId(post.getId())
                 .build();
@@ -94,6 +95,7 @@ public class PostFacade {
         );
         postImageService.updatePostImage(post, request.getImageUrlsToDelete(), request.getImagesToAdd());
 
+        amplitudeService.log(memberId, "updatePost", Map.of("PostId", post.getId().toString(), "PostTitle", post.getTitle()));
         return UpdatePostResponse.builder()
                 .postId(postId)
                 .categoryType(post.getCategoryType())
@@ -111,6 +113,7 @@ public class PostFacade {
         commentService.deleteAllByPostId(postId);
         postImageService.deletePostImage(postId);
 
+        amplitudeService.log(memberId, "deletePost", Map.of("PostId", postId.toString()));
         return DeletePostResponse.builder()
                 .deleted(true)
                 .build();
@@ -124,7 +127,8 @@ public class PostFacade {
         List<PostPreviewDto> postPreviewDtoList = postList.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))
                 .collect(Collectors.toList());
-        amplitudeService.logEventAsync("getAllPostList", memberId);
+
+        amplitudeService.log(memberId, "getAllPostList", Map.of("boardType", boardType.getBoardName()));
         return new PostListResponse(postPreviewDtoList);
     }
 
@@ -137,6 +141,8 @@ public class PostFacade {
         List<PostPreviewDto> postPreviewDtoList = postList.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))
                 .collect(Collectors.toList());
+
+        amplitudeService.log(memberId, "getPostList", Map.of("boardType", boardType.getBoardName(), "categoryType", categoryType.getCategoryName()));
         return new PostListResponse(postPreviewDtoList);
     }
 
@@ -163,6 +169,8 @@ public class PostFacade {
                 applicationEventPublisher.publishEvent(new PopularPostNotificationEvent(this, postId, memberId));
             }
         }
+
+        amplitudeService.log(memberId, "updatePostLike", Map.of("postId", postId.toString()));
     }
 
     @Transactional
@@ -176,6 +184,8 @@ public class PostFacade {
         } else {
             postScrapService.createPostScrap(post, member);
         }
+
+        amplitudeService.log(memberId, "updatePostScrap", Map.of("postId", postId.toString()));
     }
 
 
@@ -188,6 +198,8 @@ public class PostFacade {
         List<PostPreviewDto> postPreviewDtoList = postPage.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))
                 .collect(Collectors.toList());
+
+        amplitudeService.log(memberId, "loadMainPage", Map.of("description", "check load main page event by logging getBestPost API"));
         return new PostListResponse(postPreviewDtoList);
 
     }
@@ -196,6 +208,7 @@ public class PostFacade {
     public PostDetailResponse getPostDetail(Long postId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Post post = postService.getPost(postId);
+        amplitudeService.log(memberId, "getPostDetail", Map.of("postTitle", post.getTitle()));
 
         applicationEventPublisher.publishEvent(
                 new ReadPostEvent(this, postId, memberId)
@@ -211,6 +224,8 @@ public class PostFacade {
         List<PostPreviewDto> searchPostPreviewDtoList = postList.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))
                 .collect(Collectors.toList());
+
+        amplitudeService.log(memberId, "getSearchPostList", Map.of("keyword", keyword));
         return new PostListResponse(searchPostPreviewDtoList);
     }
 

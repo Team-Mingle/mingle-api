@@ -14,6 +14,7 @@ import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.dto.course.CoursePreviewDto;
 import community.mingle.api.dto.course.CourseTimeDto;
 import community.mingle.api.enums.CourseColourRgb;
+import community.mingle.api.global.amplitude.AmplitudeService;
 import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 import static community.mingle.api.global.exception.ErrorCode.*;
 
@@ -31,6 +33,7 @@ public class CourseFacade {
     private final MemberService memberService;
     private final TimetableService timetableService;
     private final TokenService tokenService;
+    private final AmplitudeService amplitudeService;
 
     @Transactional
     public CreatePersonalCourseResponse createPersonalCourse(Long timetableId, CreatePersonalCourseRequest request) {
@@ -59,6 +62,8 @@ public class CourseFacade {
         );
 
         timetableService.addCourse(timetable, personalCourse);
+
+        amplitudeService.log(memberId, "createPersonalCourse", Map.of("personalCourseId", personalCourse.getId().toString(), "personalCourseName", personalCourse.getName()));
 
         return new CreatePersonalCourseResponse(
                 personalCourse.getId(),
@@ -100,6 +105,8 @@ public class CourseFacade {
                 .map(CourseTime::toDto)
                 .toList();
 
+        amplitudeService.log(memberId, "updateCourse", Map.of("personalCourseId", personalCourse.getId().toString(), "personalCourseName", personalCourse.getName()));
+
         return new CourseDetailResponse( //TODO 참고
                 updatedPersonalCourse.getId(),
                 updatedPersonalCourse.getName(),
@@ -126,6 +133,8 @@ public class CourseFacade {
         List<CourseTimeDto> courseTimeDtoList = course.getCourseTimeList().stream()
                 .map(CourseTime::toDto)
                 .toList();
+
+        amplitudeService.log(memberId, "getCourseDetail", Map.of("personalCourseId", course.getId().toString(), "personalCourseName", course.getName()));
 
         return new CourseDetailResponse(
                 course.getId(),
@@ -165,6 +174,7 @@ public class CourseFacade {
                     );
                 }).toList();
 
+        amplitudeService.log(memberId, "searchCourse", Map.of("keyword", keyword));
         return new CoursePreviewResponse(coursePreviewDtoList);
     }
 

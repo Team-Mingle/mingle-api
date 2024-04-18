@@ -1,16 +1,18 @@
 package community.mingle.api.configuration;
 
-import com.amplitude.Amplitude;
+import community.mingle.api.infra.SecretsManagerService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@RequiredArgsConstructor
 public class AmplitudeConfiguration {
 
+    private final SecretsManagerService secretsManagerService;
+
     @Bean
-    public Amplitude amplitude() {
-        Amplitude amplitude = Amplitude.getInstance();
-        amplitude.init("86848239b2e18a1d839b522148b406e1");
-        return amplitude;
+    public String amplitudeApiKey() {
+        return secretsManagerService.getAmplitudeApiKey();
     }
 }

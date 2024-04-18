@@ -21,6 +21,13 @@ repositories {
     mavenCentral()
 }
 
+dependencyManagement {
+
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2020.0.3"
+    }
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -36,6 +43,7 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE' //s3
     implementation 'com.amplitude:java-sdk:1.+'
     implementation 'org.json:json:20201115'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
 
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
