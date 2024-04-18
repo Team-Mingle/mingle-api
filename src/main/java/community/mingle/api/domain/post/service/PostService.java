@@ -196,13 +196,18 @@ public class PostService {
     }
 
     public String calculateNickname(Post post) {
+        String nickname;
         if (post.getAnonymous()) {
-            return "익명";
-        } else if (post.getMember().getRole() == MemberRole.FRESHMAN) {
-            return "🐥" + post.getMember().getNickname();
+            nickname = "익명";
         } else {
-            return post.getMember().getNickname();
+            nickname = post.getMember().getNickname();
         }
+
+        if (post.getMember().getRole() == MemberRole.FRESHMAN) {
+            nickname = nickname + " 🐥";
+        }
+
+        return nickname;
     }
 
     public String titleByStatus(Post post) {
