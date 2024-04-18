@@ -8,6 +8,7 @@ import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.repository.MemberRepository;
 import community.mingle.api.domain.post.entity.Post;
 import community.mingle.api.domain.post.repository.PostRepository;
+import community.mingle.api.enums.MemberRole;
 import community.mingle.api.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -131,16 +132,21 @@ public class CommentService {
             displayName = "익명 " + anonymousId;
         } else if (!isAnonymous && Objects.equals(commentWriterId, postAuthorId)) {
             displayName = comment.getMember().getNickname() + "(글쓴이)";
-        } else if (isAnonymous && Objects.equals(commentWriterId, postAuthorId)){
+        } else if (isAnonymous && Objects.equals(commentWriterId, postAuthorId)) {
             displayName = "익명(글쓴이)";
         }
         if (comment.getMember().getId().equals(memberId)) {
             displayName = displayName + "(나)";
         }
+        if (comment.getMember().getRole() == MemberRole.FRESHMAN) {
+            displayName = displayName + " 🐥";
+        }
         if (comment.getStatusType() == REPORTED || comment.getStatusType() == DELETED) {
             displayName = "(비공개됨)";
         }
-        return displayName;
+
+
+            return displayName;
     }
 
     public boolean isCommentLikedByMember(Comment comment, Long memberId) {

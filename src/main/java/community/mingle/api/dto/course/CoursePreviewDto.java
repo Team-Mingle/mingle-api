@@ -10,6 +10,7 @@ public record CoursePreviewDto(
         String professor,
         String subclass,
         List<CourseTimeDto> courseTimeDtoList,
+        String venue,
         String rgb
 ) {
 }

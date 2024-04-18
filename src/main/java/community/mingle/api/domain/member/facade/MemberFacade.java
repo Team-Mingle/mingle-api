@@ -6,6 +6,7 @@ import community.mingle.api.domain.member.controller.request.WithdrawMemberReque
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.domain.post.service.PostService;
+import community.mingle.api.global.amplitude.AmplitudeService;
 import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class MemberFacade {
     private final TokenService tokenService;
     private final MemberService memberService;
     private final AuthService authService;
+    private final AmplitudeService amplitudeService;
 
 
     @Transactional
@@ -33,6 +35,8 @@ public class MemberFacade {
             throw new CustomException(NICKNAME_DUPLICATED);
         }
         member.updateNickname(nickname);
+
+        amplitudeService.log(memberId, "updateNickname", null);
     }
 
     @Transactional
@@ -42,6 +46,7 @@ public class MemberFacade {
 
         memberService.deleteRefreshToken(member);
         member.setFcmToken(null);
+        amplitudeService.log(memberId, "logout", null);
     }
 
     @Transactional
@@ -61,5 +66,6 @@ public class MemberFacade {
         authService.checkMemberStatusActive(member);
         memberService.deleteRefreshToken(member);
         member.withDraw();
+        amplitudeService.log(memberId, "withdraw", null);
     }
 }

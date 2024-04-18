@@ -12,6 +12,7 @@ import community.mingle.api.domain.friend.service.FriendService;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.dto.friend.FriendDto;
+import community.mingle.api.global.amplitude.AmplitudeService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class FriendFacade {
     private final FriendService friendService;
     private final TokenService tokenService;
     private final MemberService memberService;
+    private final AmplitudeService amplitudeService;
 
     @Transactional
     public CreateFriendCodeResponse createFriendCode(CreateFriendCodeRequest request) {
@@ -44,6 +46,8 @@ public class FriendFacade {
         List<FriendDto> friendDtoList = friendList.stream()
                 .map(friend -> new FriendDto(friend.getId(), friend.getFriendName()))
                 .toList();
+
+        amplitudeService.log(memberId, "createFriend", null);
         return new CreateFriendResponse(friendDtoList);
     }
 
@@ -68,6 +72,7 @@ public class FriendFacade {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
         friendService.deleteFriend(member, friendId);
+        amplitudeService.log(memberId, "deleteFriend", null);
     }
 
 }

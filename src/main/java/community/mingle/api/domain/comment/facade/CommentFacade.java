@@ -15,6 +15,7 @@ import community.mingle.api.domain.post.service.PostService;
 import community.mingle.api.dto.comment.CoCommentDto;
 import community.mingle.api.dto.comment.CommentDto;
 import community.mingle.api.enums.MemberRole;
+import community.mingle.api.global.amplitude.AmplitudeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ public class CommentFacade {
     private final TokenService tokenService;
     private final CommentService commentService;
     private final CommentLikeService commentLikeService;
-    private final MemberService memberService;
+    private final AmplitudeService amplitudeService;
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
@@ -80,6 +81,7 @@ public class CommentFacade {
         applicationEventPublisher.publishEvent(
                 new CommentNotificationEvent(this, request.postId(), comment.getId(), memberId, request.parentCommentId(), request.mentionId(), request.content())
         );
+        amplitudeService.log(memberId, "createComment", Map.of("CommentId", comment.getId().toString(), "CommentContent", comment.getContent()));
         return new CreateCommentResponse(comment.getId());
     }
 
@@ -87,6 +89,7 @@ public class CommentFacade {
     public DeleteCommentResponse delete(Long commentId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         commentService.delete(commentId, memberId);
+        amplitudeService.log(memberId, "deleteComment", Map.of("CommentId", commentId.toString()));
         return new DeleteCommentResponse(true);
     }
 
@@ -98,6 +101,8 @@ public class CommentFacade {
         } else {
             commentLikeService.create(commentId, memberId);
         }
+
+        amplitudeService.log(memberId, "updateCommentLike", Map.of("CommentId", commentId.toString()));
     }
 
 
