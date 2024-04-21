@@ -88,12 +88,19 @@ public class TimetableService {
     public void deleteTimetable(Timetable timetable, Member member) {
         hasPermission(member, timetable);
         Semester semester = timetable.getSemester();
+        Boolean isPinned = timetable.getIsPinned();
         timetableRepository.delete(timetable);
 
-
         List<Timetable> timetableList = timetableRepository.findAllByMemberAndSemesterOrderByOrderNumberAsc(member, semester);
+
+        if (isPinned) {
+            timetableList.get(0).convertPinStatus();
+        }
+
         IntStream.range(0, timetableList.size())
-                .forEach(indexNumber -> timetableList.get(indexNumber).updateOrderNumber(indexNumber + 1));
+                .forEach(indexNumber -> {
+                    timetableList.get(indexNumber).updateOrderNumber(indexNumber + 1);
+                });
 
     }
 
