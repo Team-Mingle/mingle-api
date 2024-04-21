@@ -115,8 +115,7 @@ public class CommentService {
     }
 
     public String getMentionDisplayName(Long mentionId, Long postAuthorId) {
-        Comment comment = commentRepository.findById(mentionId)
-                .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
+        Comment comment = commentRepository.findCommentByMentionId(mentionId);
         return getDisplayName(comment, postAuthorId);
     }
 
