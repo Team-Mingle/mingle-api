@@ -148,6 +148,8 @@ public class TimetableService {
         return timetableRepository.findAllByMember(member);
     }
 
+
+
     private List<Course> coursesConflictWithNewCourseTime(Timetable timetable, List<CourseTimeDto> courseTimeList) {
         List<CourseTimetable> existingCourses = timetable.getCourseTimetableList();
 
