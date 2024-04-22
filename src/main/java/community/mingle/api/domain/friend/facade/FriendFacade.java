@@ -1,8 +1,8 @@
 package community.mingle.api.domain.friend.facade;
 
 import community.mingle.api.domain.auth.service.TokenService;
-import community.mingle.api.domain.friend.controller.request.CreateFriendRequest;
 import community.mingle.api.domain.friend.controller.request.CreateFriendCodeRequest;
+import community.mingle.api.domain.friend.controller.request.CreateFriendRequest;
 import community.mingle.api.domain.friend.controller.response.CreateFriendCodeResponse;
 import community.mingle.api.domain.friend.controller.response.CreateFriendResponse;
 import community.mingle.api.domain.friend.controller.response.FriendListResponse;
@@ -13,11 +13,15 @@ import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.dto.friend.FriendDto;
 import community.mingle.api.global.amplitude.AmplitudeService;
+import community.mingle.api.global.exception.CustomException;
+import community.mingle.api.global.exception.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -73,6 +77,22 @@ public class FriendFacade {
         Member member = memberService.getById(memberId);
         friendService.deleteFriend(member, friendId);
         amplitudeService.log(memberId, "deleteFriend", null);
+    }
+
+    @Transactional
+    public void updateFriendNameRequest(
+        Long friendId,
+        String newFriendName
+    ) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Friend friend = friendService.getById(friendId);
+
+        if (!Objects.equals(friend.getMember().getId(), memberId)) {
+            throw new CustomException(ErrorCode.MEMBER_NOT_FRIEND);
+        }
+
+        friendService.updateMemberName(friendId, newFriendName);
+        amplitudeService.log(memberId, "updateFriendNameRequest", Map.of("newFriendName", newFriendName));
     }
 
 }

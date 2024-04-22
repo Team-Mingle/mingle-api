@@ -2,6 +2,7 @@ package community.mingle.api.domain.friend.controller;
 
 import community.mingle.api.domain.friend.controller.request.CreateFriendRequest;
 import community.mingle.api.domain.friend.controller.request.CreateFriendCodeRequest;
+import community.mingle.api.domain.friend.controller.request.UpdateFriendNameRequest;
 import community.mingle.api.domain.friend.controller.response.CreateFriendCodeResponse;
 import community.mingle.api.domain.friend.controller.response.CreateFriendResponse;
 import community.mingle.api.domain.friend.controller.response.FriendListResponse;
@@ -65,6 +66,18 @@ public class FriendController {
             Long friendId
     ) {
         friendFacade.deleteFriend(friendId);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "친구 이름 변경 API")
+    @PatchMapping("/{friendId}")
+    public ResponseEntity<Void> updateFriendName(
+            @PathVariable
+            Long friendId,
+            @RequestBody
+            UpdateFriendNameRequest request
+    ) {
+        friendFacade.updateFriendNameRequest(friendId, request.friendName());
         return ResponseEntity.ok().build();
     }
 }

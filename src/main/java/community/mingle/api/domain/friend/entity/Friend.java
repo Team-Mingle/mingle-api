@@ -45,4 +45,8 @@ public class Friend extends AuditLoggingBase {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    public void changeFriendName(String newFriendName) {
+        this.friendName = newFriendName;
+    }
+
 }
