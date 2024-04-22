@@ -152,7 +152,7 @@ public class TimetableService {
     }
 
     public List<Timetable> listByIdAndIsPinnedTrue(Member member) {
-        return timetableRepository.findAllByMember(member);
+        return timetableRepository.findAllByMemberAndIsPinnedTrue(member);
     }
 
 
