@@ -187,6 +187,27 @@ public class PostService {
         };
     }
 
+    public List<CategoryType> getCategoryListByMemberRoleAndBoardType(
+            MemberRole memberRole,
+            BoardType boardType
+    ) {
+        List<CategoryType> categories = new ArrayList<>();
+
+        if (boardType == BoardType.TOTAL) {
+            categories.addAll(Arrays.asList(CategoryType.FREE, CategoryType.QNA));
+            if (memberRole == MemberRole.ADMIN) {
+                categories.add(CategoryType.MINGLE);
+            }
+        } else if (boardType == BoardType.UNIV) {
+            categories.addAll(Arrays.asList(CategoryType.FREE, CategoryType.QNA));
+            if (memberRole == MemberRole.ADMIN || memberRole == MemberRole.KSA) {
+                categories.add(CategoryType.KSA);
+            }
+        }
+
+        return categories;
+    }
+
     public PostStatusDto getPostStatus(Post post, Long memberIdByJwt) {
         boolean isMyPost = Objects.equals(post.getMember().getId(), memberIdByJwt);
         boolean isLiked = postLikeRepository.countByPostIdAndMemberId(post.getId(), memberIdByJwt) > 0;
