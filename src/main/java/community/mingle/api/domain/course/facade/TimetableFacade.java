@@ -213,7 +213,8 @@ public class TimetableFacade {
                                     .map(CourseTime::toDto)
                                     .toList(),
                             course.getVenue(),
-                            courseTimetable.getRgb()
+                            courseTimetable.getRgb(),
+                            course.getType()
                     );
                 })
                 .toList();

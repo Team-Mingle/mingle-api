@@ -1,5 +1,7 @@
 package community.mingle.api.dto.course;
 
+import community.mingle.api.enums.CourseType;
+
 import java.util.List;
 
 public record CoursePreviewDto(
@@ -11,6 +13,7 @@ public record CoursePreviewDto(
         String subclass,
         List<CourseTimeDto> courseTimeDtoList,
         String venue,
-        String rgb
+        String rgb,
+        CourseType courseType
 ) {
 }
