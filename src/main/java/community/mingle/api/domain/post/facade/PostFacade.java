@@ -58,6 +58,15 @@ public class PostFacade {
                 .toList();
     }
 
+    public CategoryResponse getPostCategoryByBoardType(
+            BoardType boardType
+    ) {
+        MemberRole memberRole = tokenService.getTokenInfo().getMemberRole();
+        List<String> categoryNames = postService.getCategoryListByMemberRoleAndBoardType(memberRole, boardType).stream()
+                .map(CategoryType::getCategoryName)
+                .toList();
+        return new CategoryResponse(categoryNames);
+    }
 
     @Transactional
     public CreatePostResponse createPost(CreatePostRequest request, BoardType boardType) {

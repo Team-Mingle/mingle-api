@@ -119,6 +119,12 @@ public class TimetableController {
         return ResponseEntity.ok(timetableFacade.getFriendTimetableList(friendId));
     }
 
+    @Operation(summary = "기본 시간표 Id 조회 API")
+    @GetMapping("/default")
+    public ResponseEntity<DefaultTimetableIdResponse> getDefaultTimetableId() {
+        return ResponseEntity.ok(timetableFacade.getDefaultTimetableId());
+    }
+
 
 
 }

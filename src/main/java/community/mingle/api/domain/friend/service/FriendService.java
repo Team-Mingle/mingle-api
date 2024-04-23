@@ -90,6 +90,11 @@ public class FriendService {
         friendRepository.delete(friendToMemberRelation);
     }
 
+    public void updateMemberName(Long friendId, String newFriendName) {
+        Friend memberToFriendRelation = friendRepository.findById(friendId).orElseThrow(() -> new CustomException(FRIEND_NOT_FOUND));
+        memberToFriendRelation.changeFriendName(newFriendName);
+    }
+
     public String getMemberLastDisplayName(Member member) {
         Optional<String> memberLastDisplayName = friendCodeRepository.findMemberLastDisplayName(member.getId());
         return memberLastDisplayName.orElseGet(member::getNickname);

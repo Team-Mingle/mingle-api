@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -182,6 +183,18 @@ public class TimetableFacade {
         amplitudeService.log(memberId, "getFriendTimetableList", Map.of("friendId", friendId.toString()));
 
         return new FriendTimetableDetailResponse(timetableDetailResponseList);
+    }
+
+    public DefaultTimetableIdResponse getDefaultTimetableId() {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+        Long defaultTimetableId = timetableService.listByIdAndIsPinnedTrue(member)
+                .stream()
+                .max(Comparator.comparing((Timetable t) -> t.getSemester().getYear())
+                        .thenComparingInt(t -> t.getSemester().getSemester()))
+                .get().getId();
+
+        return new DefaultTimetableIdResponse(defaultTimetableId);
     }
 
     @NotNull

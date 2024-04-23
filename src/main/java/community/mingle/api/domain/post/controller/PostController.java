@@ -37,10 +37,20 @@ public class PostController {
     private final CommentFacade commentFacade;
 
 
+    @Deprecated(since = "BoardType에 따라 다른 카테고리 목록을 조회하도록 해야함, use getPostCategoryByBoardType() instead")
     @Operation(summary = "카테고리 목록 조회 API")
     @GetMapping("/category")
     public ResponseEntity<List<PostCategoryResponse>> getPostCategory() {
         return new ResponseEntity<>(postFacade.getPostCategory(), HttpStatus.OK);
+    }
+
+    @Operation(summary = "카테고리 목록 조회 by 게시판 API")
+    @GetMapping("/category/{boardType}")
+    public ResponseEntity<CategoryResponse> getPostCategoryByBoardType(
+            @PathVariable
+            BoardType boardType
+    ) {
+        return new ResponseEntity<>(postFacade.getPostCategoryByBoardType(boardType), HttpStatus.OK);
     }
 
     @Operation(summary = "게시물 생성 API")
