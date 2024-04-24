@@ -6,6 +6,7 @@ import community.mingle.api.domain.like.entity.PostLike;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.domain.notification.event.PopularPostNotificationEvent;
+import community.mingle.api.domain.notification.event.RedirectionByContentIdManualNotificationEvent;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
 import community.mingle.api.domain.post.controller.request.UpdatePostRequest;
 import community.mingle.api.domain.post.controller.response.*;
@@ -20,6 +21,7 @@ import community.mingle.api.dto.post.PostStatusDto;
 import community.mingle.api.enums.BoardType;
 import community.mingle.api.enums.CategoryType;
 import community.mingle.api.enums.ContentStatusType;
+import community.mingle.api.enums.ContentType;
 import community.mingle.api.enums.MemberRole;
 import community.mingle.api.global.amplitude.AmplitudeService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static community.mingle.api.global.utils.DateTimeConverter.convertToDateAndTime;
@@ -84,6 +87,31 @@ public class PostFacade {
         );
         if (isFileAttached) {
             postImageService.createPostImage(post, request.getMultipartFile());
+        }
+
+        Member member = memberService.getById(memberId);
+        if (member.getRole() == MemberRole.KSA && request.getCategoryType() == CategoryType.KSA) {
+            applicationEventPublisher.publishEvent(new RedirectionByContentIdManualNotificationEvent(
+                    this,
+                    boardType,
+                    "학생회에 새로운 소식이 올라왔어요",
+                    request.getTitle(),
+                    post.getId(),
+                    ContentType.POST
+            ));
+        } else if (member.getRole() == MemberRole.ADMIN && request.getCategoryType() == CategoryType.MINGLE) {
+            String categoryName = "밍글소식";
+            if (Objects.equals(member.getUniversity().getCountry().getName(), "CHINA")) {
+                categoryName = "총학생회";
+            }
+            applicationEventPublisher.publishEvent(new RedirectionByContentIdManualNotificationEvent(
+                    this,
+                    boardType,
+                    categoryName + "에 새로운 소식이 올라왔어요",
+                    request.getTitle(),
+                    post.getId(),
+                    ContentType.POST
+            ));
         }
 
         amplitudeService.log(memberId, "createPost", Map.of("PostId", post.getId().toString(), "PostTitle", post.getTitle()));
