@@ -170,7 +170,8 @@ public class CourseFacade {
                             courseTimeDtoList,
                             course.getVenue(),
                             //rgb 필드는 timetable view에서만 사용되므로 course list view에서는 아무 값을 default로 넣어준다.
-                            CourseColourRgb.FBE9EF.getStringRgb()
+                            CourseColourRgb.FBE9EF.getStringRgb(),
+                            course.getType()
                     );
                 }).toList();
 
