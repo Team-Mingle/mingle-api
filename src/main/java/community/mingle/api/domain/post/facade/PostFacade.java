@@ -63,7 +63,7 @@ public class PostFacade {
     ) {
         MemberRole memberRole = tokenService.getTokenInfo().getMemberRole();
         List<String> categoryNames = postService.getCategoryListByMemberRoleAndBoardType(memberRole, boardType).stream()
-                .map(CategoryType::getCategoryName)
+                .map(Enum::name)
                 .toList();
         return new CategoryResponse(categoryNames);
     }
