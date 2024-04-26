@@ -36,7 +36,7 @@ public class CouponController {
         return ResponseEntity.ok().body(couponProductList);
     }
 
-    @Operation(summary = "보유 중인 이용권 조회 API")
+    @Operation(summary = "보유 중인 이용권 조회 API", description = "유저가 보유 중인 이용권을 조회합니다. 보유 중인 이용권이 없으면 반환 값이 없습니다.")
     @GetMapping()
     public ResponseEntity<CouponResponse> getCoupon() {
         CouponResponse response = couponFacade.getCoupon();

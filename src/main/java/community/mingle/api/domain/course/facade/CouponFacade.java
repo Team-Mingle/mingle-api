@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -41,13 +42,13 @@ public class CouponFacade {
     public CouponResponse getCoupon() {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
-        Coupon coupon = couponService.getByMember(member);
+        Optional<Coupon> coupon = couponService.getByMember(member);
 
-        return new CouponResponse(
+        return coupon.map(value -> new CouponResponse(
                 "강의평가 조회 이용권",
-                coupon.getCreatedAt().toLocalDate(),
-                coupon.getExpiresAt().toLocalDate()
-        );
+                value.getCreatedAt().toLocalDate(),
+                value.getExpiresAt().toLocalDate()
+        )).orElse(null);
     }
     public CouponProductListResponse getCouponProductList() {
         List<CouponProduct> couponProductList = couponProductService.getAll();
