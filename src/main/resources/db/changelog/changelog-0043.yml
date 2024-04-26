@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      id: add coupon_shop table
+      author: Hyeonwoo Jung
+      changes:
+        - createTable:
+            tableName: coupon_product
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                  autoIncrement: true
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cost
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: duration_in_day
+                  type: int
+                  constraints:
+                    nullable: false
