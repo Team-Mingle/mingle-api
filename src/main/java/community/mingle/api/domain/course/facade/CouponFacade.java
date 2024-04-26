@@ -31,8 +31,9 @@ public class CouponFacade {
     public void create(CreateCouponRequest request) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
-        couponService.create(member, request.couponType());
-        amplitudeService.log(memberId, "createCoupon", Map.of("couponType", request.couponType().toString()));
+        CouponProduct couponProduct = couponProductService.getById(request.couponProductId());
+        couponService.create(member, couponProduct);
+        amplitudeService.log(memberId, "createCoupon", Map.of("couponTypeId", request.couponProductId().toString()));
     }
 
     public CouponProductListResponse getCouponProductList() {
