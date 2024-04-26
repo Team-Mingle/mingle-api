@@ -14,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static community.mingle.api.global.exception.ErrorCode.POINT_NOT_ENOUGH;
@@ -26,15 +29,34 @@ public class CouponService {
     private final PointRepository pointRepository;
     private final PointLogRepository pointLogRepository;
 
+    public Optional<Coupon> getByMember(Member member) {
+        LocalDateTime currentDateTimeInKst = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime();
+        List<Coupon> couponsMayContainsExpired = couponRepository.findByMemberId(member.getId());
+        couponsMayContainsExpired.forEach( coupon -> {
+                if (coupon.getExpiresAt().isBefore(currentDateTimeInKst)) {
+                    couponRepository.delete(coupon);
+                }
+            }
+        );
+        for (Coupon coupon : couponsMayContainsExpired) {
+            if (!coupon.getExpiresAt().isBefore(currentDateTimeInKst)) {
+                return Optional.of(coupon);
+            }
+        }
+        return Optional.empty();
+    }
+
     @Transactional
     public Coupon create(Member member, CouponProduct couponProduct) {
 
         usePoint(member, couponProduct.getCost(), couponProduct.getName());
-        Optional<Coupon> coupon = couponRepository.findByMemberId(member.getId());
+        LocalDateTime currentDateTimeInKst = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime();
+        Optional<Coupon> coupon = getByMember(member);
+
         if (coupon.isPresent()) {
             return updateCoupon(coupon.get(), couponProduct.getDurationInDay());
         } else {
-            LocalDateTime expiresAt = LocalDateTime.now().plusDays(couponProduct.getDurationInDay());
+            LocalDateTime expiresAt = currentDateTimeInKst.plusDays(couponProduct.getDurationInDay());
             return couponRepository.save(
                     Coupon.builder()
                             .member(member)

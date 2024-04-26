@@ -4,6 +4,8 @@ import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.course.controller.request.CreateCouponRequest;
 import community.mingle.api.domain.course.controller.response.CouponProductListResponse;
 import community.mingle.api.domain.course.controller.response.CouponProductResponse;
+import community.mingle.api.domain.course.controller.response.CouponResponse;
+import community.mingle.api.domain.course.entity.Coupon;
 import community.mingle.api.domain.course.entity.CouponProduct;
 import community.mingle.api.domain.course.service.CouponService;
 import community.mingle.api.domain.course.service.CouponProductService;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +39,17 @@ public class CouponFacade {
         amplitudeService.log(memberId, "createCoupon", Map.of("couponTypeId", request.couponProductId().toString()));
     }
 
+    public CouponResponse getCoupon() {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+        Optional<Coupon> coupon = couponService.getByMember(member);
+
+        return coupon.map(value -> new CouponResponse(
+                "강의평가 조회 이용권",
+                value.getCreatedAt().toLocalDate(),
+                value.getExpiresAt().toLocalDate()
+        )).orElse(null);
+    }
     public CouponProductListResponse getCouponProductList() {
         List<CouponProduct> couponProductList = couponProductService.getAll();
         List<CouponProductResponse> couponProductResponse = couponProductList
