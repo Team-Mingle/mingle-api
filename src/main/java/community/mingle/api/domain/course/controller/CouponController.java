@@ -2,6 +2,7 @@ package community.mingle.api.domain.course.controller;
 
 import community.mingle.api.domain.course.controller.request.CreateCouponRequest;
 import community.mingle.api.domain.course.controller.response.CouponProductListResponse;
+import community.mingle.api.domain.course.controller.response.CouponResponse;
 import community.mingle.api.domain.course.facade.CouponFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,10 +29,17 @@ public class CouponController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "이용권 종류 리스트 API")
+    @Operation(summary = "이용권 종류 리스트 조회 API")
     @GetMapping("/shop")
     public ResponseEntity<CouponProductListResponse> getCouponShopList() {
         CouponProductListResponse couponProductList = couponFacade.getCouponProductList();
         return ResponseEntity.ok().body(couponProductList);
+    }
+
+    @Operation(summary = "보유 중인 이용권 조회 API")
+    @GetMapping()
+    public ResponseEntity<CouponResponse> getCoupon() {
+        CouponResponse response = couponFacade.getCoupon();
+        return ResponseEntity.ok().body(response);
     }
 }

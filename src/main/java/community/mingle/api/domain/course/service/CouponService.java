@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static community.mingle.api.global.exception.ErrorCode.COURSE_NOT_FOUND;
 import static community.mingle.api.global.exception.ErrorCode.POINT_NOT_ENOUGH;
 
 @Service
@@ -25,6 +26,11 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final PointRepository pointRepository;
     private final PointLogRepository pointLogRepository;
+
+    public Coupon getByMember(Member member) {
+        return couponRepository.findByMemberId(member.getId())
+                .orElseThrow(() -> new CustomException(COURSE_NOT_FOUND));
+    }
 
     @Transactional
     public Coupon create(Member member, CouponProduct couponProduct) {
