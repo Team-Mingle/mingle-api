@@ -1,6 +1,7 @@
 package community.mingle.api.domain.course.controller.response;
 
 public record UpdateTimetableCourseResponse(
-        boolean updated
+        boolean updated,
+        String rgb
 ) {
 }

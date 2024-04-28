@@ -7,6 +7,7 @@ import community.mingle.api.domain.course.controller.request.UpdateTimetableName
 import community.mingle.api.domain.course.controller.response.*;
 import community.mingle.api.domain.course.entity.Course;
 import community.mingle.api.domain.course.entity.CourseTime;
+import community.mingle.api.domain.course.entity.CourseTimetable;
 import community.mingle.api.domain.course.entity.Timetable;
 import community.mingle.api.domain.course.service.CourseService;
 import community.mingle.api.domain.course.service.TimetableService;
@@ -73,10 +74,13 @@ public class TimetableFacade {
         timetableService.checkCourseAlreadyAdded(timetable, course);
         timetableService.deleteConflictCoursesByOverrideValidation(timetable, courseTimeDtoList, request.overrideValidation());
 
-        timetableService.addCourse(timetable, course);
+        CourseTimetable courseTimetable = timetableService.addCourse(timetable, course);
 
         amplitudeService.log(memberId, "updateTimetableCourse", Map.of("timetableId", timetable.getId().toString(), "timetableName", timetable.getName(), "courseId", course.getId().toString(), "courseName", course.getName()));
-        return new UpdateTimetableCourseResponse(true);
+        return new UpdateTimetableCourseResponse(
+            true,
+            courseTimetable.getRgb()
+        );
     }
 
     @Transactional
