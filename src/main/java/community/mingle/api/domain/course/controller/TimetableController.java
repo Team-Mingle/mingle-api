@@ -52,7 +52,7 @@ public class TimetableController {
     })
     @PostMapping("/{timetableId}/course/personal")
     public ResponseEntity<CreatePersonalCourseResponse> createPersonalCourse(
-            @RequestParam
+            @PathVariable
             Long timetableId,
             @RequestBody CreatePersonalCourseRequest request
     ) {
