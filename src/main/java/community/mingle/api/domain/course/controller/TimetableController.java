@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Tag(name = "Timetable Controller", description = "시간표 관련 API")
+@ApiResponses({
+        @ApiResponse(responseCode = "200")
+})
 @RestController
 @RequestMapping("/timetable")
 @RequiredArgsConstructor
@@ -46,10 +49,11 @@ public class TimetableController {
     }
 
     @Operation(summary = "시간표 개인 강의 추가 API")
-    @ApiResponses({
-            @ApiResponse(responseCode = "409", description = "TIMETABLE_CONFLICT - 시간표가 겹칩니다.", content = @Content(schema = @Schema(hidden = true))),
-            @ApiResponse(responseCode = "409", description = "COURSE_TIME_CONFLICT - 강의 시간이 겹치지 않게 설정해 주세요.", content = @Content(schema = @Schema(hidden = true)))
-    })
+    @ApiResponse(responseCode = "409", description = "Conflict: \n" +
+            "- TIMETABLE_CONFLICT: 시간표가 겹칩니다. \n" +
+            "- COURSE_TIME_CONFLICT: 강의 시간이 겹치지 않게 설정해 주세요."
+            , content = @Content(schema = @Schema(hidden = true))
+    )
     @PostMapping("/{timetableId}/course/personal")
     public ResponseEntity<CreatePersonalCourseResponse> createPersonalCourse(
             @PathVariable
