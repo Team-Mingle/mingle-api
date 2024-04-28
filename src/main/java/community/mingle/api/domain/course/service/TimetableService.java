@@ -74,7 +74,11 @@ public class TimetableService {
                 .course(course)
                 .rgb(rgb.getStringRgb())
                 .build();
-        return courseTimetableRepository.save(courseTimetable);
+
+        courseTimetableRepository.save(courseTimetable);
+        course.updateCourseTimetable(courseTimetable);
+
+        return courseTimetable;
     }
 
     @Transactional

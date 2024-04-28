@@ -54,7 +54,9 @@ public class CourseService {
 
         PersonalCourse personalCourse = personalCourseRepository.save(course);
 
-        createCourseTime(personalCourse.getId(), courseTimeDtoList);
+        List<CourseTime> courseTimeList = createCourseTime(personalCourse.getId(), courseTimeDtoList);
+
+        personalCourse.setCourseTimeList(courseTimeList);
 
         return personalCourse;
     }
