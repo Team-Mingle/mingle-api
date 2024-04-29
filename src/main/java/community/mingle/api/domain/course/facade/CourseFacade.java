@@ -103,14 +103,16 @@ public class CourseFacade {
 
         boolean courseTimeChanged = isCourseTimeChanged(request.courseTimeDtoList(), personalCourse.getCourseTimeList());
 
+        List<CourseTime> courseTimeList = updatedPersonalCourse.getCourseTimeList();
+
         if (courseTimeChanged) {
             if (isCourseTimeConflict(request.courseTimeDtoList())) {
                 throw new CustomException(COURSE_TIME_CONFLICT);
             }
-            courseService.updateCourseTime(personalCourse.getId(), request.courseTimeDtoList());
+            courseTimeList = courseService.updateCourseTime(personalCourse.getId(), request.courseTimeDtoList());
         }
 
-        List<CourseTimeDto> courseTimeDtoList = personalCourse.getCourseTimeList().stream()
+        List<CourseTimeDto> courseTimeDtoList = courseTimeList.stream()
                 .map(CourseTime::toDto)
                 .toList();
 
