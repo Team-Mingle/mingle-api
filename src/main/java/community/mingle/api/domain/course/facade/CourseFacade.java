@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static community.mingle.api.global.exception.ErrorCode.*;
 
@@ -82,6 +83,14 @@ public class CourseFacade {
     public CourseDetailResponse updateCourse(UpdatePersonalCourseRequest request, Long courseId) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         PersonalCourse personalCourse = courseService.getPersonalCourseById(courseId);
+
+        List<Timetable> timetables = personalCourse.getCourseTimetableList().stream()
+                .map(CourseTimetable::getTimetable)
+                .toList();
+
+        timetables.forEach(timetable -> {
+            timetableService.deleteConflictCoursesByOverrideValidation(timetable, request.courseTimeDtoList(), request.overrideValidation());
+        });
 
         PersonalCourse updatedPersonalCourse = personalCourse.updatePersonalCourse(
                 memberId,
