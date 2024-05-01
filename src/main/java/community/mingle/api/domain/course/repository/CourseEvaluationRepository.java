@@ -15,4 +15,6 @@ public interface CourseEvaluationRepository extends JpaRepository<CourseEvaluati
     public Optional<CourseEvaluation> findByMemberAndCourse(Member member, Course course);
 
     public List<CourseEvaluation> findAllByCourse(Course course);
+
+    public List<CourseEvaluation> findAllByMemberId(Long memberId);
 }
