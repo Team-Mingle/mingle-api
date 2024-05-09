@@ -1,5 +1,6 @@
 package community.mingle.api.global.exception;
 
+import io.sentry.Sentry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> customExceptionHandler(CustomException customException) {
+        Sentry.captureException(customException);
+
         HttpHeaders resHeaders = new HttpHeaders();
         resHeaders.add("Content-Type", "application/json;charset=UTF-8");
 
@@ -39,14 +42,20 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = getErrorResponse(messageCode, errorMessage);
         return new ResponseEntity<>(errorResponse, resHeaders, BAD_REQUEST);
     }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> runtimeExceptionHandler(RuntimeException e) {
+        //send to Sentry
+        Sentry.captureException(e);
+
         HttpHeaders resHeaders = new HttpHeaders();
         resHeaders.add("Content-Type", "application/json;charset=UTF-8");
 
         String messageCode = "RUNTIME_ERROR";
+//            TODO 240508 - 1.LogBack 쓸건지.  2. ExceptionHandler 에서 잡고 센트리에서 로그 찍을건지 (설정 필요), 그리고 CustomException도 센트리에 찍을건지? (안찍을거면 얘는 제외하는 설정 필요) // 아니면 Handler에서 잡힌건 안잡고 걍 그대로 던질건지.
         String errorMessage = e.getMessage(); //TODO exception log 고려 필요 (다 표시하면 안됨)
-        e.printStackTrace();
+        System.out.println("errorMessage = " + errorMessage);
+//        e.printStackTrace();
         ErrorResponse errorResponse = getErrorResponse(messageCode, errorMessage);
         return new ResponseEntity<>(errorResponse, resHeaders, INTERNAL_SERVER_ERROR);
     }

@@ -7,6 +7,9 @@ import community.mingle.api.domain.auth.facade.TokenResponse;
 import community.mingle.api.domain.member.service.CountryService;
 import community.mingle.api.domain.member.service.UniversityService;
 import community.mingle.api.enums.PolicyType;
+import community.mingle.api.global.exception.CustomException;
+import community.mingle.api.global.exception.ErrorCode;
+import io.sentry.Sentry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -47,7 +50,13 @@ public class AuthController {
     @Operation(summary = "health check ping api")
     @GetMapping("/ping")
     public ResponseEntity<String> ping() {
-        return ResponseEntity.ok().body("pong");
+//        try {
+//            throw new Exception("This is a test.");
+//        } catch (Exception e) {
+//            Sentry.captureException(e);
+//        }
+        throw new RuntimeException("Runtime exception - with ExceptionHandler.");
+//        return ResponseEntity.ok().body("pong");
     }
 
     @Operation(summary = "1.1 국가 리스트 api")
@@ -73,7 +82,6 @@ public class AuthController {
 
         VerifyEmailResponse verifyEmailResponse = authFacade.verifyEmail(emailRequest);
         return ResponseEntity.ok().body(verifyEmailResponse);
-
     }
 
     @Operation(summary = "1.4 이메일 인증코드 전송 api")
