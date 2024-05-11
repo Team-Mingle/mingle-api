@@ -50,13 +50,7 @@ public class AuthController {
     @Operation(summary = "health check ping api")
     @GetMapping("/ping")
     public ResponseEntity<String> ping() {
-//        try {
-//            throw new Exception("This is a test.");
-//        } catch (Exception e) {
-//            Sentry.captureException(e);
-//        }
-        throw new RuntimeException("Runtime exception - with ExceptionHandler.");
-//        return ResponseEntity.ok().body("pong");
+        return ResponseEntity.ok().body("pong");
     }
 
     @Operation(summary = "1.1 국가 리스트 api")

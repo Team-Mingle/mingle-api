@@ -34,9 +34,8 @@ public class AuthFacade {
     private final MemberAuthPhotoService memberAuthPhotoService;
 
     public VerifyEmailResponse verifyEmail(EmailRequest emailRequest) {
-        throw new RuntimeException("Post Exception Test - 1.3 이메일 중복 검사.");
-//        authService.verifyEmail(emailRequest.getEmail());
-//        return new VerifyEmailResponse(true);
+        authService.verifyEmail(emailRequest.getEmail());
+        return new VerifyEmailResponse(true);
     }
 
     @Transactional
