@@ -11,10 +11,16 @@ logging:
     org.springframework.security: DEBUG
     org.hibernate.SQL: debug
     org.hibernate.type: trace
-    root: error
+    root: info
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
 sentry:
-  dsn: https://e10e37c6e1d9066b8c93bafefc540df5@o4507219761954816.ingest.us.sentry.io/4507219764183040
-  exception-resolver-order: -2147483647 # to capture exceptions in GlobalExceptionHandler
+  dsn: "${SENTRY_DSN}"
   traces-sample-rate: 1.0
-  maxRequestBodySize : always
-  sendDefaultPii: true
+  exception-resolver-order: -2147483647
+  max-request-body-size: always
+  send-default-pii: true
