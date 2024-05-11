@@ -1,6 +1,5 @@
 package community.mingle.api.global.exception;
 
-import io.sentry.Sentry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
