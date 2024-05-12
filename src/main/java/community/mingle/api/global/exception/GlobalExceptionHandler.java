@@ -39,14 +39,14 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = getErrorResponse(messageCode, errorMessage);
         return new ResponseEntity<>(errorResponse, resHeaders, BAD_REQUEST);
     }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> runtimeExceptionHandler(RuntimeException e) {
         HttpHeaders resHeaders = new HttpHeaders();
         resHeaders.add("Content-Type", "application/json;charset=UTF-8");
 
         String messageCode = "RUNTIME_ERROR";
-        String errorMessage = e.getMessage(); //TODO exception log 고려 필요 (다 표시하면 안됨)
-        e.printStackTrace();
+        String errorMessage = e.getMessage();
         ErrorResponse errorResponse = getErrorResponse(messageCode, errorMessage);
         return new ResponseEntity<>(errorResponse, resHeaders, INTERNAL_SERVER_ERROR);
     }

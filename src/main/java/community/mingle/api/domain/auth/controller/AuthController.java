@@ -73,7 +73,6 @@ public class AuthController {
 
         VerifyEmailResponse verifyEmailResponse = authFacade.verifyEmail(emailRequest);
         return ResponseEntity.ok().body(verifyEmailResponse);
-
     }
 
     @Operation(summary = "1.4 이메일 인증코드 전송 api")
