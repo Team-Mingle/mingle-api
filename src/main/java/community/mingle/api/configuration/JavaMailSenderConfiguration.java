@@ -21,12 +21,14 @@ public class JavaMailSenderConfiguration {
         Properties properties = new Properties();
         properties.put("mail.smtp.auth", true);
         properties.put("mail.smtp.starttls.enable", true);
+//        properties.put("mail.smtp.ssl.trust", "smtp-relay.gmail.com"); // SSL 설정 추가
+//        properties.put("mail.debug", true); // 디버그 모드 활성화
 
         javaMailSender.setHost("smtp-relay.gmail.com");
         javaMailSender.setPort(25);
         javaMailSender.setUsername("no-reply@mingle.community");
-        String password = secretsManagerService.getMailSenderPassword();
-        javaMailSender.setPassword(password);
+//        String password = secretsManagerService.getMailSenderPassword();
+        javaMailSender.setPassword("rxwlhjapwxjxtczb");
         javaMailSender.setJavaMailProperties(properties);
 
         return javaMailSender;
