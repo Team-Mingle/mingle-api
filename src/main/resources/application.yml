@@ -17,7 +17,7 @@ logging:
 spring:
   config:
     activate:
-      on-profile: prod
+      on-profile: prod, dev
 sentry:
   dsn: "${SENTRY_DSN}"
   traces-sample-rate: 1.0

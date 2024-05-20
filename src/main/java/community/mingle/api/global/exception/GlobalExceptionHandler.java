@@ -47,6 +47,7 @@ public class GlobalExceptionHandler {
 
         String messageCode = "RUNTIME_ERROR";
         String errorMessage = e.getMessage();
+        e.printStackTrace();
         ErrorResponse errorResponse = getErrorResponse(messageCode, errorMessage);
         return new ResponseEntity<>(errorResponse, resHeaders, INTERNAL_SERVER_ERROR);
     }
