@@ -24,7 +24,7 @@ public class JavaMailSenderConfiguration {
         properties.put("mail.debug", true); // 디버그 모드 활성화
 
         javaMailSender.setHost("smtp-relay.gmail.com");
-        javaMailSender.setPort(25);
+        javaMailSender.setPort(587);
         javaMailSender.setUsername("no-reply@mingle.community");
         javaMailSender.setPassword("doybqwvbafqkdbiv");
         javaMailSender.setJavaMailProperties(properties);
