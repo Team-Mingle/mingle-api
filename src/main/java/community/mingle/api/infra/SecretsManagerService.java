@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import community.mingle.api.database.DataSourceConfig;
 import community.mingle.api.dto.security.DevTokenDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
@@ -15,8 +13,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static community.mingle.api.configuration.AmazonSecretManagerConfig.SECRET_MANAGER_CLIENT;
 
 @Service
 @RequiredArgsConstructor
@@ -84,5 +80,9 @@ public class SecretsManagerService {
     private <T> T getSecretValue(String id, Class<T> valueType) throws IOException {
         String value = getSecretValueString(id);
         return objectMapper.readValue(value, valueType);
+    }
+
+    public String getMailSenderPassword() {
+        return getSecretValueString("mingle-api/mailsender-password");
     }
 }
