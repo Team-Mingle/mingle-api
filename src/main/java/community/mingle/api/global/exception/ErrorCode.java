@@ -38,6 +38,7 @@ public enum ErrorCode {
     SEMESTER_NOT_FOUND(404, "SEMESTER_NOT_FOUND", "존재하지 않는 학기입니다."),
     TIMETABLE_NOT_FOUND(404, "TIMETABLE_NOT_FOUND", "존재하지 않는 시간표입니다."),
     COUPON_TYPE_NOT_FOUND(404, "COUPON_TYPE_NOT_FOUND", "존재하지 않는 쿠폰 타입입니다."),
+    COUPON_NOT_FOUND(404, "COUPON_NOT_FOUND", "보유 중인 쿠폰이 없습니다."),
     POINT_NOT_ENOUGH(406, "POINT_NOT_ENOUGH", "포인트가 부족합니다."),
     COURSE_ALREADY_EVALUATED(409, "COURSE_ALREADY_EVALUATED", "이미 해당 강의에 평가를 작성했습니다."),
     FRIEND_CODE_EXPIRED(409, "FRIEND_CODE_EXPIRED", "친구 코드가 만료되었습니다."),

@@ -71,4 +71,21 @@ public class CourseEvaluationFacade {
         amplitudeService.log(memberId, "getCourseEvaluationList", Map.of("courseId", course.getId().toString()));
         return new CourseEvaluationResponse(courseEvaluationDtoList);
     }
+
+    public CourseEvaluationResponse getMyCourseEvaluationList() {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+
+        List<CourseEvaluation> courseEvaluationList = courseEvaluationService.getByMemberId(memberId);
+        List<CourseEvaluationDto> courseEvaluationDtoList = courseEvaluationList.stream()
+                .map(courseEvaluation -> {
+                    return new CourseEvaluationDto(
+                            courseEvaluation.getId(),
+                            courseEvaluation.getSemester(),
+                            courseEvaluation.getComment(),
+                            courseEvaluation.getRating()
+                    );
+                }).toList();
+        amplitudeService.log(memberId, "getMyCourseEvaluationList", Map.of("memberId", memberId.toString()));
+        return new CourseEvaluationResponse(courseEvaluationDtoList);
+    }
 }

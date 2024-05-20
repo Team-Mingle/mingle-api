@@ -46,6 +46,9 @@ public class CourseEvaluationService {
         return courseEvaluationRepository.findAllByCourse(course);
     }
 
+    public List<CourseEvaluation> getByMemberId(Long memberId) {
+        return courseEvaluationRepository.findAllByMemberId(memberId);
+    }
     private void checkCourseEvaluated(Member member, Course course) {
         courseEvaluationRepository.findByMemberAndCourse(member, course)
                 .ifPresent(courseEvaluation -> {

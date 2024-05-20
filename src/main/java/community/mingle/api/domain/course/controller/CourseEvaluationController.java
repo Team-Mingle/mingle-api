@@ -21,8 +21,8 @@ public class CourseEvaluationController {
     @Operation(summary = "강의 평가 생성 API")
     @PostMapping("/create")
     public ResponseEntity<Void> createCourseEvaluation(
-            @RequestBody
-            CreateCourseEvaluationRequest request
+        @RequestBody
+        CreateCourseEvaluationRequest request
     ) {
         courseEvaluationFacade.create(request);
         return ResponseEntity.ok().build();
@@ -31,10 +31,17 @@ public class CourseEvaluationController {
     @Operation(summary = "강의 평가 리스트 API")
     @GetMapping("/{courseId}")
     public ResponseEntity<CourseEvaluationResponse> getCourseEvaluationList(
-            @PathVariable
-            Long courseId
+        @PathVariable
+        Long courseId
     ) {
         CourseEvaluationResponse response = courseEvaluationFacade.getCourseEvaluationList(courseId);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @Operation(summary = "내가 쓴 강의 평가 리스트 API")
+    @GetMapping("/my")
+    public ResponseEntity<CourseEvaluationResponse> getMyCourseEvaluationList() {
+        CourseEvaluationResponse response = courseEvaluationFacade.getMyCourseEvaluationList();
         return ResponseEntity.ok().body(response);
     }
 }

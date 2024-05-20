@@ -74,7 +74,11 @@ public class TimetableService {
                 .course(course)
                 .rgb(rgb.getStringRgb())
                 .build();
-        return courseTimetableRepository.save(courseTimetable);
+
+        courseTimetableRepository.save(courseTimetable);
+        course.updateCourseTimetable(courseTimetable);
+
+        return courseTimetable;
     }
 
     @Transactional
@@ -93,14 +97,16 @@ public class TimetableService {
 
         List<Timetable> timetableList = timetableRepository.findAllByMemberAndSemesterOrderByOrderNumberAsc(member, semester);
 
-        if (isPinned) {
-            timetableList.get(0).convertPinStatus();
-        }
+        if (!timetableList.isEmpty()) {
+            if (isPinned) {
+                timetableList.get(0).convertPinStatus();
+            }
 
-        IntStream.range(0, timetableList.size())
-                .forEach(indexNumber -> {
-                    timetableList.get(indexNumber).updateOrderNumber(indexNumber + 1);
-                });
+            IntStream.range(0, timetableList.size())
+                    .forEach(indexNumber -> {
+                        timetableList.get(indexNumber).updateOrderNumber(indexNumber + 1);
+                    });
+        }
 
     }
 

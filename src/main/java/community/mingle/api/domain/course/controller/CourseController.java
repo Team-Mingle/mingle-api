@@ -44,7 +44,4 @@ public class CourseController {
         return ResponseEntity.ok(courseFacade.updateCourse(request, courseId));
     }
 
-
-
-
 }

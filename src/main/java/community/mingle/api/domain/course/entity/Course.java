@@ -88,4 +88,14 @@ public class Course extends AuditLoggingBase {
     @Cascade(CascadeType.ALL)
     List<CourseTimetable> courseTimetableList = new ArrayList<>();
 
+    public void setCourseTimeList(List<CourseTime> courseTimeList) {
+        this.courseTimeList = courseTimeList;
+    }
+
+    public void updateCourseTimetable(CourseTimetable courseTimetable) {
+        if (courseTimetableList == null) {
+            this.courseTimetableList = List.of(courseTimetable);
+        } else this.courseTimetableList.add(courseTimetable);
+    }
+
 }

@@ -59,6 +59,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+
+    implementation 'io.sentry:sentry-spring-boot-starter-jakarta:7.9.0'
 }
 
 tasks.named('test') {
@@ -66,6 +68,8 @@ tasks.named('test') {
 }
 
 def generated = 'src/main/generated'
+
+
 
 clean{
     delete file(generated)
