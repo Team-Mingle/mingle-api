@@ -11,8 +11,9 @@ logging:
     org.springframework.security: DEBUG
     org.hibernate.SQL: debug
     org.hibernate.type: trace
-    root: info
-
+#    root: info
+    org.springframework.mail: DEBUG
+    com.sun.mail: DEBUG
 ---
 spring:
   config:
