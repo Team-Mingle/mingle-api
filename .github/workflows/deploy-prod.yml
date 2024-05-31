@@ -33,6 +33,8 @@ jobs:
                   value: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                 - name: SPRING_PROFILES_ACTIVE
                   value: prod
+                - name : SENTRY_DSN
+                  value: ${{ secrets.SENTRY_DSN }}
             context:
               git:
                 url: git@github.com:${{ github.repository }}.git

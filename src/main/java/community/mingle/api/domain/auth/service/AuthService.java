@@ -93,7 +93,7 @@ public class AuthService {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "utf-8");
 
-            messageHelper.setFrom("admin@mingle.community");
+            messageHelper.setFrom("no-reply@mingle.community");
             messageHelper.setTo(emailTo);
             messageHelper.setSubject(VERIFICATION_CODE_EMAIL_SUBJECT);
             messageHelper.setText(html, true);

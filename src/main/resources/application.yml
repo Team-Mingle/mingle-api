@@ -11,13 +11,14 @@ logging:
     org.springframework.security: DEBUG
     org.hibernate.SQL: debug
     org.hibernate.type: trace
-    root: info
-
+#    root: info
+    org.springframework.mail: DEBUG
+    com.sun.mail: DEBUG
 ---
 spring:
   config:
     activate:
-      on-profile: prod
+      on-profile: prod, dev
 sentry:
   dsn: "${SENTRY_DSN}"
   traces-sample-rate: 1.0
