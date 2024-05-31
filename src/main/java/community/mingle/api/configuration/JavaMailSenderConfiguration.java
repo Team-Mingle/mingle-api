@@ -26,7 +26,7 @@ public class JavaMailSenderConfiguration {
         properties.put("mail.debug", true); // 디버그 모드 활성화
 
         javaMailSender.setHost("smtp.gmail.com");
-        javaMailSender.setPort(587);
+        javaMailSender.setPort(25);
         javaMailSender.setUsername("no-reply@mingle.community");
         String password = secretsManagerService.getMailSenderPassword();
         javaMailSender.setPassword(password);
