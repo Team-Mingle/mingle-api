@@ -1,11 +1,26 @@
 package community.mingle.api.domain.auth.facade;
 
-import community.mingle.api.domain.auth.controller.request.*;
-import community.mingle.api.domain.auth.controller.response.*;
+import community.mingle.api.domain.auth.controller.request.EmailRequest;
+import community.mingle.api.domain.auth.controller.request.LoginMemberRequest;
+import community.mingle.api.domain.auth.controller.request.SignUpRequest;
+import community.mingle.api.domain.auth.controller.request.TempSignUpRequest;
+import community.mingle.api.domain.auth.controller.request.UpdatePasswordRequest;
+import community.mingle.api.domain.auth.controller.request.VerificationCodeRequest;
+import community.mingle.api.domain.auth.controller.response.LoginMemberResponse;
+import community.mingle.api.domain.auth.controller.response.PolicyResponse;
+import community.mingle.api.domain.auth.controller.response.SendVerificationCodeResponse;
+import community.mingle.api.domain.auth.controller.response.SignUpResponse;
+import community.mingle.api.domain.auth.controller.response.UpdatePasswordResponse;
+import community.mingle.api.domain.auth.controller.response.VerifyCodeResponse;
+import community.mingle.api.domain.auth.controller.response.VerifyEmailResponse;
+import community.mingle.api.domain.auth.controller.response.VerifyLoggedInMemberResponse;
 import community.mingle.api.domain.auth.entity.Policy;
 import community.mingle.api.domain.auth.service.AuthService;
 import community.mingle.api.domain.auth.service.TokenService;
+import community.mingle.api.domain.backoffice.controller.response.TempSignUpApplyListResponse;
+import community.mingle.api.domain.backoffice.controller.response.TempSignUpApplyResponse;
 import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.domain.member.entity.MemberAuthPhoto;
 import community.mingle.api.domain.member.service.MemberAuthPhotoService;
 import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.dto.security.CreatedTokenDto;
@@ -22,7 +37,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static community.mingle.api.domain.auth.service.AuthService.FRESHMAN_EMAIL_DOMAIN;
-import static community.mingle.api.global.exception.ErrorCode.*;
+import static community.mingle.api.global.exception.ErrorCode.FAILED_TO_LOGIN;
+import static community.mingle.api.global.exception.ErrorCode.MEMBER_ALREADY_EXIST;
+import static community.mingle.api.global.exception.ErrorCode.MODIFY_NOT_AUTHORIZED;
+import static community.mingle.api.global.exception.ErrorCode.NICKNAME_DUPLICATED;
 
 @Service
 @RequiredArgsConstructor
@@ -188,5 +206,19 @@ public class AuthFacade {
                 member.getUniversity().getName(),
                 member.getUniversity().getCountry().getName()
         );
+    }
+
+    public TempSignUpApplyListResponse getTempSignUpApplyList() {
+        List<MemberAuthPhoto> photoList = memberAuthPhotoService.getUnauthenticatedPhotoList();
+        List<TempSignUpApplyResponse> responses = photoList.stream().map(photo ->
+                    new TempSignUpApplyResponse(
+                        photo.getImageUrl(),
+                        photo.getMember().getNickname(),
+                        photo.getMember().getStudentId(),
+                        photo.getMember().getUniversity().getName(),
+                        photo.getMember().getRawEmail()
+                    ))
+            .toList();
+        return new TempSignUpApplyListResponse(responses);
     }
 }
