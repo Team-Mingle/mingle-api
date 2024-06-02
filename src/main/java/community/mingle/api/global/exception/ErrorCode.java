@@ -17,6 +17,7 @@ public enum ErrorCode {
 
     MEMBER_ALREADY_EXIST(409, "MEMBER_ALREADY_EXIST", "이미 가입된 회원입니다."), //1.8
     NICKNAME_DUPLICATED(409, "NICKNAME_DUPLICATED", "이미 존재하는 닉네임입니다."), //1.8
+    EMAIL_DOMAIN_MISMATCH(400, "EMAIL_DOMAIN_MISMATCH", "학교의 공식 이메일 도메인이 아닙니다."),
 
     UNIVERSITY_NOT_FOUND(404, "UNIVERSITY_NOT_FOUND", "존재하지 않는 대학입니다."), //1,8
     FAILED_TO_LOGIN(404, "FAILED_TO_LOGIN", "일치하는 이메일이나 비밀번호를 찾지 못했습니다.\n" +

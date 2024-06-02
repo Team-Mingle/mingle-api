@@ -119,5 +119,11 @@ public class MemberService {
         }
     }
 
+    @Transactional
+    public void updateEmail(Member member, String email) {
+        String encodedEmail = AuthHasher.hashString(email);
+        member.updateEmail(encodedEmail);
+    }
+
 
 }
