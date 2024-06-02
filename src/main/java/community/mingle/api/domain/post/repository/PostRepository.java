@@ -17,6 +17,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     public Page<Post> findAllByBoardTypeAndCategoryTypeAndMemberUniversityId(BoardType boardType, CategoryType categoryType, PageRequest pageRequest, int memberId);
 
+    public Page<Post> findAllByBoardType(BoardType boardType, PageRequest pageRequest);
+
     Page<Post> findAllByBoardTypeAndMember(BoardType boardType, Member member, PageRequest pageRequest);
 
     @Query("select distinct p from Comment c join c.member m join c.post p where m.id = :memberId and p.boardType = :boardType")

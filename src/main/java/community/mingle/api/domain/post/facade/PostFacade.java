@@ -1,10 +1,14 @@
 package community.mingle.api.domain.post.facade;
 
+import community.mingle.api.domain.auth.controller.response.UniversityResponse;
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.comment.service.CommentService;
 import community.mingle.api.domain.like.entity.PostLike;
+import community.mingle.api.domain.member.entity.Country;
 import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.domain.member.service.CountryService;
 import community.mingle.api.domain.member.service.MemberService;
+import community.mingle.api.domain.member.service.UniversityService;
 import community.mingle.api.domain.notification.event.PopularPostNotificationEvent;
 import community.mingle.api.domain.notification.event.RedirectionByContentIdManualNotificationEvent;
 import community.mingle.api.domain.post.controller.request.CreatePostRequest;
@@ -51,6 +55,8 @@ public class PostFacade {
     private final ApplicationEventPublisher applicationEventPublisher;
     private final MemberService memberService;
     private final AmplitudeService amplitudeService;
+    private final CountryService countryService;
+    private final UniversityService universityService;
     private static final int POPULAR_NOTIFICATION_LIKE_SIZE = 5;
 
 
@@ -159,7 +165,7 @@ public class PostFacade {
     public PostListResponse getAllPostList(BoardType boardType, PageRequest pageRequest) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
-        List<Post> postList = postService.pagePostsByBoardType(boardType, pageRequest, member.getUniversity().getId());
+        List<Post> postList = postService.pagePostsByBoardTypeAndUniversityId(boardType, pageRequest, member.getUniversity().getId());
 
         List<PostPreviewDto> postPreviewDtoList = postList.stream()
                 .map(post -> mapToPostPreviewResponse(post, memberId))
@@ -169,6 +175,43 @@ public class PostFacade {
         return new PostListResponse(postPreviewDtoList);
     }
 
+    public PostListResponse getTotalPostListByCountry(PageRequest pageRequest, String countryId) {
+        List<Post> postList;
+        if (countryId.equals("ALL")) {
+            postList = postService.pagePostsByBoardType(BoardType.TOTAL, pageRequest);
+        } else {
+            Country country = countryService.getById(countryId);
+            UniversityResponse universityByCountry = universityService.getUniversityList(country.getName()).get(0);
+            postList = postService.pagePostsByBoardTypeAndUniversityId(BoardType.TOTAL, pageRequest, universityByCountry.universityId());
+        }
+
+        List<PostPreviewDto> postPreviewDtoList = postList.stream()
+                .map(post -> {
+                    PostPreviewDto dto = mapToPostPreviewResponse(post, 1L);
+                    dto.addPrefixOnTitle(post.getMember().getUniversity().getCountry().getName());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+        return new PostListResponse(postPreviewDtoList);
+    }
+
+    public PostListResponse getUniversityPostListByUniversityId(PageRequest pageRequest, int universityId) {
+        List<Post> postList;
+        if (universityId == 0) {
+            postList = postService.pagePostsByBoardType(BoardType.UNIV, pageRequest);
+        } else {
+            postList = postService.pagePostsByBoardTypeAndUniversityId(BoardType.UNIV, pageRequest, universityId);
+        }
+
+        List<PostPreviewDto> postPreviewDtoList = postList.stream()
+                .map(post -> {
+                    PostPreviewDto dto = mapToPostPreviewResponse(post, 1L);
+                    dto.addPrefixOnTitle(post.getMember().getUniversity().getName());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+        return new PostListResponse(postPreviewDtoList);
+    }
 
     public PostListResponse getPostList(BoardType boardType, CategoryType categoryType, PageRequest pageRequest) {
         Long memberId = tokenService.getTokenInfo().getMemberId();

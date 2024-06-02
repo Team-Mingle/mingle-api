@@ -25,4 +25,8 @@ public class PostPreviewDto {
     private int viewCount;
     private boolean isFileAttached;
     private boolean isBlinded;
+
+    public void addPrefixOnTitle(String prefixName) {
+        this.title = "[" + prefixName + "] " + title;
+    }
 }
