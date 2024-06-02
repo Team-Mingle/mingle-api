@@ -79,6 +79,11 @@ public class MemberService {
 
         University university = universityRepository.findById(universityId).orElseThrow(() -> new CustomException(UNIVERSITY_NOT_FOUND));
 
+        MemberRole role;
+        if (university.getEmailDomain() != null) {
+            role = MemberRole.FRESHMAN;
+        } else role = MemberRole.USER;
+
         Member member = Member.builder()
                 .university(university)
                 .nickname(nickname)
@@ -86,7 +91,7 @@ public class MemberService {
                 .password(encodedPassword)
                 .agreedAt(LocalDateTime.now())
                 .status(MemberStatus.WAITING)
-                .role(MemberRole.USER)
+                .role(role)
                 .fcmToken(fcmToken)
                 .studentId(studentId)
                 .rawEmail(email)
