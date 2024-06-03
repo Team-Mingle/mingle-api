@@ -112,8 +112,6 @@ public class Member extends AuditLoggingBase {
 
     public void authenticateTempMember() {
         this.status = MemberStatus.ACTIVE;
-        this.rawEmail = null;
-        this.studentId = null;
     }
 
     public void withDraw() {

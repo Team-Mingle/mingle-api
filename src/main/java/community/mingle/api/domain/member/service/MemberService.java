@@ -74,6 +74,10 @@ public class MemberService {
 
     @Transactional
     public Member tempCreate(int universityId, String nickname, String email, String password, String fcmToken, String studentId) {
+        boolean isNewMember = memberRepository.findAllByUniversityIdAndStudentId(universityId, studentId).isEmpty();
+        if (!isNewMember) {
+            throw new CustomException(MEMBER_ALREADY_EXIST);
+        }
         String hashedEmail = AuthHasher.hashString(email);
         String encodedPassword = AuthHasher.hashString(password);
 
