@@ -1,6 +1,7 @@
 package community.mingle.api.domain.backoffice.controller;
 
 import community.mingle.api.domain.auth.facade.AuthFacade;
+import community.mingle.api.domain.backoffice.controller.request.RejectTempSignUpRequest;
 import community.mingle.api.domain.backoffice.controller.response.TempSignUpApplyListResponse;
 import community.mingle.api.domain.post.controller.response.PostListResponse;
 import community.mingle.api.domain.post.facade.PostFacade;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,8 +55,11 @@ public class BackofficeController {
 
     @Operation(summary = "임시 회원가입 인증 불허가 api")
     @PostMapping("/reject-temp-sign-up")
-    public ResponseEntity<Void> RejectTempSignUp(@RequestParam Long memberId) {
-        authFacade.rejectTempSignUp(memberId);
+    public ResponseEntity<Void> RejectTempSignUp(
+        @RequestParam Long memberId,
+        @RequestBody RejectTempSignUpRequest request
+    ) {
+        authFacade.rejectTempSignUp(memberId, request.rejectReason());
         return ResponseEntity.ok().build();
     }
 
