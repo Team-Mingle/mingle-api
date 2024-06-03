@@ -108,7 +108,7 @@ public class AuthService {
 
     @Async
     //Transactional 안됨
-    public void sendTempSignUpEmail(String emailTo, TempSignUpStatusType emailType) {
+    public void sendTempSignUpEmail(String emailTo, TempSignUpStatusType emailType, String reason) {
         Context context = new Context();
         String html = null;
         String subject = null;
@@ -123,6 +123,7 @@ public class AuthService {
                 break;
             case REJECTED:
                 subject = TEMP_SIGNUP_REJECTED_EMAIL_SUBJECT;
+                context.setVariable("reason", reason);
                 html = springTemplateEngine.process("tempSignUpRejected", context);
                 break;
             case ADMIN:

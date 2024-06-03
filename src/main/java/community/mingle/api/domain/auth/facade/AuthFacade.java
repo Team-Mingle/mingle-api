@@ -101,8 +101,8 @@ public class AuthFacade {
         imgUrls.forEach(imgUrl ->
                         memberAuthPhotoService.create(member.getId(), imgUrl)
                 );
-        authService.sendTempSignUpEmail(request.email(), TempSignUpStatusType.PROCESSING);
-        authService.sendTempSignUpEmail("team.mingle.aos@gmail.com", TempSignUpStatusType.ADMIN);
+        authService.sendTempSignUpEmail(request.email(), TempSignUpStatusType.PROCESSING, null);
+        authService.sendTempSignUpEmail("team.mingle.aos@gmail.com", TempSignUpStatusType.ADMIN, null);
 
         return new SignUpResponse(member.getId());
     }
@@ -179,19 +179,19 @@ public class AuthFacade {
         }
 
         Member member = memberService.getById(memberId);
-        authService.sendTempSignUpEmail(member.getRawEmail(), TempSignUpStatusType.APPROVED);
+        authService.sendTempSignUpEmail(member.getRawEmail(), TempSignUpStatusType.APPROVED, null);
         authService.sendTempSignUpNotification(member.getFcmToken(), TempSignUpStatusType.APPROVED);
         member.authenticateTempMember();
     }
 
     @Transactional
-    public void rejectTempSignUp(Long memberId) {
+    public void rejectTempSignUp(Long memberId, String reason) {
         if (!tokenService.getTokenInfo().getMemberRole().equals(MemberRole.ADMIN)) {
             throw new CustomException(MODIFY_NOT_AUTHORIZED);
         }
         Member member = memberService.getById(memberId);
         String memberFcmToken = member.getFcmToken();
-        authService.sendTempSignUpEmail(member.getRawEmail(), TempSignUpStatusType.REJECTED);
+        authService.sendTempSignUpEmail(member.getRawEmail(), TempSignUpStatusType.REJECTED, reason);
         authService.sendTempSignUpNotification(memberFcmToken, TempSignUpStatusType.REJECTED);
         member.withDraw();
     }
