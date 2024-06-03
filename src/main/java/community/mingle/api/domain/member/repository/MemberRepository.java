@@ -23,5 +23,7 @@ public interface MemberRepository extends JpaRepository <Member, Long> {
 
     List<Member> findAllByUniversity(University university);
 
+    List<Member> findAllByUniversityIdAndStudentId(int universityId, String studentId);
+
 
 }

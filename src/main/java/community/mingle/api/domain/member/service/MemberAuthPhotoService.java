@@ -4,9 +4,12 @@ import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.entity.MemberAuthPhoto;
 import community.mingle.api.domain.member.repository.MemberAuthPhotoRepository;
 import community.mingle.api.domain.member.repository.MemberRepository;
+import community.mingle.api.enums.MemberStatus;
 import community.mingle.api.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static community.mingle.api.global.exception.ErrorCode.MEMBER_NOT_FOUND;
 
@@ -25,6 +28,10 @@ public class MemberAuthPhotoService {
                 .imageUrl(imgUrl)
                 .build();
         return memberAuthPhotoRepository.save(memberAuthPhoto);
+    }
+
+    public List<MemberAuthPhoto> getUnauthenticatedPhotoList() {
+        return memberAuthPhotoRepository.findAllByMemberStatus(MemberStatus.WAITING);
     }
     
 }

@@ -102,14 +102,16 @@ public class Member extends AuditLoggingBase {
         this.password = password;
     }
 
+    public void updateEmail(String email) {
+        this.email = email;
+    }
+
     public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
 
     public void authenticateTempMember() {
         this.status = MemberStatus.ACTIVE;
-        this.rawEmail = null;
-        this.studentId = null;
     }
 
     public void withDraw() {

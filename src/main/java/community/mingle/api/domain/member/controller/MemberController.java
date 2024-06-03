@@ -3,6 +3,7 @@ package community.mingle.api.domain.member.controller;
 import community.mingle.api.domain.item.controller.response.ItemListResponse;
 import community.mingle.api.domain.item.facade.ItemFacade;
 import community.mingle.api.domain.member.controller.request.ChangeNicknameRequest;
+import community.mingle.api.domain.member.controller.request.FreshmanSignupRequest;
 import community.mingle.api.domain.member.controller.request.WithdrawMemberRequest;
 import community.mingle.api.domain.member.facade.MemberFacade;
 import community.mingle.api.domain.post.controller.response.PostListResponse;
@@ -172,4 +173,12 @@ public class MemberController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Operation(summary = "1.15 신입생 대상 재학생 인증 회원가입 api")
+    @PatchMapping(path = "/freshman-sign-up")
+    public ResponseEntity<Void> freshmanSignUp(
+            @Valid @RequestBody FreshmanSignupRequest request
+    ) {
+        memberFacade.freshmanSignup(request);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

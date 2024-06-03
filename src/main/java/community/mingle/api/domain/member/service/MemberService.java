@@ -74,10 +74,19 @@ public class MemberService {
 
     @Transactional
     public Member tempCreate(int universityId, String nickname, String email, String password, String fcmToken, String studentId) {
+        boolean isNewMember = memberRepository.findAllByUniversityIdAndStudentId(universityId, studentId).isEmpty();
+        if (!isNewMember) {
+            throw new CustomException(MEMBER_ALREADY_EXIST);
+        }
         String hashedEmail = AuthHasher.hashString(email);
         String encodedPassword = AuthHasher.hashString(password);
 
         University university = universityRepository.findById(universityId).orElseThrow(() -> new CustomException(UNIVERSITY_NOT_FOUND));
+
+        MemberRole role;
+        if (university.getEmailDomain() != null) {
+            role = MemberRole.FRESHMAN;
+        } else role = MemberRole.USER;
 
         Member member = Member.builder()
                 .university(university)
@@ -86,7 +95,7 @@ public class MemberService {
                 .password(encodedPassword)
                 .agreedAt(LocalDateTime.now())
                 .status(MemberStatus.WAITING)
-                .role(MemberRole.USER)
+                .role(role)
                 .fcmToken(fcmToken)
                 .studentId(studentId)
                 .rawEmail(email)
@@ -117,6 +126,12 @@ public class MemberService {
         if (!tokenMember.getEmail().equals(member.getEmail())) {
             throw new CustomException(FAILED_TO_LOGIN);
         }
+    }
+
+    @Transactional
+    public void updateEmail(Member member, String email) {
+        String encodedEmail = AuthHasher.hashString(email);
+        member.updateEmail(encodedEmail);
     }
 
 

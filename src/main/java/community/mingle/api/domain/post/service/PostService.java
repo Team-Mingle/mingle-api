@@ -19,6 +19,7 @@ import community.mingle.api.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,7 +102,7 @@ public class PostService {
 
 
     //TODO 광장, 잔디밭 구분해서 잔디밭일 경우 학교별로 필터링하는 로직 팩토리 메소드로 구현하기
-    public List<Post> pagePostsByBoardType(BoardType boardType, PageRequest pageRequest, int universityId) {
+    public List<Post> pagePostsByBoardTypeAndUniversityId(BoardType boardType, PageRequest pageRequest, int universityId) {
         Page<Post> pagePosts;
         switch (boardType) {
             case TOTAL -> {
@@ -129,6 +130,11 @@ public class PostService {
             default -> throw new CustomException(INTERNAL_SERVER_ERROR);
         }
 
+        return pagePosts.toList();
+    }
+
+    public List<Post> pagePostsByBoardType(BoardType boardType, PageRequest pageRequest) {
+        Page<Post> pagePosts = postRepository.findAllByBoardType(boardType, pageRequest);
         return pagePosts.toList();
     }
 

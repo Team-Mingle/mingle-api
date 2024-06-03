@@ -67,7 +67,7 @@ public class SecurityConfiguration {
                             "/auth/**",
                             "/country",
                             "/university/**",
-                            "/swagger-ui/**",
+                            "aldrmfghkdlxld22/**",
                             "/v3/api-docs/**"
                     ).permitAll()
                     .requestMatchers("/**")
