@@ -212,6 +212,7 @@ public class AuthFacade {
         List<MemberAuthPhoto> photoList = memberAuthPhotoService.getUnauthenticatedPhotoList();
         List<TempSignUpApplyResponse> responses = photoList.stream().map(photo ->
                     new TempSignUpApplyResponse(
+                        photo.getMember().getId(),
                         photo.getImageUrl(),
                         photo.getMember().getNickname(),
                         photo.getMember().getStudentId(),
