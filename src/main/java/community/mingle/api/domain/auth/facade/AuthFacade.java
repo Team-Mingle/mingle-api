@@ -17,6 +17,7 @@ import community.mingle.api.domain.auth.controller.response.VerifyLoggedInMember
 import community.mingle.api.domain.auth.entity.Policy;
 import community.mingle.api.domain.auth.service.AuthService;
 import community.mingle.api.domain.auth.service.TokenService;
+import community.mingle.api.domain.backoffice.controller.response.FreshmanCouponApplyListResponse;
 import community.mingle.api.domain.backoffice.controller.response.TempSignUpApplyListResponse;
 import community.mingle.api.domain.backoffice.controller.response.TempSignUpApplyResponse;
 import community.mingle.api.domain.member.entity.Member;
@@ -181,7 +182,7 @@ public class AuthFacade {
         }
 
         Member member = memberService.getById(memberId);
-        memberAuthPhotoService.getById(memberId).accepted();
+        memberAuthPhotoService.getById(memberId, MemberAuthPhotoType.SIGNUP).accepted();
         authService.sendTempSignUpEmail(member.getRawEmail(), TempSignUpStatusType.APPROVED, null);
         authService.sendTempSignUpNotification(member.getFcmToken(), TempSignUpStatusType.APPROVED);
         member.authenticateTempMember();
@@ -192,7 +193,7 @@ public class AuthFacade {
         if (!tokenService.getTokenInfo().getMemberRole().equals(MemberRole.ADMIN)) {
             throw new CustomException(MODIFY_NOT_AUTHORIZED);
         }
-        memberAuthPhotoService.getById(memberId).rejected();
+        memberAuthPhotoService.getById(memberId, MemberAuthPhotoType.SIGNUP).rejected();
         Member member = memberService.getById(memberId);
         String memberFcmToken = member.getFcmToken();
         authService.sendTempSignUpEmail(member.getRawEmail(), TempSignUpStatusType.REJECTED, reason);

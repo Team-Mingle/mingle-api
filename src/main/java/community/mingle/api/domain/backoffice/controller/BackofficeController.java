@@ -1,8 +1,11 @@
 package community.mingle.api.domain.backoffice.controller;
 
 import community.mingle.api.domain.auth.facade.AuthFacade;
+import community.mingle.api.domain.backoffice.controller.request.RejectFreshmanCoupon;
 import community.mingle.api.domain.backoffice.controller.request.RejectTempSignUpRequest;
+import community.mingle.api.domain.backoffice.controller.response.FreshmanCouponApplyListResponse;
 import community.mingle.api.domain.backoffice.controller.response.TempSignUpApplyListResponse;
+import community.mingle.api.domain.course.facade.CouponFacade;
 import community.mingle.api.domain.post.controller.response.PostListResponse;
 import community.mingle.api.domain.post.facade.PostFacade;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -43,11 +47,12 @@ public class BackofficeController {
 
     private final AuthFacade authFacade;
     private final PostFacade postFacade;
+    private final CouponFacade couponFacade;
 
     @Operation(summary = "임시 회원가입 인증 api")
     @PostMapping("/authenticate-temp-sign-up")
     public ResponseEntity<Void> authenticateTempSignUp(
-            @RequestParam Long memberId
+        @RequestParam Long memberId
     ) {
         authFacade.authenticateTempSignUp(memberId);
         return ResponseEntity.ok().build();
@@ -57,7 +62,7 @@ public class BackofficeController {
     @PostMapping("/reject-temp-sign-up")
     public ResponseEntity<Void> RejectTempSignUp(
         @RequestParam Long memberId,
-        @RequestBody RejectTempSignUpRequest request
+        @RequestBody @Valid RejectTempSignUpRequest request
     ) {
         authFacade.rejectTempSignUp(memberId, request.rejectReason());
         return ResponseEntity.ok().build();
@@ -68,6 +73,32 @@ public class BackofficeController {
     public ResponseEntity<TempSignUpApplyListResponse> tempSignUpApplyList() {
         TempSignUpApplyListResponse response = authFacade.getTempSignUpApplyList();
         return ResponseEntity.ok().body(response);
+    }
+
+    @Operation(summary = "새내기 강의평가 이용권 요청 리스트 api")
+    @GetMapping("/freshman-coupon-apply-list")
+    public ResponseEntity<FreshmanCouponApplyListResponse> freshmanCouponApplyList() {
+        FreshmanCouponApplyListResponse response = couponFacade.getFreshmanCouponApplyList();
+        return ResponseEntity.ok().body(response);
+    }
+
+    @Operation(summary = "새내기 강의평가 이용권 요청 허가 api")
+    @PostMapping("/authenticate-freshman-coupon")
+    public ResponseEntity<Void> authenticateFreshmanCoupon(
+        @RequestParam Long memberId
+    ) {
+        couponFacade.authenticateFreshmanCoupon(memberId);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "새내기 강의평가 이용권 요청 불허가 api")
+    @PostMapping("/reject-freshman-coupon")
+    public ResponseEntity<Void> rejectFreshmanCoupon(
+        @RequestParam Long memberId,
+        @RequestBody @Valid RejectFreshmanCoupon reason
+    ) {
+        couponFacade.rejectFreshmanCoupon(memberId, reason.rejectReason());
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "국가별 광장 게시물 리스트 api")

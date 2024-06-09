@@ -45,8 +45,12 @@ public class MemberAuthPhotoService {
 
     }
 
-    public MemberAuthPhoto getById(Long memberId) {
-        return memberAuthPhotoRepository.findById(memberId)
+    public List<MemberAuthPhoto> getUnauthenticatedFreshmanCouponRequestPhotoList() {
+        return memberAuthPhotoRepository.findAllByAuthStatusAndAuthType(MemberAuthPhotoStatus.WAITING, MemberAuthPhotoType.FRESHMAN_COUPON);
+    }
+
+    public MemberAuthPhoto getById(Long memberId, MemberAuthPhotoType type) {
+        return memberAuthPhotoRepository.findByMemberIdAndAuthType(memberId, type)
                 .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
     }
     
