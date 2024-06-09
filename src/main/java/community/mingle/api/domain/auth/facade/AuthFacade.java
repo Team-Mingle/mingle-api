@@ -104,6 +104,7 @@ public class AuthFacade {
                 );
         authService.sendTempSignUpEmail(request.email(), TempSignUpStatusType.PROCESSING, null);
         authService.sendTempSignUpEmail("team.mingle.aos@gmail.com", TempSignUpStatusType.ADMIN, null);
+        authService.sendTempSignUpEmail("euler271@naver.com", TempSignUpStatusType.ADMIN, null);
 
         return new SignUpResponse(member.getId());
     }
