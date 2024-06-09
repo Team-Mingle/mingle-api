@@ -1,6 +1,7 @@
 package community.mingle.api.domain.course.facade;
 
 import community.mingle.api.domain.auth.service.TokenService;
+import community.mingle.api.domain.course.controller.request.CreateCouponForFreshmanRequest;
 import community.mingle.api.domain.course.controller.request.CreateCouponRequest;
 import community.mingle.api.domain.course.controller.response.CouponProductListResponse;
 import community.mingle.api.domain.course.controller.response.CouponProductResponse;
@@ -10,8 +11,14 @@ import community.mingle.api.domain.course.entity.CouponProduct;
 import community.mingle.api.domain.course.service.CouponService;
 import community.mingle.api.domain.course.service.CouponProductService;
 import community.mingle.api.domain.member.entity.Member;
+import community.mingle.api.domain.member.entity.MemberAuthPhoto;
+import community.mingle.api.domain.member.service.MemberAuthPhotoService;
 import community.mingle.api.domain.member.service.MemberService;
+import community.mingle.api.enums.MemberAuthPhotoType;
 import community.mingle.api.global.amplitude.AmplitudeService;
+import community.mingle.api.global.exception.CustomException;
+import community.mingle.api.global.exception.ErrorCode;
+import community.mingle.api.global.s3.S3Service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +36,8 @@ public class CouponFacade {
     private final MemberService memberService;
     private final AmplitudeService amplitudeService;
     private final CouponProductService couponProductService;
+    private final S3Service s3Service;
+    private final MemberAuthPhotoService memberAuthPhotoService;
 
     @Transactional
     public void create(CreateCouponRequest request) {
@@ -64,4 +73,16 @@ public class CouponFacade {
         return new CouponProductListResponse(couponProductResponse);
     }
 
+    @Transactional
+    public void createCouponRequestForFreshman(CreateCouponForFreshmanRequest request) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        List<MemberAuthPhoto> acceptedRequest = memberAuthPhotoService.getAuthenticatedFreshmanCouponRequestPhotoList(memberId);
+        if (!acceptedRequest.isEmpty()) {
+            throw new CustomException(ErrorCode.FRESHMAN_COUPON_ALREADY_GIVEN);
+        }
+        List<String> imgUrls = s3Service.uploadFile(request.multipartFile(), "temp_auth");
+        imgUrls.forEach(imgUrl ->
+                memberAuthPhotoService.create(memberId, imgUrl, MemberAuthPhotoType.FRESHMAN_COUPON)
+        );
+    }
 }

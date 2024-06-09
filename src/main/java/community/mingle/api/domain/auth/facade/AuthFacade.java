@@ -25,6 +25,7 @@ import community.mingle.api.domain.member.service.MemberAuthPhotoService;
 import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.dto.security.CreatedTokenDto;
 import community.mingle.api.dto.security.TokenDto;
+import community.mingle.api.enums.MemberAuthPhotoType;
 import community.mingle.api.enums.MemberRole;
 import community.mingle.api.enums.PolicyType;
 import community.mingle.api.enums.TempSignUpStatusType;
@@ -99,7 +100,7 @@ public class AuthFacade {
 
         List<String> imgUrls = s3Service.uploadFile(request.multipartFile(), "temp_auth");
         imgUrls.forEach(imgUrl ->
-                        memberAuthPhotoService.create(member.getId(), imgUrl)
+                        memberAuthPhotoService.create(member.getId(), imgUrl, MemberAuthPhotoType.SIGNUP)
                 );
         authService.sendTempSignUpEmail(request.email(), TempSignUpStatusType.PROCESSING, null);
         authService.sendTempSignUpEmail("team.mingle.aos@gmail.com", TempSignUpStatusType.ADMIN, null);
@@ -179,6 +180,7 @@ public class AuthFacade {
         }
 
         Member member = memberService.getById(memberId);
+        memberAuthPhotoService.getById(memberId).accepted();
         authService.sendTempSignUpEmail(member.getRawEmail(), TempSignUpStatusType.APPROVED, null);
         authService.sendTempSignUpNotification(member.getFcmToken(), TempSignUpStatusType.APPROVED);
         member.authenticateTempMember();
@@ -189,6 +191,7 @@ public class AuthFacade {
         if (!tokenService.getTokenInfo().getMemberRole().equals(MemberRole.ADMIN)) {
             throw new CustomException(MODIFY_NOT_AUTHORIZED);
         }
+        memberAuthPhotoService.getById(memberId).rejected();
         Member member = memberService.getById(memberId);
         String memberFcmToken = member.getFcmToken();
         authService.sendTempSignUpEmail(member.getRawEmail(), TempSignUpStatusType.REJECTED, reason);
@@ -209,7 +212,7 @@ public class AuthFacade {
     }
 
     public TempSignUpApplyListResponse getTempSignUpApplyList() {
-        List<MemberAuthPhoto> photoList = memberAuthPhotoService.getUnauthenticatedPhotoList();
+        List<MemberAuthPhoto> photoList = memberAuthPhotoService.getUnauthenticatedSignupRequestPhotoList();
         List<TempSignUpApplyResponse> responses = photoList.stream().map(photo ->
                     new TempSignUpApplyResponse(
                         photo.getMember().getId(),
