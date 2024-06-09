@@ -82,6 +82,20 @@ public class NotificationEventHandler {
         );
     }
 
+    @EventListener(FreshmanCouponNotificationEvent.class)
+    @Async
+    @Transactional
+    public void handleFreshmanCouponNotificationEvent(FreshmanCouponNotificationEvent event) {
+        fcmService.sendAllMessage(
+                event.getTitle(),
+                event.getBody(),
+                null,
+                null,
+                null,
+                List.of(event.getFcmToken())
+        );
+    }
+
 
     @EventListener(RedirectionByContentIdManualNotificationEvent.class)
     @Async

@@ -1,12 +1,15 @@
 package community.mingle.api.domain.course.controller;
 
+import community.mingle.api.domain.course.controller.request.CreateCouponForFreshmanRequest;
 import community.mingle.api.domain.course.controller.request.CreateCouponRequest;
 import community.mingle.api.domain.course.controller.response.CouponProductListResponse;
 import community.mingle.api.domain.course.controller.response.CouponResponse;
 import community.mingle.api.domain.course.facade.CouponFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,5 +44,16 @@ public class CouponController {
     public ResponseEntity<CouponResponse> getCoupon() {
         CouponResponse response = couponFacade.getCoupon();
         return ResponseEntity.ok().body(response);
+    }
+
+    @Operation(summary = "새내기 이용권 요청 API")
+    @PostMapping(path = "/create/freshman", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> couponRequestForFreshman(
+        @ModelAttribute
+        @Valid
+        CreateCouponForFreshmanRequest request
+    ) {
+        couponFacade.createCouponRequestForFreshman(request);
+        return ResponseEntity.ok().build();
     }
 }
