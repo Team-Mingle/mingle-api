@@ -58,9 +58,12 @@ public class ItemService {
     public String calculateNickname(Item item) {
         if (item.getAnonymous()) {
             return "익명";
-        } else if (item.getMember().getRole() == MemberRole.FRESHMAN) {
-            return "🐥" + item.getMember().getNickname();
-        } else {
+        }
+        // 프론트에서 병아리 이모티콘을 추가하고 있음
+//        else if (item.getMember().getRole() == MemberRole.FRESHMAN) {
+//            return "🐥" + item.getMember().getNickname();
+//        }
+        else {
             return item.getMember().getNickname();
         }
     }
