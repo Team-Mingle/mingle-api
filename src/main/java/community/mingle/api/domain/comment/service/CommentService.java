@@ -134,12 +134,10 @@ public class CommentService {
         } else if (isAnonymous && Objects.equals(commentWriterId, postAuthorId)) {
             displayName = "익명(글쓴이)";
         }
-        if (comment.getMember().getId().equals(memberId)) {
-            displayName = displayName + "(나)";
-        }
-        if (comment.getMember().getRole() == MemberRole.FRESHMAN) {
-            displayName = displayName + " 🐥";
-        }
+// 프론트에서 병아리 이모티콘을 추가하고 있음
+//        if (comment.getMember().getRole() == MemberRole.FRESHMAN) {
+//            displayName = displayName + " 🐥";
+//        }
         if (comment.getStatusType() == REPORTED || comment.getStatusType() == DELETED) {
             displayName = "(비공개됨)";
         }

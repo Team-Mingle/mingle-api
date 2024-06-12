@@ -229,10 +229,10 @@ public class PostService {
         } else {
             nickname = post.getMember().getNickname();
         }
-
-        if (post.getMember().getRole() == MemberRole.FRESHMAN) {
-            nickname = nickname + " 🐥";
-        }
+// 프론트에서 병아리 이모티콘을 추가하고 있음
+//        if (post.getMember().getRole() == MemberRole.FRESHMAN) {
+//            nickname = nickname + " 🐥";
+//        }
 
         return nickname;
     }

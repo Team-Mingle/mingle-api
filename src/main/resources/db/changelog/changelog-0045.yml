@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: add_columns_to_member_auth_photo_table
+      author: Hyeonwoo Jung
+      changes:
+        - addColumn:
+            tableName: member_auth_photo
+            columns:
+              - column:
+                  name: auth_type
+                  type: enum ('SIGNUP', 'FRESHMAN_COUPON')
+                  defaultValue: 'SIGNUP'
+                  constraints:
+                    nullable: false
+              - column:
+                  name: auth_status
+                  type: enum ('WAITING', 'ACCEPTED', 'REJECTED')
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValue: CURRENT_TIMESTAMP()
+                  constraints:
+                    nullable: false
