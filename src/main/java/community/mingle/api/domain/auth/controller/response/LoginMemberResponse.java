@@ -17,5 +17,6 @@ public class LoginMemberResponse {
     private String country;
     private String accessToken;
     private String refreshToken;
+    private Boolean isCourseEvaluationAllowed;
 }
 

@@ -132,6 +132,7 @@ public class AuthFacade {
         CreatedTokenDto tokens = tokenService.createTokens(memberId, memberRole, email);
 
         memberService.setFcmToken(member, loginMemberRequest.getFcmToken());
+        boolean isCourseEvaluationAllowed = courseEvaluationAllowed.contains(member.getUniversity().getId());
 
         return LoginMemberResponse.builder()
                 .memberId(member.getId())
@@ -141,6 +142,7 @@ public class AuthFacade {
                 .country(member.getUniversity().getCountry().getName())
                 .accessToken(tokens.getAccessToken())
                 .refreshToken(tokens.getRefreshToken())
+                .isCourseEvaluationAllowed(isCourseEvaluationAllowed)
                 .build();
     }
 
