@@ -7,6 +7,8 @@ public record CourseEvaluationDto(
         Long courseEvaluationId,
         Semester semester,
         String comment,
-        CourseEvaluationRating rating
+        CourseEvaluationRating rating,
+        Long courseId,
+        Boolean isMine
 ) {
 }

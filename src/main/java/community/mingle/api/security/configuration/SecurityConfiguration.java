@@ -17,6 +17,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -59,32 +60,30 @@ public class SecurityConfiguration {
     //TODO hasRole로 역할에 따라 url 분리
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http
+        DefaultSecurityFilterChain build = http
                 .csrf(CsrfConfigurer::disable)
                 .cors(CorsConfigurer::disable)
                 .authorizeHttpRequests(it -> {
                     it.requestMatchers(
-                            "/auth/**",
-                            "/country",
-                            "/university/**",
-                            "aldrmfghkdlxld22/**",
-                            "/v3/api-docs/**"
-                    ).permitAll()
-                    .requestMatchers("/**")
+                                    "/auth/**",
+                                    "/country",
+                                    "/university/**",
+                                    "aldrmfghkdlxld22/**",
+                                    "/v3/api-docs/**"
+                            ).permitAll()
+                            .requestMatchers("/**")
                             .authenticated();
                 })
-                .exceptionHandling(it-> {
-                        it.authenticationEntryPoint(authenticationEntryPoint());
-                        it.accessDeniedHandler(accessDeniedHandler());
+                .exceptionHandling(it -> {
+                    it.authenticationEntryPoint(authenticationEntryPoint());
+                    it.accessDeniedHandler(accessDeniedHandler());
                 })
                 .sessionManagement(it -> {
                     it.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
+        return build;
 
     }
-
-
-
 }

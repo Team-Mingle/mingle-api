@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static community.mingle.api.global.exception.ErrorCode.COURSE_FORBIDDEN;
 
@@ -64,7 +65,9 @@ public class CourseEvaluationFacade {
                             courseEvaluation.getId(),
                             courseEvaluation.getSemester(),
                             courseEvaluation.getComment(),
-                            courseEvaluation.getRating()
+                            courseEvaluation.getRating(),
+                            courseId,
+                            Objects.equals(courseEvaluation.getMember().getId(), memberId)
                     );
                 }).toList();
 
@@ -82,7 +85,9 @@ public class CourseEvaluationFacade {
                             courseEvaluation.getId(),
                             courseEvaluation.getSemester(),
                             courseEvaluation.getComment(),
-                            courseEvaluation.getRating()
+                            courseEvaluation.getRating(),
+                            courseEvaluation.getCourse().getId(),
+                            true
                     );
                 }).toList();
         amplitudeService.log(memberId, "getMyCourseEvaluationList", Map.of("memberId", memberId.toString()));
