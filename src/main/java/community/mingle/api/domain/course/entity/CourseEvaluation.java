@@ -29,9 +29,12 @@ public class CourseEvaluation extends AuditLoggingBase {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "course_id", nullable = false)
-    private Course course;
+    @Column(name = "course_code", nullable = false)
+    private String courseCode;
+
+    @NotNull
+    @Column(name = "university_id")
+    private int universityId;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
