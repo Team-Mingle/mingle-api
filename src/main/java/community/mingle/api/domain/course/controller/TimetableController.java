@@ -1,9 +1,6 @@
 package community.mingle.api.domain.course.controller;
 
-import community.mingle.api.domain.course.controller.request.CreatePersonalCourseRequest;
-import community.mingle.api.domain.course.controller.request.CreateTimetableRequest;
-import community.mingle.api.domain.course.controller.request.UpdateTimetableCourseRequest;
-import community.mingle.api.domain.course.controller.request.UpdateTimetableNameRequest;
+import community.mingle.api.domain.course.controller.request.*;
 import community.mingle.api.domain.course.controller.response.*;
 import community.mingle.api.domain.course.facade.CourseFacade;
 import community.mingle.api.domain.course.facade.TimetableFacade;
@@ -62,6 +59,17 @@ public class TimetableController {
     ) {
         return ResponseEntity.ok(courseFacade.createPersonalCourse(timetableId, request));
     }
+
+    @Operation(summary = "시간표 강의 수정 API")
+    @PatchMapping("/{timetableCourseId}")
+    public ResponseEntity<Void> updateTimetableName(
+            @PathVariable Long timetableCourseId,
+            @RequestBody UpdateTimetableCourseDetailRequest request
+    ) {
+        timetableFacade.updateTimetableCourseDetail(timetableCourseId, request);
+        return ResponseEntity.ok().build();
+    }
+
 
     @Operation(summary = "시간표 강의 삭제 API")
     @DeleteMapping("/{timetableId}/course/{courseId}")

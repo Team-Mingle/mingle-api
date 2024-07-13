@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: add venue, professor, subclass to course_timetable table
+      author: taehyun
+      changes:
+        - addColumn:
+              tableName: course_timetable
+              columns:
+                - column:
+                    name: venue
+                    type: varchar(1023)
+                    constraints:
+                      nullable: true
+                - column:
+                    name: professor
+                    type: varchar(1023)
+                    constraints:
+                      nullable: true
+                - column:
+                    name: subclass
+                    type: varchar(1023)
+                    constraints:
+                      nullable: true
