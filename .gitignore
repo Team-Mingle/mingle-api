@@ -38,3 +38,4 @@ out/
 
 ### /generated ###
 /src/main/generated/
+.DS_Store
