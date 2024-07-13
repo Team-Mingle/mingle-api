@@ -28,7 +28,8 @@ public class CourseEvaluationService {
     public CourseEvaluation create(Member member, Course course, Semester semester, String comment, CourseEvaluationRating rating) {
         checkCourseEvaluated(member, course);
         CourseEvaluation courseEvaluation = CourseEvaluation.builder()
-                .course(course)
+                .courseCode(course.getCourseCode())
+                .universityId(course.getUniversity().getId())
                 .semester(semester)
                 .comment(comment)
                 .rating(rating)
@@ -43,14 +44,17 @@ public class CourseEvaluationService {
     }
 
     public List<CourseEvaluation> getByCourse(Course course) {
-        return courseEvaluationRepository.findAllByCourse(course);
+        return courseEvaluationRepository.findAllByCourseCodeAndUniversityId(
+                course.getCourseCode(),
+                course.getUniversity().getId()
+        );
     }
 
     public List<CourseEvaluation> getByMemberId(Long memberId) {
         return courseEvaluationRepository.findAllByMemberId(memberId);
     }
     private void checkCourseEvaluated(Member member, Course course) {
-        courseEvaluationRepository.findByMemberAndCourse(member, course)
+        courseEvaluationRepository.findByMemberAndCourseCodeAndUniversityId(member, course.getCourseCode(), course.getUniversity().getId())
                 .ifPresent(courseEvaluation -> {
                     throw new CustomException(ErrorCode.COURSE_ALREADY_EVALUATED);
                 });

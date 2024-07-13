@@ -66,7 +66,7 @@ public class CourseEvaluationFacade {
                             courseEvaluation.getSemester(),
                             courseEvaluation.getComment(),
                             courseEvaluation.getRating(),
-                            courseId,
+                            courseEvaluation.getCourseCode(),
                             Objects.equals(courseEvaluation.getMember().getId(), memberId)
                     );
                 }).toList();
@@ -86,7 +86,7 @@ public class CourseEvaluationFacade {
                             courseEvaluation.getSemester(),
                             courseEvaluation.getComment(),
                             courseEvaluation.getRating(),
-                            courseEvaluation.getCourse().getId(),
+                            courseEvaluation.getCourseCode(),
                             true
                     );
                 }).toList();
