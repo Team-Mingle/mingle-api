@@ -65,6 +65,13 @@ public class TimetableService {
         return timetable;
     }
 
+    public CourseTimetable getCourseTimetableById(Long courseTimetableId, Member member) {
+        CourseTimetable courseTimetable = courseTimetableRepository.findById(courseTimetableId)
+                .orElseThrow(() -> new CustomException(TIMETABLE_NOT_FOUND));
+        hasPermission(member, courseTimetable);
+        return courseTimetable;
+    }
+
     @Transactional
     public CourseTimetable addCourse(Timetable timetable, Course course) {
 
@@ -72,6 +79,9 @@ public class TimetableService {
         CourseTimetable courseTimetable = CourseTimetable.builder()
                 .timetable(timetable)
                 .course(course)
+                .venue(course.getVenue())
+                .professor(course.getProfessor())
+                .subclass(course.getSubclass())
                 .rgb(rgb.getStringRgb())
                 .build();
 
@@ -79,6 +89,13 @@ public class TimetableService {
         course.updateCourseTimetable(courseTimetable);
 
         return courseTimetable;
+    }
+
+
+    @Transactional
+    public void updateCourseTimetableDetail(CourseTimetable courseTimetable, Member member, String venue, String professor, String subclass) {
+        hasPermission(member, courseTimetable);
+        courseTimetable.updateCourseTimetable(venue, professor, subclass);
     }
 
     @Transactional
@@ -186,6 +203,12 @@ public class TimetableService {
 
     private void hasPermission(Member member, Timetable timetable) {
         if (!timetable.getMember().getId().equals(member.getId())) {
+            throw new CustomException(MODIFY_NOT_AUTHORIZED);
+        }
+    }
+
+    private void hasPermission(Member member, CourseTimetable timetable) {
+        if (!timetable.getTimetable().getMember().getId().equals(member.getId())) {
             throw new CustomException(MODIFY_NOT_AUTHORIZED);
         }
     }

@@ -173,6 +173,7 @@ public class CourseFacade {
                             .map(CourseTime::toDto)
                             .toList();
                     return new CoursePreviewDto(
+                            0L, // 검색의 경우 courseTimetableId가 없으므로 0으로 넣어준다.
                             course.getId(),
                             course.getName(),
                             course.getCourseCode(),
