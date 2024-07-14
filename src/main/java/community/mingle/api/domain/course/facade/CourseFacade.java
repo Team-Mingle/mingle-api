@@ -18,6 +18,7 @@ import community.mingle.api.global.amplitude.AmplitudeService;
 import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
@@ -161,10 +162,10 @@ public class CourseFacade {
         );
     }
 
-    public CoursePreviewResponse searchCourse(String keyword) {
+    public CoursePreviewResponse searchCourse(String keyword, PageRequest pageRequest) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
-        List<CrawledCourse> crawledCourseList = courseService.getCrawledCourseByKeyword(keyword, member.getUniversity());
+        List<CrawledCourse> crawledCourseList = courseService.getCrawledCourseByKeyword(keyword, member.getUniversity(), pageRequest);
 
         List<CoursePreviewDto> coursePreviewDtoList = crawledCourseList.stream()
                 .map(course -> {
