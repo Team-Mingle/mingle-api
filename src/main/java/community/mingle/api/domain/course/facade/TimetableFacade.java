@@ -2,6 +2,7 @@ package community.mingle.api.domain.course.facade;
 
 import community.mingle.api.domain.auth.service.TokenService;
 import community.mingle.api.domain.course.controller.request.CreateTimetableRequest;
+import community.mingle.api.domain.course.controller.request.UpdateTimetableCourseDetailRequest;
 import community.mingle.api.domain.course.controller.request.UpdateTimetableCourseRequest;
 import community.mingle.api.domain.course.controller.request.UpdateTimetableNameRequest;
 import community.mingle.api.domain.course.controller.response.*;
@@ -29,7 +30,6 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -81,6 +81,17 @@ public class TimetableFacade {
             true,
             courseTimetable.getRgb()
         );
+    }
+
+    @Transactional
+    public void updateTimetableCourseDetail(Long courseTimetableId, UpdateTimetableCourseDetailRequest request) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+
+        CourseTimetable courseTimetable = timetableService.getCourseTimetableById(courseTimetableId, member);
+        timetableService.updateCourseTimetableDetail(courseTimetable, member, request.venue(), request.professor(), request.subclass());
+
+        amplitudeService.log(memberId, "updateTimetableCourseDetail", Map.of("courseTimetableId", courseTimetableId.toString(), "courseId", courseTimetable.getCourse().getId().toString(), "courseName", courseTimetable.getCourse().getName()));
     }
 
     @Transactional
@@ -207,16 +218,17 @@ public class TimetableFacade {
                 .map(courseTimetable -> {
                     Course course = courseTimetable.getCourse();
                     return new CoursePreviewDto(
+                            courseTimetable.getId(),
                             course.getId(),
                             course.getName(),
                             course.getCourseCode(),
                             course.getSemester(),
-                            course.getProfessor(),
-                            course.getSubclass(),
+                            courseTimetable.getProfessor(),
+                            courseTimetable.getSubclass(),
                             course.getCourseTimeList().stream()
                                     .map(CourseTime::toDto)
                                     .toList(),
-                            course.getVenue(),
+                            courseTimetable.getVenue(),
                             courseTimetable.getRgb(),
                             course.getType()
                     );

@@ -5,10 +5,14 @@ import community.mingle.api.domain.course.controller.response.CourseDetailRespon
 import community.mingle.api.domain.course.controller.response.CoursePreviewResponse;
 import community.mingle.api.domain.course.facade.CourseFacade;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Pageable;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Tag(name = "Course Controller", description = "강의 관련 API")
@@ -30,9 +34,11 @@ public class CourseController {
     @Operation(summary = "강의 검색 API")
     @GetMapping("/search")
     public ResponseEntity<CoursePreviewResponse> searchCourse(
-            @RequestParam String keyword
+            @RequestParam String keyword,
+            @Parameter Pageable pageable
     ) {
-        return ResponseEntity.ok(courseFacade.searchCourse(keyword));
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
+        return ResponseEntity.ok(courseFacade.searchCourse(keyword, pageRequest));
     }
 
     @Operation(summary = "강의 수정 API")

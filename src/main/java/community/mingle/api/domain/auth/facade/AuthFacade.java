@@ -17,7 +17,6 @@ import community.mingle.api.domain.auth.controller.response.VerifyLoggedInMember
 import community.mingle.api.domain.auth.entity.Policy;
 import community.mingle.api.domain.auth.service.AuthService;
 import community.mingle.api.domain.auth.service.TokenService;
-import community.mingle.api.domain.backoffice.controller.response.FreshmanCouponApplyListResponse;
 import community.mingle.api.domain.backoffice.controller.response.TempSignUpApplyListResponse;
 import community.mingle.api.domain.backoffice.controller.response.TempSignUpApplyResponse;
 import community.mingle.api.domain.member.entity.Member;
@@ -52,6 +51,9 @@ public class AuthFacade {
     private final TokenService tokenService;
     private final S3Service s3Service;
     private final MemberAuthPhotoService memberAuthPhotoService;
+
+    //HKU, HKUST, CITYU, POLYU, NUS, NTU
+    private final List<Integer> courseEvaluationAllowed = List.of(1, 2, 4, 5, 7, 8);
 
     public VerifyEmailResponse verifyEmail(EmailRequest emailRequest) {
         authService.verifyEmail(emailRequest.getEmail());
@@ -130,6 +132,7 @@ public class AuthFacade {
         CreatedTokenDto tokens = tokenService.createTokens(memberId, memberRole, email);
 
         memberService.setFcmToken(member, loginMemberRequest.getFcmToken());
+        boolean isCourseEvaluationAllowed = courseEvaluationAllowed.contains(member.getUniversity().getId());
 
         return LoginMemberResponse.builder()
                 .memberId(member.getId())
@@ -139,6 +142,7 @@ public class AuthFacade {
                 .country(member.getUniversity().getCountry().getName())
                 .accessToken(tokens.getAccessToken())
                 .refreshToken(tokens.getRefreshToken())
+                .isCourseEvaluationAllowed(isCourseEvaluationAllowed)
                 .build();
     }
 
@@ -204,12 +208,14 @@ public class AuthFacade {
     public VerifyLoggedInMemberResponse getVerifiedMemberInfo() {
         Long memberIdByJwt = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberIdByJwt);
+        boolean isCourseEvaluationAllowed = courseEvaluationAllowed.contains(member.getUniversity().getId());
         return new VerifyLoggedInMemberResponse(
                 member.getId(),
                 member.getEmail(),
                 member.getNickname(),
                 member.getUniversity().getName(),
-                member.getUniversity().getCountry().getName()
+                member.getUniversity().getCountry().getName(),
+                isCourseEvaluationAllowed
         );
     }
 

@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: drop course id fk from course_evaluation table
+      author: Hyeonwoo Jung
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: course_evaluation
+            constraintName: fk_course_evaluation_course_id
+        - dropColumn:
+            tableName: course_evaluation
+            columnName: course_id
+        - addColumn:
+            tableName: course_evaluation
+            columns:
+              - column:
+                  name: course_code
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: university_id
+                  type: int
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: add unique constraint to course_evaluation table
+      author: Hyeonwoo Jung
+      changes:
+        - addUniqueConstraint:
+            tableName: course_evaluation
+            columnNames: course_code, university_id, member_id
+            constraintName: unique_course_code_university_id_member_id

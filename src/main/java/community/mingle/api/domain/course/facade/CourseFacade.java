@@ -18,6 +18,7 @@ import community.mingle.api.global.amplitude.AmplitudeService;
 import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
@@ -161,10 +162,10 @@ public class CourseFacade {
         );
     }
 
-    public CoursePreviewResponse searchCourse(String keyword) {
+    public CoursePreviewResponse searchCourse(String keyword, PageRequest pageRequest) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
-        List<CrawledCourse> crawledCourseList = courseService.getCrawledCourseByKeyword(keyword, member.getUniversity());
+        List<CrawledCourse> crawledCourseList = courseService.getCrawledCourseByKeyword(keyword, member.getUniversity(), pageRequest);
 
         List<CoursePreviewDto> coursePreviewDtoList = crawledCourseList.stream()
                 .map(course -> {
@@ -172,6 +173,7 @@ public class CourseFacade {
                             .map(CourseTime::toDto)
                             .toList();
                     return new CoursePreviewDto(
+                            0L, // 검색의 경우 courseTimetableId가 없으므로 0으로 넣어준다.
                             course.getId(),
                             course.getName(),
                             course.getCourseCode(),

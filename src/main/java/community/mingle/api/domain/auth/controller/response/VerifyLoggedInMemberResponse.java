@@ -5,6 +5,7 @@ public record VerifyLoggedInMemberResponse(
         String hashedEmail,
         String nickName,
         String univName,
-        String country
+        String country,
+        Boolean isCourseEvaluationAllowed
 ) {
 }

@@ -12,9 +12,9 @@ import java.util.Optional;
 @Repository
 public interface CourseEvaluationRepository extends JpaRepository<CourseEvaluation, Long>{
 
-    public Optional<CourseEvaluation> findByMemberAndCourse(Member member, Course course);
+    public Optional<CourseEvaluation> findByMemberAndCourseCodeAndUniversityId(Member member, String courseCode, int universityId);
 
-    public List<CourseEvaluation> findAllByCourse(Course course);
+    List<CourseEvaluation> findAllByCourseCodeAndUniversityId(String courseCode, int universityId);
 
     public List<CourseEvaluation> findAllByMemberId(Long memberId);
 }
