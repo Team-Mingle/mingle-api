@@ -18,6 +18,7 @@ import community.mingle.api.global.amplitude.AmplitudeService;
 import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -165,7 +166,8 @@ public class CourseFacade {
     public CoursePreviewResponse searchCourse(String keyword, PageRequest pageRequest) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
-        List<CrawledCourse> crawledCourseList = courseService.getCrawledCourseByKeyword(keyword, member.getUniversity(), pageRequest);
+        Page<CrawledCourse> crawledCourseList = courseService.getCrawledCourseByKeyword(keyword, member.getUniversity(), pageRequest);
+        int totalCount = (int) crawledCourseList.getTotalElements();
 
         List<CoursePreviewDto> coursePreviewDtoList = crawledCourseList.stream()
                 .map(course -> {
@@ -189,7 +191,7 @@ public class CourseFacade {
                 }).toList();
 
         amplitudeService.log(memberId, "searchCourse", Map.of("keyword", keyword));
-        return new CoursePreviewResponse(coursePreviewDtoList);
+        return new CoursePreviewResponse(coursePreviewDtoList, totalCount);
     }
 
     private boolean isCourseTimeConflict(List<CourseTimeDto> courseTimeDtoList) {
