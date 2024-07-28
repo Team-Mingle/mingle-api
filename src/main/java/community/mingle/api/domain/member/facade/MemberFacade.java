@@ -82,7 +82,7 @@ public class MemberFacade {
             throw new CustomException(EMAIL_DOMAIN_MISMATCH);
         }
 
-        memberService.updateEmail(tokenMember, request.email());
+        memberService.updateEmailAndMemberRoleAsUser(tokenMember, request.email());
     }
 
 }
