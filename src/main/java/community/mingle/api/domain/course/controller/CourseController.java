@@ -36,10 +36,12 @@ public class CourseController {
     @GetMapping("/search")
     public ResponseEntity<CoursePreviewResponse> searchCourse(
             @RequestParam String keyword,
+            @RequestParam int year,
+            @RequestParam int semester,
             @Parameter Pageable pageable
     ) {
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
-        return ResponseEntity.ok(courseFacade.searchCourse(keyword, pageRequest));
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        return ResponseEntity.ok(courseFacade.searchCourse(keyword, year, semester, pageRequest));
     }
 
     @Operation(summary = "강의 평가용 강의 검색 API")

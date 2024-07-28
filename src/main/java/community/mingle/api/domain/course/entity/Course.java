@@ -3,6 +3,7 @@ package community.mingle.api.domain.course.entity;
 import community.mingle.api.domain.member.entity.University;
 import community.mingle.api.entitybase.AuditLoggingBase;
 import community.mingle.api.enums.CourseType;
+import community.mingle.api.enums.Semester;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -46,7 +47,8 @@ public class Course extends AuditLoggingBase {
 
     @Size(max = 1023)
     @Column(name = "semester", length = 1023)
-    String semester;
+    @Enumerated(EnumType.STRING)
+    Semester semester;
 
     @Size(max = 1023)
     @Column(name = "venue", length = 1023)

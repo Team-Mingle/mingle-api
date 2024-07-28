@@ -14,6 +14,7 @@ import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.dto.course.CoursePreviewDto;
 import community.mingle.api.dto.course.CourseTimeDto;
 import community.mingle.api.enums.CourseColourRgb;
+import community.mingle.api.enums.Semester;
 import community.mingle.api.global.amplitude.AmplitudeService;
 import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
@@ -165,10 +166,12 @@ public class CourseFacade {
         );
     }
 
-    public CoursePreviewResponse searchCourse(String keyword, PageRequest pageRequest) {
+    public CoursePreviewResponse searchCourse(String keyword, int year, int semester, PageRequest pageRequest) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
-        Page<CrawledCourse> crawledCourseList = courseService.getCrawledCourseByKeyword(keyword, member.getUniversity(), pageRequest);
+
+        Semester semesterEnum = Semester.findSemester(year, semester);
+        Page<CrawledCourse> crawledCourseList = courseService.getCrawledCourseByKeywordAndSemester(keyword, member.getUniversity(), semesterEnum, pageRequest);
         int totalCount = (int) crawledCourseList.getTotalElements();
 
         List<CoursePreviewDto> coursePreviewDtoList = crawledCourseList.stream()

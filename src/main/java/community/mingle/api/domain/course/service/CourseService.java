@@ -11,6 +11,7 @@ import community.mingle.api.domain.course.repository.PersonalCourseRepository;
 import community.mingle.api.domain.member.entity.Member;
 import community.mingle.api.domain.member.entity.University;
 import community.mingle.api.dto.course.CourseTimeDto;
+import community.mingle.api.enums.Semester;
 import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -114,5 +115,9 @@ public class CourseService {
 
     public Page<CrawledCourse> getCrawledCourseByKeyword(String keyword, University university, Pageable pageable) {
         return crawledCourseRepository.findByKeyword(keyword, university, pageable);
+    }
+
+    public Page<CrawledCourse> getCrawledCourseByKeywordAndSemester(String keyword, University university, Semester semester, Pageable pageable) {
+        return crawledCourseRepository.findByKeywordAndSemester(keyword, university, semester, pageable);
     }
 }
