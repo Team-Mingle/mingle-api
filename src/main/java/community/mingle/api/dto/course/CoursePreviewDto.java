@@ -1,6 +1,7 @@
 package community.mingle.api.dto.course;
 
 import community.mingle.api.enums.CourseType;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
