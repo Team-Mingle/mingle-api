@@ -5,7 +5,7 @@ import community.mingle.api.dto.course.CoursePreviewDto;
 import java.util.List;
 
 public record CoursePreviewResponse(
-        List<CoursePreviewDto> data
-
+        List<CoursePreviewDto> data,
+        int totalCount
         ) {
 }

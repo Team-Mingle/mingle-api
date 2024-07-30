@@ -14,16 +14,20 @@ import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.dto.course.CoursePreviewDto;
 import community.mingle.api.dto.course.CourseTimeDto;
 import community.mingle.api.enums.CourseColourRgb;
+import community.mingle.api.enums.Semester;
 import community.mingle.api.global.amplitude.AmplitudeService;
 import community.mingle.api.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static community.mingle.api.global.exception.ErrorCode.*;
@@ -162,10 +166,13 @@ public class CourseFacade {
         );
     }
 
-    public CoursePreviewResponse searchCourse(String keyword, PageRequest pageRequest) {
+    public CoursePreviewResponse searchCourse(String keyword, int year, int semester, PageRequest pageRequest) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
-        List<CrawledCourse> crawledCourseList = courseService.getCrawledCourseByKeyword(keyword, member.getUniversity(), pageRequest);
+
+        Semester semesterEnum = Semester.findSemester(year, semester);
+        Page<CrawledCourse> crawledCourseList = courseService.getCrawledCourseByKeywordAndSemester(keyword, member.getUniversity(), semesterEnum, pageRequest);
+        int totalCount = (int) crawledCourseList.getTotalElements();
 
         List<CoursePreviewDto> coursePreviewDtoList = crawledCourseList.stream()
                 .map(course -> {
@@ -189,7 +196,43 @@ public class CourseFacade {
                 }).toList();
 
         amplitudeService.log(memberId, "searchCourse", Map.of("keyword", keyword));
-        return new CoursePreviewResponse(coursePreviewDtoList);
+        return new CoursePreviewResponse(coursePreviewDtoList, totalCount);
+    }
+
+    public CoursePreviewResponse searchCourseForCourseEvaluation(String keyword, PageRequest pageRequest) {
+        Long memberId = tokenService.getTokenInfo().getMemberId();
+        Member member = memberService.getById(memberId);
+        Page<CrawledCourse> crawledCourseList = courseService.getCrawledCourseByKeyword(keyword, member.getUniversity(), pageRequest);
+        int totalCount = (int) crawledCourseList.getTotalElements();
+
+        HashMap<String, CrawledCourse> courseHashMap = new HashMap<>();
+        crawledCourseList.stream().forEach(crawledCourse ->
+            courseHashMap.put(crawledCourse.getCourseCode() + crawledCourse.getUniversity().getId(), crawledCourse)
+        );
+
+        List<CoursePreviewDto> coursePreviewDtoList = courseHashMap.values()
+                .stream()
+                .map(course -> {
+                    List<CourseTimeDto> courseTimeDtoList = course.getCourseTimeList().stream()
+                            .map(CourseTime::toDto)
+                            .toList();
+                    return new CoursePreviewDto(
+                            0L, // 검색의 경우 courseTimetableId가 없으므로 0으로 넣어준다.
+                            course.getId(),
+                            course.getName(),
+                            course.getCourseCode(),
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null
+                    );
+                }).toList();
+
+        amplitudeService.log(memberId, "searchCourseForCourseEvaluation", Map.of("keyword", keyword));
+        return new CoursePreviewResponse(coursePreviewDtoList, totalCount);
     }
 
     private boolean isCourseTimeConflict(List<CourseTimeDto> courseTimeDtoList) {

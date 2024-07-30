@@ -31,14 +31,27 @@ public class CourseController {
         return ResponseEntity.ok(courseFacade.getCourseDetail(courseId));
     }
 
+
     @Operation(summary = "강의 검색 API")
     @GetMapping("/search")
     public ResponseEntity<CoursePreviewResponse> searchCourse(
             @RequestParam String keyword,
+            @RequestParam int year,
+            @RequestParam int semester,
             @Parameter Pageable pageable
     ) {
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "createdAt");
-        return ResponseEntity.ok(courseFacade.searchCourse(keyword, pageRequest));
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        return ResponseEntity.ok(courseFacade.searchCourse(keyword, year, semester, pageRequest));
+    }
+
+    @Operation(summary = "강의 평가용 강의 검색 API")
+    @GetMapping("/course-evaluation/search")
+    public ResponseEntity<CoursePreviewResponse> searchCourseForCourseEvaluation(
+        @RequestParam String keyword,
+        @Parameter Pageable pageable
+    ) {
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "id");
+        return ResponseEntity.ok(courseFacade.searchCourseForCourseEvaluation(keyword, pageRequest));
     }
 
     @Operation(summary = "강의 수정 API")

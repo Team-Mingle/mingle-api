@@ -66,7 +66,9 @@ public class FriendService {
         //LastDisplayName은 friendCode의 제일 최근 이름을 가져오고 있음
         //친구를 생성할 때의 myDisplayName도 LastDisplayName으로 사용하기 위해 임의의 friendCode를 만들어줌
         createFriendCode(member, myDisplayName);
-        friendCodeRepository.delete(checkedFriendCode);
+
+        //하나의 코드로 여러 명이 친구추가를 가능하도록 하귀 위해 한 명 추가할 때마다 코드 disable하는 기능 제거
+//        friendCodeRepository.delete(checkedFriendCode);
         friendRepository.save(friend);
         friendRepository.save(reverseFriend);
 

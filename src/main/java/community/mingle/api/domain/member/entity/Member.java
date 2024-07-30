@@ -106,6 +106,10 @@ public class Member extends AuditLoggingBase {
         this.email = email;
     }
 
+    public void updateRole(MemberRole memberRole) {
+        this.role = memberRole;
+    }
+
     public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
