@@ -45,7 +45,6 @@ public class Course extends AuditLoggingBase {
     @Column(name = "name")
     String name;
 
-    @Size(max = 1023)
     @Column(name = "semester", length = 1023)
     @Enumerated(EnumType.STRING)
     Semester semester;
