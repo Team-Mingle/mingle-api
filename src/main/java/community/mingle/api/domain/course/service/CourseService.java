@@ -115,7 +115,7 @@ public class CourseService {
         return personalCourseRepository.findById(courseId).orElseThrow(() -> new CustomException(COURSE_NOT_FOUND));
     }
 
-    public Page<CrawledCourse> getCrawledCourseByKeyword(String keyword, University university, Pageable pageable) {
+    public Page<CrawledCourse> getDistinctCrawledCourseByKeyword(String keyword, University university, Pageable pageable) {
         return crawledCourseRepository.findByKeyword(keyword, university, pageable);
     }
 

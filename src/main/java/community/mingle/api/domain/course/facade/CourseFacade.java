@@ -14,6 +14,7 @@ import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.dto.course.CoursePreviewDto;
 import community.mingle.api.dto.course.CourseTimeDto;
 import community.mingle.api.enums.CourseColourRgb;
+import community.mingle.api.enums.CourseType;
 import community.mingle.api.enums.Semester;
 import community.mingle.api.global.amplitude.AmplitudeService;
 import community.mingle.api.global.exception.CustomException;
@@ -24,11 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.*;
 
 import static community.mingle.api.global.exception.ErrorCode.*;
 
@@ -202,20 +199,12 @@ public class CourseFacade {
     public CoursePreviewResponse searchCourseForCourseEvaluation(String keyword, PageRequest pageRequest) {
         Long memberId = tokenService.getTokenInfo().getMemberId();
         Member member = memberService.getById(memberId);
-        Page<CrawledCourse> crawledCourseList = courseService.getCrawledCourseByKeyword(keyword, member.getUniversity(), pageRequest);
+        Page<CrawledCourse> crawledCourseList = courseService.getDistinctCrawledCourseByKeyword(keyword, member.getUniversity(), pageRequest);
         int totalCount = (int) crawledCourseList.getTotalElements();
 
-        HashMap<String, CrawledCourse> courseHashMap = new HashMap<>();
-        crawledCourseList.stream().forEach(crawledCourse ->
-            courseHashMap.put(crawledCourse.getCourseCode() + crawledCourse.getUniversity().getId(), crawledCourse)
-        );
-
-        List<CoursePreviewDto> coursePreviewDtoList = courseHashMap.values()
+        List<CoursePreviewDto> coursePreviewDtoList = crawledCourseList
                 .stream()
                 .map(course -> {
-                    List<CourseTimeDto> courseTimeDtoList = course.getCourseTimeList().stream()
-                            .map(CourseTime::toDto)
-                            .toList();
                     return new CoursePreviewDto(
                             0L, // 검색의 경우 courseTimetableId가 없으므로 0으로 넣어준다.
                             course.getId(),
@@ -227,7 +216,7 @@ public class CourseFacade {
                             null,
                             null,
                             null,
-                            null
+                            CourseType.CRAWL
                     );
                 }).toList();
 
