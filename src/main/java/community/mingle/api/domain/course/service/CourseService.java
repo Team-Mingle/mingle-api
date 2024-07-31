@@ -43,7 +43,8 @@ public class CourseService {
             String professor,
             String memo,
             University university,
-            Member member
+            Member member,
+            Semester semester
     ) {
         PersonalCourse course = PersonalCourse.builder()
                 .courseCode(courseCode)
@@ -53,6 +54,7 @@ public class CourseService {
                 .memo(memo)
                 .university(university)
                 .member(member)
+                .semester(semester)
                 .build();
 
         PersonalCourse personalCourse = personalCourseRepository.save(course);

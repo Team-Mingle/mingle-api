@@ -44,7 +44,6 @@ public class CourseFacade {
     @Transactional
     public CreatePersonalCourseResponse createPersonalCourse(Long timetableId, CreatePersonalCourseRequest request) {
 
-
         if (isCourseTimeConflict(request.courseTimeDtoList())) {
             throw new CustomException(COURSE_TIME_CONFLICT);
         }
@@ -64,7 +63,8 @@ public class CourseFacade {
                 request.professor(),
                 request.memo(),
                 member.getUniversity(),
-                member
+                member,
+                timetable.getSemester()
         );
 
         timetableService.addCourse(timetable, personalCourse);
