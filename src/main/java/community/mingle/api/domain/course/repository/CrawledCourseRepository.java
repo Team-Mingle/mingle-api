@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CrawledCourseRepository extends JpaRepository<CrawledCourse, Long> {
 
-    @Query("SELECT c FROM CrawledCourse c WHERE (c.name LIKE %:keyword% OR c.courseCode LIKE %:keyword%) AND c.university = :university")
+    @Query("SELECT c FROM CrawledCourse c WHERE (c.name LIKE %:keyword% OR c.courseCode LIKE %:keyword%) AND c.university = :university GROUP BY c.courseCode")
     Page<CrawledCourse> findByKeyword(@Param("keyword") String keyword, @Param("university") University university, Pageable pageable);
 
     @Query("SELECT c FROM CrawledCourse c WHERE c.semester = :semester AND (c.name LIKE %:keyword% OR c.courseCode LIKE %:keyword%) AND c.university = :university")

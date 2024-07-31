@@ -216,7 +216,7 @@ public class TimetableFacade {
     private TimetableDetailResponse getTimetableDetailResponse(Timetable timetable) {
         List<CoursePreviewDto> coursePreviewResponseList = timetable.getCourseTimetableList().stream()
                 .map(courseTimetable -> {
-                    Course course = courseTimetable.getCourse();
+                    Course course = courseTimetable.getCourse(); //TODO N+1 해결
                     return new CoursePreviewDto(
                             courseTimetable.getId(),
                             course.getId(),

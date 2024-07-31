@@ -50,7 +50,7 @@ public class CourseController {
         @RequestParam String keyword,
         @Parameter Pageable pageable
     ) {
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "id");
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         return ResponseEntity.ok(courseFacade.searchCourseForCourseEvaluation(keyword, pageRequest));
     }
 
