@@ -14,6 +14,7 @@ import community.mingle.api.domain.member.service.MemberService;
 import community.mingle.api.dto.course.CoursePreviewDto;
 import community.mingle.api.dto.course.CourseTimeDto;
 import community.mingle.api.enums.CourseColourRgb;
+import community.mingle.api.enums.CourseType;
 import community.mingle.api.enums.Semester;
 import community.mingle.api.global.amplitude.AmplitudeService;
 import community.mingle.api.global.exception.CustomException;
@@ -215,7 +216,7 @@ public class CourseFacade {
                             null,
                             null,
                             null,
-                            null
+                            CourseType.CRAWL
                     );
                 }).toList();
 
