@@ -16,6 +16,7 @@ public record CreatePersonalCourseRequest(
         String courseCode,
         String venue,
         String professor,
+        String subclass,
         String memo,
         @Schema(description = "true일 때 시간표 중복 검사를 하지 않습니다.")
         boolean overrideValidation

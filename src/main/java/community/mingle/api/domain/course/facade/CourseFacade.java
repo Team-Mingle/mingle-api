@@ -58,6 +58,7 @@ public class CourseFacade {
                 request.courseTimeDtoList(),
                 request.venue(),
                 request.professor(),
+                request.subclass(),
                 request.memo(),
                 member.getUniversity(),
                 member,

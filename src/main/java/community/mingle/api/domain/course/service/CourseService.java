@@ -41,6 +41,7 @@ public class CourseService {
             List<CourseTimeDto> courseTimeDtoList,
             String venue,
             String professor,
+            String subclass,
             String memo,
             University university,
             Member member,
@@ -51,6 +52,7 @@ public class CourseService {
                 .name(name)
                 .venue(venue)
                 .professor(professor)
+                .subclass(subclass)
                 .memo(memo)
                 .university(university)
                 .member(member)
