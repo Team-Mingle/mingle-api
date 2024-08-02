@@ -183,10 +183,12 @@ public class TimetableService {
     private List<Course> coursesConflictWithNewCourseTime(Timetable timetable, List<CourseTimeDto> courseTimeList) {
         List<CourseTimetable> existingCourses = timetable.getCourseTimetableList();
 
+        Set<String> courseCodeSet = new HashSet<>();
         return existingCourses.stream()
                 .flatMap(existingCourse -> existingCourse.getCourse().getCourseTimeList().stream())
                 .filter(existingCourseTime -> isTimeOverlap(existingCourseTime, courseTimeList))
                 .map(CourseTime::getCourse)
+                .filter(course -> courseCodeSet.add(course.getCourseCode()))
                 .toList();
 
     }
