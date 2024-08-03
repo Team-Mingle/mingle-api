@@ -17,6 +17,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -145,7 +146,13 @@ public class TimetableService {
     }
 
     @Transactional
-    public void deleteConflictCoursesByOverrideValidation(Timetable timetable, List<CourseTimeDto> courseTimeDtoList, boolean overrideValidation) {
+    public void deleteConflictCoursesByOverrideValidation(
+            Timetable timetable,
+            List<CourseTimeDto> courseTimeDtoList,
+            boolean overrideValidation,
+            @Nullable
+            Long currentPersonalCourseId
+    ) {
         List<Course> conflictCourseList = coursesConflictWithNewCourseTime(timetable, courseTimeDtoList);
         if (!overrideValidation && !conflictCourseList.isEmpty()) {
             throw new CustomException(TIMETABLE_CONFLICT);
@@ -163,6 +170,7 @@ public class TimetableService {
 
             conflictCourseList.stream()
                     .filter(course -> course.getType().equals(CourseType.PERSONAL))
+                    .filter(course -> !Objects.equals(course.getId(), currentPersonalCourseId))
                     .forEach(courseRepository::delete);
         }
     }

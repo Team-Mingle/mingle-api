@@ -50,7 +50,7 @@ public class CourseFacade {
 
         Timetable timetable = timetableService.getById(timetableId, member);
 
-        timetableService.deleteConflictCoursesByOverrideValidation(timetable, request.courseTimeDtoList(), request.overrideValidation());
+        timetableService.deleteConflictCoursesByOverrideValidation(timetable, request.courseTimeDtoList(), request.overrideValidation(), null);
 
         PersonalCourse personalCourse = courseService.createPersonalCourse(
                 request.courseCode(),
@@ -92,10 +92,15 @@ public class CourseFacade {
                 .toList();
 
         timetables.forEach(timetable -> {
-            timetableService.deleteConflictCoursesByOverrideValidation(timetable, request.courseTimeDtoList(), request.overrideValidation());
+            timetableService.deleteConflictCoursesByOverrideValidation(
+                    timetable,
+                    request.courseTimeDtoList(),
+                    request.overrideValidation(),
+                    personalCourse.getId()
+            );
         });
 
-        PersonalCourse updatedPersonalCourse = personalCourse.updatePersonalCourse(
+        personalCourse.updatePersonalCourse(
                 memberId,
                 request.courseCode(),
                 request.name(),
@@ -106,7 +111,7 @@ public class CourseFacade {
 
         boolean courseTimeChanged = isCourseTimeChanged(request.courseTimeDtoList(), personalCourse.getCourseTimeList());
 
-        List<CourseTime> courseTimeList = updatedPersonalCourse.getCourseTimeList();
+        List<CourseTime> courseTimeList = personalCourse.getCourseTimeList();
 
         if (courseTimeChanged) {
             if (isCourseTimeConflict(request.courseTimeDtoList())) {
@@ -122,16 +127,16 @@ public class CourseFacade {
         amplitudeService.log(memberId, "updateCourse", Map.of("personalCourseId", personalCourse.getId().toString(), "personalCourseName", personalCourse.getName()));
 
         return new CourseDetailResponse( //TODO 참고
-                updatedPersonalCourse.getId(),
-                updatedPersonalCourse.getName(),
-                updatedPersonalCourse.getCourseCode(),
-                updatedPersonalCourse.getSemester(),
+                personalCourse.getId(),
+                personalCourse.getName(),
+                personalCourse.getCourseCode(),
+                personalCourse.getSemester(),
                 courseTimeDtoList,
-                updatedPersonalCourse.getVenue(),
-                updatedPersonalCourse.getProfessor(),
-                updatedPersonalCourse.getSubclass(),
-                updatedPersonalCourse.getMemo(),
-                updatedPersonalCourse.getPrerequisite()
+                personalCourse.getVenue(),
+                personalCourse.getProfessor(),
+                personalCourse.getSubclass(),
+                personalCourse.getMemo(),
+                personalCourse.getPrerequisite()
         );
     }
 

@@ -72,7 +72,7 @@ public class TimetableFacade {
         List<CourseTimeDto> courseTimeDtoList = course.getCourseTimeList().stream().map(CourseTime::toDto).toList();
 
         timetableService.checkCourseAlreadyAdded(timetable, course);
-        timetableService.deleteConflictCoursesByOverrideValidation(timetable, courseTimeDtoList, request.overrideValidation());
+        timetableService.deleteConflictCoursesByOverrideValidation(timetable, courseTimeDtoList, request.overrideValidation(), null);
 
         CourseTimetable courseTimetable = timetableService.addCourse(timetable, course);
 
