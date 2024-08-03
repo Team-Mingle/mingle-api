@@ -44,4 +44,8 @@ public class PersonalCourse extends Course {
         this.professor = professor;
         this.memo = memo;
     }
+
+    public void deleteCourseTime() {
+        this.courseTimeList.clear();
+    }
 }

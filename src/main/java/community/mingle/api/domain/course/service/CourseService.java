@@ -99,8 +99,7 @@ public class CourseService {
     @Transactional
     public List<CourseTime> updateCourseTime(Long personalCourseId, List<CourseTimeDto> courseTimeDtoList) {
         PersonalCourse personalCourse = getPersonalCourseById(personalCourseId);
-        courseTimeRepository.deleteAll(personalCourse.getCourseTimeList());
-
+        personalCourse.deleteCourseTime();
         return createCourseTime(personalCourseId, courseTimeDtoList);
 
     }

@@ -81,7 +81,7 @@ public class Course extends AuditLoggingBase {
     @Column(name = "type", insertable = false, updatable = false)
     CourseType type;
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", orphanRemoval = true)
     @Cascade(CascadeType.ALL)
     List<CourseTime> courseTimeList= new ArrayList<>();
 
