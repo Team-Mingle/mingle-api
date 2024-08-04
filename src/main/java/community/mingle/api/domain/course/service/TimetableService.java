@@ -153,7 +153,11 @@ public class TimetableService {
             @Nullable
             Long currentPersonalCourseId
     ) {
-        List<Course> conflictCourseList = coursesConflictWithNewCourseTime(timetable, courseTimeDtoList);
+        List<Course> conflictCourseList = coursesConflictWithNewCourseTime(timetable, courseTimeDtoList)
+                .stream()
+                .filter(course -> !Objects.equals(course.getId(), currentPersonalCourseId))
+                .toList();
+
         if (!overrideValidation && !conflictCourseList.isEmpty()) {
             throw new CustomException(TIMETABLE_CONFLICT);
         } else if (overrideValidation && !conflictCourseList.isEmpty()) {
@@ -170,7 +174,6 @@ public class TimetableService {
 
             conflictCourseList.stream()
                     .filter(course -> course.getType().equals(CourseType.PERSONAL))
-                    .filter(course -> !Objects.equals(course.getId(), currentPersonalCourseId))
                     .forEach(courseRepository::delete);
         }
     }
