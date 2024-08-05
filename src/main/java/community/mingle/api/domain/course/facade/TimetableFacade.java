@@ -72,7 +72,7 @@ public class TimetableFacade {
         List<CourseTimeDto> courseTimeDtoList = course.getCourseTimeList().stream().map(CourseTime::toDto).toList();
 
         timetableService.checkCourseAlreadyAdded(timetable, course);
-        timetableService.deleteConflictCoursesByOverrideValidation(timetable, courseTimeDtoList, request.overrideValidation());
+        timetableService.deleteConflictCoursesByOverrideValidation(timetable, courseTimeDtoList, request.overrideValidation(), null);
 
         CourseTimetable courseTimetable = timetableService.addCourse(timetable, course);
 
@@ -216,7 +216,7 @@ public class TimetableFacade {
     private TimetableDetailResponse getTimetableDetailResponse(Timetable timetable) {
         List<CoursePreviewDto> coursePreviewResponseList = timetable.getCourseTimetableList().stream()
                 .map(courseTimetable -> {
-                    Course course = courseTimetable.getCourse();
+                    Course course = courseTimetable.getCourse(); //TODO N+1 해결
                     return new CoursePreviewDto(
                             courseTimetable.getId(),
                             course.getId(),

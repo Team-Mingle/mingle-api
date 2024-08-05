@@ -17,6 +17,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -145,8 +146,18 @@ public class TimetableService {
     }
 
     @Transactional
-    public void deleteConflictCoursesByOverrideValidation(Timetable timetable, List<CourseTimeDto> courseTimeDtoList, boolean overrideValidation) {
-        List<Course> conflictCourseList = coursesConflictWithNewCourseTime(timetable, courseTimeDtoList);
+    public void deleteConflictCoursesByOverrideValidation(
+            Timetable timetable,
+            List<CourseTimeDto> courseTimeDtoList,
+            boolean overrideValidation,
+            @Nullable
+            Long currentPersonalCourseId
+    ) {
+        List<Course> conflictCourseList = coursesConflictWithNewCourseTime(timetable, courseTimeDtoList)
+                .stream()
+                .filter(course -> !Objects.equals(course.getId(), currentPersonalCourseId))
+                .toList();
+
         if (!overrideValidation && !conflictCourseList.isEmpty()) {
             throw new CustomException(TIMETABLE_CONFLICT);
         } else if (overrideValidation && !conflictCourseList.isEmpty()) {
@@ -183,10 +194,12 @@ public class TimetableService {
     private List<Course> coursesConflictWithNewCourseTime(Timetable timetable, List<CourseTimeDto> courseTimeList) {
         List<CourseTimetable> existingCourses = timetable.getCourseTimetableList();
 
+        Set<String> courseCodeSet = new HashSet<>();
         return existingCourses.stream()
                 .flatMap(existingCourse -> existingCourse.getCourse().getCourseTimeList().stream())
                 .filter(existingCourseTime -> isTimeOverlap(existingCourseTime, courseTimeList))
                 .map(CourseTime::getCourse)
+                .filter(course -> courseCodeSet.add(course.getCourseCode()))
                 .toList();
 
     }

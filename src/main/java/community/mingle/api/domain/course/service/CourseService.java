@@ -41,18 +41,22 @@ public class CourseService {
             List<CourseTimeDto> courseTimeDtoList,
             String venue,
             String professor,
+            String subclass,
             String memo,
             University university,
-            Member member
+            Member member,
+            Semester semester
     ) {
         PersonalCourse course = PersonalCourse.builder()
                 .courseCode(courseCode)
                 .name(name)
                 .venue(venue)
                 .professor(professor)
+                .subclass(subclass)
                 .memo(memo)
                 .university(university)
                 .member(member)
+                .semester(semester)
                 .build();
 
         PersonalCourse personalCourse = personalCourseRepository.save(course);
@@ -95,8 +99,7 @@ public class CourseService {
     @Transactional
     public List<CourseTime> updateCourseTime(Long personalCourseId, List<CourseTimeDto> courseTimeDtoList) {
         PersonalCourse personalCourse = getPersonalCourseById(personalCourseId);
-        courseTimeRepository.deleteAll(personalCourse.getCourseTimeList());
-
+        personalCourse.deleteCourseTime();
         return createCourseTime(personalCourseId, courseTimeDtoList);
 
     }
@@ -113,7 +116,7 @@ public class CourseService {
         return personalCourseRepository.findById(courseId).orElseThrow(() -> new CustomException(COURSE_NOT_FOUND));
     }
 
-    public Page<CrawledCourse> getCrawledCourseByKeyword(String keyword, University university, Pageable pageable) {
+    public Page<CrawledCourse> getDistinctCrawledCourseByKeyword(String keyword, University university, Pageable pageable) {
         return crawledCourseRepository.findByKeyword(keyword, university, pageable);
     }
 

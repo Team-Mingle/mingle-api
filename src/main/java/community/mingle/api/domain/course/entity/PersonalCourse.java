@@ -26,7 +26,7 @@ public class PersonalCourse extends Course {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    public PersonalCourse updatePersonalCourse(
+    public void updatePersonalCourse(
         Long memberId,
         String courseCode,
         String name,
@@ -43,6 +43,9 @@ public class PersonalCourse extends Course {
         this.venue = venue;
         this.professor = professor;
         this.memo = memo;
-        return this;
+    }
+
+    public void deleteCourseTime() {
+        this.courseTimeList.clear();
     }
 }
