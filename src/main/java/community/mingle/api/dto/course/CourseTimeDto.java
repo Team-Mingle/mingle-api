@@ -1,9 +1,9 @@
 package community.mingle.api.dto.course;
 
+import community.mingle.api.enums.DayOfWeek;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 public record CourseTimeDto(
