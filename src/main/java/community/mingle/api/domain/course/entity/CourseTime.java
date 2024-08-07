@@ -2,6 +2,7 @@ package community.mingle.api.domain.course.entity;
 
 import community.mingle.api.dto.course.CourseTimeDto;
 import community.mingle.api.entitybase.AuditLoggingBase;
+import community.mingle.api.enums.DayOfWeek;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -9,7 +10,6 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalTime;
 
