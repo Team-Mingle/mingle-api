@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: add 'TBA' to course_time table's day_of_week column
+      author: taehyun
+      changes:
+        - modifyDataType:
+            tableName: course_time
+            columnName: day_of_week
+            newDataType: enum ('SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'TBA')

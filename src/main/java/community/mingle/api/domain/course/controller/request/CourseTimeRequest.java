@@ -1,9 +1,9 @@
 package community.mingle.api.domain.course.controller.request;
 
+import community.mingle.api.enums.DayOfWeek;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 @Getter
