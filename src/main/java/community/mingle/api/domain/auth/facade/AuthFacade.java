@@ -52,8 +52,8 @@ public class AuthFacade {
     private final S3Service s3Service;
     private final MemberAuthPhotoService memberAuthPhotoService;
 
-    //HKU, HKUST, CITYU, POLYU, NUS, NTU
-    private final List<Integer> courseEvaluationAllowed = List.of(1, 2, 4, 5, 7, 8);
+    //HKU, HKUST, POLYU, NUS
+    private final List<Integer> courseEvaluationAllowed = List.of(1, 2, 5, 7);
 
     public VerifyEmailResponse verifyEmail(EmailRequest emailRequest) {
         authService.verifyEmail(emailRequest.getEmail());
