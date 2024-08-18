@@ -205,7 +205,7 @@ public class TimetableFacade {
         Member member = memberService.getById(memberId);
         Long defaultTimetableId = timetableService.listByIdAndIsPinnedTrue(member)
                 .stream()
-                .max(Comparator.comparing((Timetable t) -> t.getSemester().getYear())
+                .min(Comparator.comparing((Timetable t) -> t.getSemester().getYear()).reversed()
                         .thenComparingInt(t -> t.getSemester().getSemester()))
                 .get().getId();
 
