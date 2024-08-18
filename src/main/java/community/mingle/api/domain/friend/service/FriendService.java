@@ -40,7 +40,7 @@ public class FriendService {
                 .member(member)
                 .code(code)
                 .displayName(myDisplayName)
-                .expiresAt(LocalDateTime.now().plusDays(3L))
+                .expiresAt(LocalDateTime.now().plusHours(1L))
                 .build();
 
         return friendCodeRepository.save(friendCode);
